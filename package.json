@@ -2,7 +2,7 @@
   "name": "gatenu",
   "version": "1.0.0",
   "description": "nu gate for *blu",
-  "main": "index.js",
+  "main": "index.html",
   "scripts": {
     "start": "coffee server.coffee",
     "test":  "echo \"Error: no test specified\" && exit 1"
