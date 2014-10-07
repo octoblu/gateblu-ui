@@ -1,0 +1,24 @@
+{
+  "name": "gatenu",
+  "version": "1.0.0",
+  "description": "nu gate for *blu",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/octoblu/gatenu.git"
+  },
+  "keywords": [
+    "meshblu",
+    "gateway",
+    "gateblu"
+  ],
+  "author": "Octoblu Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/octoblu/gatenu/issues"
+  },
+  "homepage": "https://github.com/octoblu/gatenu"
+}
