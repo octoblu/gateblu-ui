@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/octoblu/gatenu/issues"
   },
-  "homepage": "https://github.com/octoblu/gatenu"
+  "homepage": "https://github.com/octoblu/gatenu",
+  "dependencies": {
+    "coffee-script": "^1.8.0"
+  }
 }
