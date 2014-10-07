@@ -5,7 +5,7 @@
   "main": "index.html",
   "scripts": {
     "start": "coffee server.coffee",
-    "test":  "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/octoblu/gatenu",
   "dependencies": {
-    "coffee-script": "^1.8.0"
+    "coffee-script": "^1.8.0",
+    "skynet": "^1.1.1"
   }
 }
