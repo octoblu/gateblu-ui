@@ -1,7 +1,8 @@
-var fs = require('fs-extra');
+var fs   = require('fs-extra');
 var path = require('path');
 
-var CONFIG_PATH = path.join(process.env.HOME, '.config/gatenu');
+var HOME_DIR     = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
+var CONFIG_PATH  = path.join(HOME_DIR, '.config/gatenu');
 var DEFAULT_FILE = path.join(CONFIG_PATH, 'meshblu.json');
 
 module.exports = {
