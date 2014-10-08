@@ -1,13 +1,19 @@
 var skynet = require('skynet');
-var forever = require('forever');
-var _ = require('lodash');
 
-var configManager = require('./config-manager');
+var configManager = require('./src/config-manager');
 var config = configManager.loadConfig();
 
 var skynetConnection = skynet.createConnection({ uuid: config.uuid, token: config.token });
 
-var messageManager = require('./message-manager')(config, skynetConnection);
+skynetConnection.on('notReady', function(){
+  if (!config.uuid) {
+    skynetConnection.register({type: 'gateway'}, function(data){
+      skynetConnection.identify({uuid: data.uuid, token: data.token});
+    });
+  }
+});
+
+var messageManager = require('./src/message-manager')(config, skynetConnection);
 
 skynetConnection.on('ready', function(readyResponse){
     config.uuid = readyResponse.uuid;
@@ -21,4 +27,5 @@ skynetConnection.on('message', function(message){
    }
 });
 
-messageManager.setupDevice({name: 'test-subdevice', connector: 'skynet-wemo', uuid: '1'});
+device = {name: 'test-subdevice', connector: 'meshblu-blink1', uuid: '1', token: '2'}
+messageManager.setupDevice(device, messageManager.startDevice);

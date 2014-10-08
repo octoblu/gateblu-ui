@@ -1,38 +1,7 @@
 <html>
   <head>
-    <script type="text/javascript">
-      var gui = require('nw.gui');
-      var skynet = require('skynet');
-
-      var click_quit = function() {
-        gui.App.quit();
-      }
-
-      // Create a tray icon
-      var tray = new gui.Tray({ title: '', icon: 'img/icon.png' });
-      tray.tooltip = "Octoblu Gateway";
-
-      var menu = new gui.Menu();
-      menu.append(new gui.MenuItem({ type: 'normal', label: 'Quit', click: click_quit }));
-      tray.menu = menu;
-
-      var conx = skynet.createConnection({
-        server: 'meshblu.octoblu.com',
-        port: '80',
-        uuid: '659f9a31-4e56-11e4-9133-338b9914afd1',
-        token: '0000f1joywpyl23xr68chct6pbucv7vi'
-      });
-
-      console.log(conx);
-
-      conx.on('ready', function(data){
-        console.log(data);
-        menu.insert(new gui.MenuItem({type: 'normal', label: 'Ready'}), 0);
-      });
-      conx.on('notReady', function(){
-        menu.insert(new gui.MenuItem({type: 'normal', label: 'Not Ready'}), 0);
-      });
-    </script>
+    <script type="text/javascript" src="src/index.js"></script>
+    <script type="text/javascript" src="src/app.js"></script>
   </head>
   <body>
   </body>
