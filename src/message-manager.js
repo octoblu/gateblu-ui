@@ -17,7 +17,7 @@ if (process.platform === 'win32') {
 
 node_path = path.join(__dirname, '../dist', platform_path, 'bin');
 
-module.exports = function(config) {
+module.exports = function(config, skynetConnection) {
   var messageManager = {
     setupDevice : function(device, callback) {
       setupDevice(config, device, callback);
