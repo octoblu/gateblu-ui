@@ -25,6 +25,12 @@ module.exports = {
     if (!config.tmpPath) {
       config.tmpPath = path.join(config.path, 'tmp');
     }
+    if(!config.server){
+      config.server = process.env.MESHBLU_SERVER || 'meshblu.octoblu.com'
+    }
+    if(!config.port){
+      config.port = process.env.MESHBLU_PORT || '443'
+    }
     configPath = configPath || DEFAULT_FILE;
     fs.mkdirpSync(config.path);
     return fs.writeFileSync(configPath, JSON.stringify(config, null, 2));

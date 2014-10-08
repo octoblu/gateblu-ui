@@ -4,7 +4,7 @@ var configManager = require('./src/config-manager');
 var config = configManager.loadConfig();
 
 $('ul').append('<li>create connection</li>');
-var skynetConnection = skynet.createConnection({ uuid: config.uuid, token: config.token });
+var skynetConnection = skynet.createConnection({ server : config.server, port : config.port, uuid: config.uuid, token: config.token });
 
 skynetConnection.on('notReady', function(){
   if (!config.uuid) {
@@ -40,4 +40,3 @@ skynetConnection.on('message', function(message){
    messageManager[message.topic](message.payload);
  }
 });
-
