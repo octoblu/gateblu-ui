@@ -1,5 +1,4 @@
 var gui = require('nw.gui');
-var forever = require('forever');
 
 var click_quit = function() {
   gui.App.quit();

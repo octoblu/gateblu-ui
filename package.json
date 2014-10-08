@@ -1,66 +1,69 @@
 {
-  "license": "MIT",
-  "node-main": "",
-  "name": "gatenu",
-  "repository": {
-    "url": "https://github.com/octoblu/gatenu.git",
-    "type": "git"
-  },
-  "author": "Octoblu Inc.",
-  "nodejs": true,
-  "bugs": {
-    "url": "https://github.com/octoblu/gatenu/issues"
-  },
-  "webexe_settings": {
-    "linux-x32": true,
-    "download_dir": "/Users/jmeskill/Projects/Octoblu/Web2Executable/files/downloads",
-    "windows": true,
-    "mac": true,
-    "nw_version": "0.10.5",
-    "force_download": false,
-    "linux-x64": true
-  },
-  "single-instance": true,
-  "webkit": {
-    "page-cache": false,
-    "java": false,
-    "plugin": false
-  },
-  "window": {
-    "fullscreen": false,
-    "resizable": false,
-    "title": "gatenu",
-    "always-on-top": false,
-    "frame": true,
-    "height": 480,
-    "visible": true,
-    "as_desktop": false,
-    "position": "",
-    "show_in_taskbar": true,
-    "width": 640,
-    "toolbar": false,
-    "icon": ""
-  },
-  "version": "1.0.0",
-  "dependencies": {
-    "coffee-script": "^1.8.0",
-    "forever": "^0.11.1",
-    "forever-monitor": "^1.3.0",
-    "fs-extra": "^0.12.0",
-    "npm": "^2.1.2",
-    "rimraf": "^2.2.8",
-    "skynet": "^1.1.1"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "coffee server.coffee"
-  },
-  "keywords": [
-    "meshblu",
-    "gateway",
-    "gateblu"
-  ],
-  "main": "index.html",
-  "homepage": "https://github.com/octoblu/gatenu",
-  "description": "nu gate for *blu"
+    "license": "MIT", 
+    "node-main": "", 
+    "description": "nu gate for *blu", 
+    "repository": {
+        "url": "https://github.com/octoblu/gatenu.git", 
+        "type": "git"
+    }, 
+    "nodejs": true, 
+    "author": "Octoblu Inc.", 
+    "bugs": {
+        "url": "https://github.com/octoblu/gatenu/issues"
+    }, 
+    "webexe_settings": {
+        "linux-x32": false, 
+        "download_dir": "/Users/jmeskill/Projects/Octoblu/Web2Executable/files/downloads", 
+        "windows": true, 
+        "mac": false, 
+        "nw_version": "0.10.5", 
+        "force_download": false, 
+        "linux-x64": false
+    }, 
+    "single-instance": true, 
+    "webkit": {
+        "page-cache": false, 
+        "java": false, 
+        "plugin": false
+    }, 
+    "window": {
+        "fullscreen": false, 
+        "resizable": true, 
+        "title": "gatenu", 
+        "always-on-top": false, 
+        "frame": true, 
+        "max_width": 805, 
+        "height": 600, 
+        "min_height": 805, 
+        "visible": true, 
+        "as_desktop": false, 
+        "max_height": 605, 
+        "position": "", 
+        "show_in_taskbar": true, 
+        "width": 800, 
+        "toolbar": false, 
+        "icon": ""
+    }, 
+    "version": "1.0.0", 
+    "dependencies": {
+        "npm": "^2.1.2", 
+        "coffee-script": "^1.8.0", 
+        "forever": "^0.11.1", 
+        "forever-monitor": "^1.3.0", 
+        "fs-extra": "^0.12.0", 
+        "rimraf": "^2.2.8", 
+        "skynet": "^1.1.1"
+    }, 
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1", 
+        "start": "coffee server.coffee"
+    }, 
+    "keywords": [
+        "meshblu", 
+        "gateway", 
+        "gateblu"
+    ], 
+    "main": "index.html", 
+    "homepage": "https://github.com/octoblu/gatenu", 
+    "name": "gatenu"
 }

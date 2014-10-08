@@ -1,5 +1,6 @@
 var fs   = require('fs-extra');
 var path = require('path');
+var $ = require('../lib/jquery');
 
 var HOME_DIR     = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
 var CONFIG_PATH  = path.join(HOME_DIR, '.config/gatenu');
@@ -17,6 +18,7 @@ module.exports = {
     if (!config.path) {
       config.path = CONFIG_PATH;
     }
+    $('ul').append('<li>' + config.path + '</li>');
     if (!config.devicePath) {
       config.devicePath = path.join(config.path, 'devices');
     }
