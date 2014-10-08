@@ -1,16 +1,29 @@
-var fs = require('fs');
-var DEFAULT_PATH = 'meshblu.json';
+var fs = require('fs-extra');
+var path = require('path');
+
+var CONFIG_PATH = path.join(process.env.HOME, '.config/gatenu');
+var DEFAULT_FILE = path.join(CONFIG_PATH, 'meshblu.json');
 
 module.exports = {
-    loadConfig : function( configPath ) {
-        configPath = configPath || DEFAULT_PATH;
-        if( !fs.existsSync(configPath) ) {
-            return {};
-        }
-        return JSON.parse(fs.readFileSync(configPath))
-    },
-    saveConfig : function(config, configPath) {
-        configPath = configPath || DEFAULT_PATH;
-        return fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  loadConfig : function( configPath ) {
+    configPath = configPath || DEFAULT_FILE;
+    if( !fs.existsSync(configPath) ) {
+      return {};
     }
+    return JSON.parse(fs.readFileSync(configPath))
+  },
+  saveConfig : function(config, configPath) {
+    if (!config.path) {
+      config.path = CONFIG_PATH;
+    }
+    if (!config.devicePath) {
+      config.devicePath = path.join(config.path, 'devices');
+    }
+    if (!config.tmpPath) {
+      config.tmpPath = path.join(config.path, 'tmp');
+    }
+    configPath = configPath || DEFAULT_FILE;
+    fs.mkdirpSync(config.path);
+    return fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
+  }
 };
