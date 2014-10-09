@@ -11,8 +11,8 @@ if (!config) {
 rimraf.sync(config.path + '/dist');
 fs.copySync('dist', config.path + '/dist');
 
-var Gatenu = require('gatenu-npm');
-gatenu = new Gatenu(config);
-gatenu.on('config', function(config){
+var Genblu = require('genblu');
+genblu = new Genblu(config);
+genblu.on('config', function(config){
   configManager.saveConfig(config);
 })
