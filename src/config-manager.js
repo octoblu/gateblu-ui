@@ -3,7 +3,7 @@ var path = require('path');
 var $ = require('../lib/jquery');
 
 var HOME_DIR     = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
-var CONFIG_PATH  = path.join(HOME_DIR, '.config/gatenu');
+var CONFIG_PATH  = path.join(HOME_DIR, '.config/genblu');
 var DEFAULT_FILE = path.join(CONFIG_PATH, 'meshblu.json');
 
 module.exports = {
