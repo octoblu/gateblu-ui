@@ -29,3 +29,4 @@ node_modules
 devices/*
 dist
 output
+node-webkit.app
