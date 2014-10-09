@@ -31,3 +31,4 @@ dist
 output
 node-webkit.app
 *.app
+meshblu.json
