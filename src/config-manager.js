@@ -10,11 +10,13 @@ module.exports = {
   loadConfig : function( configPath ) {
     configPath = configPath || DEFAULT_FILE;
     if( !fs.existsSync(configPath) ) {
-      return {};
+      return null;
     }
     return JSON.parse(fs.readFileSync(configPath))
   },
   saveConfig : function(config, configPath) {
+    config = config || {};
+
     if (!config.path) {
       config.path = CONFIG_PATH;
     }
