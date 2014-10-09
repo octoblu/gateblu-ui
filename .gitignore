@@ -30,3 +30,4 @@ devices/*
 dist
 output
 node-webkit.app
+*.app
