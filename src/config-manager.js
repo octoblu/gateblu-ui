@@ -18,7 +18,6 @@ module.exports = {
     if (!config.path) {
       config.path = CONFIG_PATH;
     }
-    $('ul').append('<li>' + config.path + '</li>');
     if (!config.devicePath) {
       config.devicePath = path.join(config.path, 'devices');
     }
@@ -31,6 +30,20 @@ module.exports = {
     if(!config.port){
       config.port = process.env.MESHBLU_PORT || '443'
     }
+    if (!config.nodePath) {
+      var platform_path;
+
+      if (process.platform === 'win32') {
+        platform_path = 'node-v0.10.32-win-x86';
+      } else if (process.platform === 'darwin') {
+        platform_path = 'node-v0.10.32-darwin-x64';
+      } else {
+        platform_path = 'node-v0.10.32-linux-x64';
+      }
+
+      config.nodePath = path.join(config.path, 'dist', platform_path, 'bin');
+    }
+
     configPath = configPath || DEFAULT_FILE;
     fs.mkdirpSync(config.path);
     return fs.writeFileSync(configPath, JSON.stringify(config, null, 2));
