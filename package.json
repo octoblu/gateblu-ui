@@ -48,7 +48,7 @@
   "dependencies": {
     "fs-extra": "^0.12.0",
     "rimraf": "^2.2.8",
-    "genblu": "^1.5.1"
+    "genblu": "^1.5.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
