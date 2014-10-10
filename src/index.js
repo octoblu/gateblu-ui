@@ -1,3 +1,6 @@
+(function(){
+'use strict';
+
 var fs = require('fs-extra');
 var rimraf = require('rimraf');
 var $ = require('./lib/jquery');
@@ -13,13 +16,20 @@ rimraf.sync(config.path + '/dist');
 fs.copySync('dist', config.path + '/dist');
 
 var Genblu = require('genblu');
-genblu = new Genblu(config);
+var genblu = new Genblu(config);
 
 genblu.on('config', function(config){
   $('ul.log').append('<li>Connected to Meshblu. UUID: '+config.uuid+'</li>');
+  $('ul.log').append('<li>Goto <a href="https://octoblu.octoblu.com/connect/nodes/">Octoblu</a> to configure the Genblu</li>');
   configManager.saveConfig(config);
 });
 
 genblu.on('device:start', function(device){
   $('ul.devices').append('<li>' + device.name + '(' + device.uuid + ')</li>' );
-})
+});
+
+genblu.on('refresh', function(){
+  $('ul.devices').html('');
+});
+
+})();
