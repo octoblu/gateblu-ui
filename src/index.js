@@ -20,12 +20,12 @@ var genblu = new Genblu(config);
 
 genblu.on('config', function(config){
   $('ul.log').append('<li>Connected to Meshblu. UUID: '+config.uuid+'</li>');
-  $('ul.log').append('<li>Goto <a href="https://octoblu.octoblu.com/connect/nodes/">Octoblu</a> to configure the Genblu</li>');
+  $('ul.log').append('<li>Goto <a href="https://app.octoblu.com/connect/nodes/" class="external-link">Octoblu</a> to configure the Genblu</li>');
   configManager.saveConfig(config);
 });
 
 genblu.on('device:start', function(device){
-  $('ul.devices').append('<li>' + device.name + '(' + device.uuid + ')</li>' );
+  $('ul.devices').append('<li>' + device.type + '(' + device.uuid + ')</li>' );
 });
 
 genblu.on('refresh', function(){
