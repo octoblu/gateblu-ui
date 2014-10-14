@@ -1,4 +1,4 @@
-Genblu
+Gateblu
 ======
 
-nu gate for *blu
+Gateway for Meshblu and Octoblu

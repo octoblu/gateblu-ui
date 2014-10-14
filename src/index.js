@@ -15,20 +15,20 @@ if (!config) {
 rimraf.sync(config.path + '/dist');
 fs.copySync('dist', config.path + '/dist');
 
-var Genblu = require('genblu');
-var genblu = new Genblu(config);
+var Gateblu = require('gateblu');
+var gateblu = new Gateblu(config);
 
-genblu.on('config', function(config){
+gateblu.on('config', function(config){
   $('ul.log').append('<li>Connected to Meshblu. UUID: '+config.uuid+'</li>');
-  $('ul.log').append('<li>Goto <a href="https://app.octoblu.com/connect/nodes/" class="external-link">Octoblu</a> to configure the Genblu</li>');
+  $('ul.log').append('<li>Goto <a href="https://app.octoblu.com/connect/nodes/" class="external-link">Octoblu</a> to configure the Gateblu</li>');
   configManager.saveConfig(config);
 });
 
-genblu.on('device:start', function(device){
+gateblu.on('device:start', function(device){
   $('ul.devices').append('<li>' + device.type + '(' + device.uuid + ')</li>' );
 });
 
-genblu.on('refresh', function(){
+gateblu.on('refresh', function(){
   $('ul.devices').html('');
 });
 

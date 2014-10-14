@@ -4,7 +4,7 @@ var fs   = require('fs-extra');
 var path = require('path');
 
 var HOME_DIR     = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
-var CONFIG_PATH  = path.join(HOME_DIR, '.config/genblu');
+var CONFIG_PATH  = path.join(HOME_DIR, '.config/gateblu');
 var DEFAULT_FILE = path.join(CONFIG_PATH, 'meshblu.json');
 
 module.exports = {

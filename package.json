@@ -3,13 +3,13 @@
   "node-main": "",
   "description": "nu gate for *blu",
   "repository": {
-    "url": "https://github.com/octoblu/genblu-ui.git",
+    "url": "https://github.com/octoblu/gateblu-ui.git",
     "type": "git"
   },
   "nodejs": true,
   "author": "Octoblu Inc.",
   "bugs": {
-    "url": "https://github.com/octoblu/genblu-ui/issues"
+    "url": "https://github.com/octoblu/gateblu-ui/issues"
   },
   "webexe_settings": {
     "linux-x32": false,
@@ -29,7 +29,7 @@
   "window": {
     "fullscreen": false,
     "resizable": true,
-    "title": "genblu",
+    "title": "gateblu",
     "always-on-top": false,
     "frame": true,
     "max_width": 805,
@@ -48,7 +48,7 @@
   "dependencies": {
     "fs-extra": "^0.12.0",
     "rimraf": "^2.2.8",
-    "genblu": "^1.6.0"
+    "gateblu": "^1.6.0"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -58,9 +58,9 @@
     "meshblu",
     "gateway",
     "gateblu",
-    "genblu"
+    "gateblu"
   ],
   "main": "index.html",
-  "homepage": "https://github.com/octoblu/genblu-ui",
-  "name": "genblu-ui"
+  "homepage": "https://github.com/octoblu/gateblu-ui",
+  "name": "gateblu-ui"
 }
