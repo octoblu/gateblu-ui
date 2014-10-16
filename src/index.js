@@ -1,11 +1,14 @@
 (function(){
 'use strict';
 
-var fs = require('fs-extra');
-var rimraf = require('rimraf');
-var $ = require('./lib/jquery');
+var fs      = require('fs-extra');
+var rimraf  = require('rimraf');
+var request = require('request');
+
+var $             = require('./lib/jquery');
+var version       = require('./package.json').version;
 var configManager = require('./src/config-manager');
-var config = configManager.loadConfig();
+var config        = configManager.loadConfig();
 
 if (!config) {
   configManager.saveConfig();
@@ -30,6 +33,16 @@ gateblu.on('device:start', function(device){
 
 gateblu.on('refresh', function(){
   $('ul.devices').html('');
+});
+
+request.get('http://gateblu.octoblu.com/version.json', {json: true}, function(error, response, body){
+  if(error){
+    return;
+  }
+
+  if(body.version !== version){
+    $('.update-container').removeClass('hidden');
+  }
 });
 
 })();

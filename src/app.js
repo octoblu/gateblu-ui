@@ -1,4 +1,4 @@
-var gui = require('nw.gui');
+var gui     = require('nw.gui');
 
 var click_quit = function() {
   gui.App.quit();
@@ -11,3 +11,6 @@ tray.tooltip = "Octoblu Gateway";
 var menu = new gui.Menu();
 menu.append(new gui.MenuItem({ type: 'normal', label: 'Quit', click: click_quit }));
 tray.menu = menu;
+
+
+
