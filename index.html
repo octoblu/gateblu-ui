@@ -2,26 +2,26 @@
   <head>
     <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
     <link rel="stylesheet" type="text/css" href="css/app.css">
-
+    <script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
     <script type="text/javascript" src="lib/jquery.js"></script>
     <script type="text/javascript" src="lib/bootstrap.js"></script>
     <script type="text/javascript" src="lib/external-link.js"></script>
     <script type="text/javascript" src="src/index.js"></script>
     <script type="text/javascript" src="src/app.js"></script>
-    <script type="text/javascript" src="dist/application.js"></script>
+    <script type="text/javascript" src="src/dist.js"></script>
     <script type="text/javascript">
     </script>
   </head>
 
-  <body>
+  <body ng-controller="MainController">
+    <h1>{{hi}} hellooooo</h1>
     <div class="jumbotron update-container hidden">
-      <h1>Updates Available</h1>
+      <h1>Updates Available</h1> 
       <p>There is a new version of Gateblu available.</p>
       <a href="http://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
     </div>
 
     <div class="container">
-
 
       <h1>Status</h1>
       <ul class="log">
