@@ -23,7 +23,7 @@
       <div class="panel" style="height: 50%; overflow-y: scroll">
         <div class="panel-body">
           <div class="col-xs-3 text-center" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
-            <img src="{{device.icon_url}}" class="img-responsive">
+            <div class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
             <strong>{{device.name}}</strong>
           </div>
         </div>
