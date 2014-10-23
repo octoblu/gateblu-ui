@@ -5,7 +5,7 @@ var fs      = require('fs-extra');
 var rimraf  = require('rimraf');
 var request = require('request');
 
-var $             = require('./lib/jquery');
+var $             = require('jquery');
 var version       = require('./package.json').version;
 var configManager = require('./src/config-manager');
 var config        = configManager.loadConfig();
