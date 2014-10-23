@@ -9,7 +9,6 @@
   </head>
 
   <body ng-controller="MainController">
-    <h1>{{hi}} hellooooo</h1>
     <div class="jumbotron update-container hidden">
       <h1>Updates Available</h1> 
       <p>There is a new version of Gateblu available.</p>
@@ -17,17 +16,28 @@
     </div>
 
     <div class="container">
+      <div class="text-center">
+        <h3>Gateblu</h3>
+      </div>
 
-      <h1>Status</h1>
-      <ul class="statuses">
-      </ul>
+      <div class="panel" style="height: 50%; overflow-y: scroll">
+        <div class="panel-body">
+          <div class="col-xs-3 text-center" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
+            <img src="{{device.icon_url}}" class="img-responsive">
+            <strong>{{device.name}}</strong>
+          </div>
+        </div>
+      </div>
 
-      <h2>Devices</h2>
-      <ul class="devices">
-      </ul>
-
-      <h2>Log</h2>
-      <pre class="logs"></pre>
+      <div class="panel" style="height: 30%; overflow-y: scroll">
+        <div class="panel-heading">
+          <h3 class="panel-title">Logs</h3>
+        </div>
+        <div class="panel-body">
+        <div ng-controller="LogController">
+          <pre>{{logs | json}}</pre>
+        </div>
+      </div>
     </div>
   </body>
 </html>

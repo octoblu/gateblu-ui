@@ -3,3 +3,7 @@
   color: white;
   font-family: Helvetica;
 }
+
+.device-offline {
+  opacity: 0.3;
+}
