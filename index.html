@@ -1,43 +1,44 @@
 <html ng-app="gateblu-ui">
-  <head>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="css/app.css">
-    <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-    <script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
-    <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap"></script>
-    <script type="text/javascript" src="dist/application.js"></script>
-  </head>
+<head>
+  <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="css/app.css">
+  <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
+  <script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
+  <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap"></script>
+  <script type="text/javascript" src="dist/application.js"></script>
+</head>
 
-  <body ng-controller="MainController">
-    <div class="jumbotron update-container hidden">
-      <h1>Updates Available</h1> 
-      <p>There is a new version of Gateblu available.</p>
-      <a href="http://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
-    </div>
+<body ng-controller="MainController">
+  <header>
+    Gateblu
+  </header>
 
-    <div class="container">
-      <div class="text-center">
-        <h3>Gateblu</h3>
-      </div>
+  <div class="jumbotron update-container" ng-if="updateAvailable">
+    <h1>Updates Available</h1> 
+    <p>There is a new version of Gateblu available.</p>
+    <a href="http://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
+  </div>
 
-      <div class="panel" style="height: 50%; overflow-y: scroll">
-        <div class="panel-body">
-          <div class="col-xs-3 text-center" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
-            <div class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
-            <strong>{{device.name}}</strong>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel" style="height: 30%; overflow-y: scroll">
-        <div class="panel-heading">
-          <h3 class="panel-title">Logs</h3>
-        </div>
-        <div class="panel-body">
-        <div ng-controller="LogController">
-          <pre>{{logs | json}}</pre>
+  <div class="device-container">
+    <div class="panel">
+      <div class="panel-body">
+        <div class="col-xs-3 text-center" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
+          <div class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
+          <strong>{{device.name}}</strong>
         </div>
       </div>
     </div>
-  </body>
+  </div>
+
+  <div class="log-container">
+    <div class="panel">
+      <div class="panel-heading">
+        <h3 class="panel-title">Logs</h3>
+      </div>
+      <div class="panel-body" ng-controller="LogController">
+        <pre>{{logs | json}}</pre>
+      </div>
+    </div>
+  </div>
+</body>
 </html>

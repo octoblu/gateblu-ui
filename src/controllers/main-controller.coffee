@@ -1,9 +1,11 @@
 angular.module 'gateblu-ui' 
-  .controller 'MainController', ($scope, GatebluService, LogService) ->   
+  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->   
     LogService.add 'Starting up!'
-    request = require("request")
     _ = require("lodash")
     version = require("./package.json").version
+    
+    UpdateService.check(version).then (updateAvailable) =>
+      $scope.updateAvailable = updateAvailable
 
     process.on "uncaughtException", (error) ->
       console.error error.message
@@ -37,11 +39,4 @@ angular.module 'gateblu-ui'
       LogService.add device.name
       LogService.add data
 
-    # request.get "http://gateblu.octoblu.com/version.json",
-    #   json: true
-    # , (error, response, body) ->
-    #   if error
-    #     $(".logs").append error.message + "\n"
-    #     return
-    #   $(".update-container").removeClass "hidden"  if body.version isnt version
 
