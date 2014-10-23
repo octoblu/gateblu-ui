@@ -45,8 +45,12 @@
   "dependencies": {
     "fs-extra": "^0.12.0",
     "gateblu": "^1.8.0",
+    "gulp": "^3.8.9",
     "request": "^2.45.0",
-    "rimraf": "^2.2.8"
+    "rimraf": "^2.2.8",
+    "gulp-coffee": "^2.2.0",
+    "gulp-concat": "^2.4.1",
+    "gulp-sourcemaps": "^1.2.2"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

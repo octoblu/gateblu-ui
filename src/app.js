@@ -11,6 +11,3 @@ tray.tooltip = "Octoblu Gateway";
 var menu = new gui.Menu();
 menu.append(new gui.MenuItem({ type: 'normal', label: 'Quit', click: click_quit }));
 tray.menu = menu;
-
-
-

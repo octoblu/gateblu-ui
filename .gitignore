@@ -33,3 +33,5 @@ node-webkit.app
 *.app
 meshblu.json
 Gateblu.dmg
+public/dist
+.idea/
