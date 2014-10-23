@@ -51,6 +51,7 @@
     "gulp-coffee": "^2.2.0",
     "gulp-concat": "^2.4.1",
     "jquery": "^2.1.1",
+    "lodash": "^2.4.1",
     "request": "^2.45.0",
     "rimraf": "^2.2.8"
   },
