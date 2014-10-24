@@ -20,20 +20,16 @@
   </div>
 
   <div class="device-container">
-    <div class="panel">
-      <div class="panel-body">
-        <div class="col-xs-3 text-center" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
-          <div class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
-          <strong>{{device.name}}</strong>
-        </div>
-      </div>
+    <div class="device" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
+      <div class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
+      <strong>{{device.name}}</strong>
     </div>
   </div>
 
   <div class="log-container" ng-show="showLogs">
     <div class="panel">
       <div class="panel-heading">
-        <h3 class="panel-title">Logs</h3><button ng-click="showLogs = !showLogs">hide</button>
+        <h3 class="panel-title">Logs</h3>
       </div>
       <div class="panel-body" ng-controller="LogController">
         <pre>{{logs | json}}</pre>

@@ -10,6 +10,9 @@ body {
   flex: 3;
   overflow: scroll;
   margin-bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
 }
 
 .log-container {
@@ -54,13 +57,19 @@ footer {
   font-family: Helvetica;
 }
 
+.device {
+  width: 150px;
+  padding: 10px;
+  text-align: center;
+}
+
 .device-offline {
   opacity: 0.3;
 }
 
 .device-icon {
   width: auto;
-  height: 100px;
+  height: 125px;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
