@@ -3,8 +3,8 @@
   <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="node_modules/angular/angular.min.js"></script>
-  <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap"></script>
+  <script type="text/javascript" src="node_modules/angular/angular.js"></script>
+  <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="dist/application.js"></script>
 </head>
 
@@ -41,6 +41,9 @@
     <div class="btn-toolbar drawer-controls">
       <div class="tab-controls">
         <div class="btn-group">
+          <button class="btn btn-default btn-sm" title="View Developer Console" ng-click="showDevConsole(null)">
+            <i class="glyphicon glyphicon-wrench"></i>
+          </button>
           <button class="btn btn-default btn-sm" title="View Logs" ng-click="showLogs = !showLogs">
             <i class="glyphicon glyphicon-book"></i>
           </button>
