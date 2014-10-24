@@ -52,3 +52,10 @@ angular.module 'gateblu-ui'
     gateblu.on "stdout", (data, device) ->
       $rootScope.$broadcast 'gateblu:stdout', data, device
       $rootScope.$apply()
+
+
+    # send this back
+    stopDevice: (device) =>
+      gateblu.stopDevice(device.uuid)
+    startDevice: (device) =>
+      gateblu.startDevice(device)

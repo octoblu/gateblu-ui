@@ -4,4 +4,3 @@ angular.module 'gateblu-ui'
     check : (version) =>
       $http.get("http://gateblu.octoblu.com/version.json").then (response) =>
         response.data.version > version
-        return true

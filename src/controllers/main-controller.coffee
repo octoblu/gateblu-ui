@@ -1,11 +1,18 @@
 angular.module 'gateblu-ui' 
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->   
     LogService.add 'Starting up!'
-    _ = require("lodash")
+    _       = require("lodash")
     version = require("./package.json").version
     
     UpdateService.check(version).then (updateAvailable) =>
       $scope.updateAvailable = updateAvailable
+
+    $scope.toggleDevice = _.debounce((device) =>
+      if device.online
+        GatebluService.stopDevice device
+      else
+        GatebluService.startDevice device
+    , 500, {leading: true, trailing: false})
 
     process.on "uncaughtException", (error) ->
       console.error error.message
