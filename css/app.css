@@ -26,10 +26,15 @@ body {
   flex: 1;
   flex-direction:column;
 }
+
 .log-container .panel-body {  
   flex: 1;
   display: flex;
   flex-direction: column;
+}
+
+.log-container .panel-body pre {
+  height: 100%;
 }
 
 .panel, .panel-body {
@@ -51,10 +56,9 @@ footer {
   justify-content: flex-end;
 }
 
-.jumbotron {
+.update-container {
   background-color: green;
   color: white;
-  font-family: Helvetica;
 }
 
 .device {

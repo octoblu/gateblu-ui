@@ -3,6 +3,9 @@ angular.module 'gateblu-ui'
     LogService.add 'Starting up!'
     _       = require("lodash")
     version = require("./package.json").version
+
+    getDevice = (uuid) =>
+      _.findWhere $scope.devices, {uuid: uuid}
     
     UpdateService.check(version).then (updateAvailable) =>
       $scope.updateAvailable = updateAvailable
@@ -17,13 +20,33 @@ angular.module 'gateblu-ui'
     $scope.showDevConsole = =>
       require('nw.gui').Window.get().showDevTools()
 
+    $scope.deleteDevice = (device) =>
+      sweetAlert 
+        title: 'Are you sure?'
+        text: "This will remove #{device.name} ~#{device.uuid}"
+        type: 'warning'
+        showCancelButton: true
+        confirmButtonColor: '#d9534f'
+        confirmButtonText: 'Delete'
+        closeOnConfirm: false
+      ,
+        =>
+          GatebluService.deleteDevice device
+          LogService.add "#{device.name} ~#{device.uuid} has been deleted"
+          sweetAlert
+            title: 'Deleted'
+            text: 'Your device has been deleted'
+            type: 'success'
+            confirmButtonColor: '#428bca'
+
+
     process.on "uncaughtException", (error) ->
       console.error error.message
       console.error error.stack
       LogService.add error.message
 
     $scope.$on "gateblu:config", ($event, config) ->
-      LogService.add "Connected to Meshblu. UUID: #{config.uuid}"
+      LogService.add "Gateway ~#{config.uuid} is online"
       $scope.name = config.name || config.uuid
 
     $scope.$on "gateblu:update", ($event, devices) ->
@@ -33,15 +56,16 @@ angular.module 'gateblu-ui'
       # $("ul.devices li[data-uuid=" + device.uuid + "]").addClass "active"
 
     $scope.$on 'gateblu:device:status', ($event, data) ->
-      LogService.add(data)
-      device = _.findWhere $scope.devices, {uuid: data.uuid}
-      if device
-        device.online = data.online
+      device = getDevice(data.uuid)
+      return unless device
+      LogService.add "#{device.name} ~#{device.uuid} is #{if data.online then 'online' else 'offline'}"
+      device.online = data.online
 
     $scope.$on 'gateblu:device:config', ($event, data) ->
-      device = _.findWhere $scope.devices, {uuid: data.uuid}
-      if device
-        device.name = data.name
+      device = getDevice(data.uuid)
+      return unless device
+      LogService.add "#{device.name} ~#{device.uuid} has been updated"
+      device.name = data.name
 
     $scope.$on "gateblu:refresh", ($event) ->
       LogService.add "Refreshing Device List"
@@ -51,7 +75,6 @@ angular.module 'gateblu-ui'
       LogService.add data
 
     $scope.$on "gateblu:stdout", ($event, data, device) ->
-      LogService.add device.name
-      LogService.add data
+      console.log device.name, device.uuid, data
 
 

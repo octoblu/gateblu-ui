@@ -1,10 +1,12 @@
 <html ng-app="gateblu-ui">
 <head>
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="css/sweet-alert.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
   <script type="text/javascript" src="node_modules/angular/angular.js"></script>
   <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="lib/sweet-alert.js"></script>
   <script type="text/javascript" src="dist/application.js"></script>
 </head>
 
@@ -16,23 +18,34 @@
   <div class="jumbotron update-container" ng-if="updateAvailable">
     <h1>Updates Available</h1> 
     <p>There is a new version of Gateblu available.</p>
-    <a href="http://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
+    <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
   </div>
 
   <div class="device-container">
-    <div class="device" ng-repeat="device in devices" ng-click="toggleDevice(device)" ng-class="{ 'device-offline' : !device.online }">
-      <div class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
+    <div class="empty-device-container" ng-if="!devices || !devices.length">
+      <h1>Add some devices!</h1>
+      <p class="lead">Go to <a href="https://app.octoblu.com" class="external-link">app.octoblu.com</a> to add some devices</p>
+      <a href="https://app.octoblu.com" class="btn btn-primary btn-lg external-link">Add Devices &raquo;</a>
+    </div>
+
+
+    <div class="device" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
+      <div title="{{device.uuid}}" class="device-icon" ng-click="toggleDevice(device)" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
       <strong>{{device.name || 'Initializing...'}}</strong>
+      <br>
+      <a class="btn btn-default btn-sm external-link" title="Edit" href="https://app.octoblu.com/connect/nodes/device/{{device.uuid}}">
+        <i class="glyphicon glyphicon-pencil"></i>
+      </a>
+      <button class="btn btn-danger btn-sm" title="Delete" ng-click="deleteDevice(device)">
+        <i class="glyphicon glyphicon-trash"></i>
+      </button>
     </div>
   </div>
 
   <div class="log-container" ng-show="showLogs">
     <div class="panel">
-      <div class="panel-heading">
-        <h3 class="panel-title">Logs</h3>
-      </div>
       <div class="panel-body" ng-controller="LogController">
-        <pre>{{logs | json}}</pre>
+        <pre>{{logs | formatLogs}}</pre>
       </div>
     </div>
   </div>
