@@ -71,6 +71,10 @@ footer {
   opacity: 0.3;
 }
 
+.device-buttons .btn-link {
+  padding: 2px;
+}
+
 .lucky-robot {
   width: auto;
   height: 250px;

@@ -54,6 +54,12 @@ angular.module 'gateblu-ui'
             type: 'success'
             confirmButtonColor: '#428bca'
 
+    $scope.showDevice = (device) =>
+      sweetAlert
+        title: device.name
+        text: device.uuid
+        type: 'info'
+        confirmButtonColor: '#428bca'
 
     process.on "uncaughtException", (error) ->
       console.error error.message

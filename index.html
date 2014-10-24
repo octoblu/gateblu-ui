@@ -30,16 +30,16 @@
     </div>
 
 
-    <div class="device" ng-repeat="device in devices" ng-class="{ 'device-offline' : !device.online }">
-      <div title="{{device.uuid}}" class="device-icon" ng-click="toggleDevice(device)" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
+    <div class="device" ng-repeat="device in devices">
+      <div title="{{device.uuid}}" class="device-icon"  ng-class="{ 'device-offline' : !device.online }" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
       <strong>{{device.name || 'Initializing...'}}</strong>
       <br>
-      <a class="btn btn-default btn-sm external-link" title="Edit" href="https://app.octoblu.com/connect/nodes/device/{{device.uuid}}">
-        <i class="glyphicon glyphicon-pencil"></i>
-      </a>
-      <button class="btn btn-danger btn-sm" title="Delete" ng-click="deleteDevice(device)">
-        <i class="glyphicon glyphicon-trash"></i>
-      </button>
+      <div class="btn-group device-buttons">
+        <a class="btn-link" title="Stop" ng-click="toggleDevice(device)"><i class="glyphicon glyphicon-off text-muted"></i></a>
+        <a class="btn-link" title="Information" ng-click="showDevice(device)"><i class="glyphicon glyphicon-info-sign text-muted"></i></a>
+        <a class="btn-link external-link" title="Edit" href="https://app.octoblu.com/connect/nodes/device/{{device.uuid}}"><i class="glyphicon glyphicon-pencil text-muted"></i></a>
+        <a class="btn-link" title="Delete" ng-click="deleteDevice(device)"><i class="glyphicon glyphicon-trash text-muted"></i></a>
+      </div>
     </div>
   </div>
 
