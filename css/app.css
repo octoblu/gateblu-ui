@@ -71,6 +71,14 @@ footer {
   opacity: 0.3;
 }
 
+.lucky-robot {
+  width: auto;
+  height: 250px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .device-icon {
   width: auto;
   height: 125px;

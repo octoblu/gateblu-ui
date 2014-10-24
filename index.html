@@ -22,10 +22,11 @@
   </div>
 
   <div class="device-container">
-    <div class="empty-device-container" ng-if="!devices || !devices.length">
-      <h1>Add some devices!</h1>
-      <p class="lead">Go to <a href="https://app.octoblu.com" class="external-link">app.octoblu.com</a> to add some devices</p>
-      <a href="https://app.octoblu.com" class="btn btn-primary btn-lg external-link">Add Devices &raquo;</a>
+    <div class="empty-device-container text-center" ng-if="!devices || !devices.length">
+      <h1>No Devices!</h1>
+      <div class="lucky-robot" ng-style="{'background-image': 'url(' + lucky_robot_url + ')'}"></div>
+      <p class="lead">Go to <a href="https://app.octoblu.com/node-wizard" class="external-link">app.octoblu.com</a> to add some</p>
+      <a href="https://app.octoblu.com/node-wizard" class="btn btn-primary btn-lg external-link">Add Devices &raquo;</a>
     </div>
 
 

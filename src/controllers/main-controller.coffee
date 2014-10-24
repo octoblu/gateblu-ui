@@ -4,6 +4,21 @@ angular.module 'gateblu-ui'
     _       = require("lodash")
     version = require("./package.json").version
 
+    robotUrls = [
+      './images/robot1.png'
+      './images/robot2.png'
+      './images/robot3.png'
+      './images/robot4.png'
+      './images/robot5.png'
+      './images/robot6.png'
+      './images/robot7.png'
+      './images/robot8.png'
+      './images/robot9.png'
+    ]
+
+    $scope.lucky_robot_url = _.sample robotUrls
+    console.log($scope.lucky_robot_url);
+
     getDevice = (uuid) =>
       _.findWhere $scope.devices, {uuid: uuid}
     
