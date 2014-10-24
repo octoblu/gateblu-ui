@@ -13,6 +13,7 @@ cd /Volumes/Gateblu/Gateblu.app/Contents/Resources/app.nw
 git pull
 rm -rf node_modules
 npm install
+touch /Volumes/Gateblu/Gateblu.app
 
 cd $OWD
 bless --folder /Volumes/Gateblu --openfolder /Volumes/Gateblu
