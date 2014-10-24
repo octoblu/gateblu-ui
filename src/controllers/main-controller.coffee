@@ -16,9 +16,6 @@ angular.module 'gateblu-ui'
       './images/robot9.png'
     ]
 
-    $scope.lucky_robot_url = _.sample robotUrls
-    console.log($scope.lucky_robot_url);
-
     getDevice = (uuid) =>
       _.findWhere $scope.devices, {uuid: uuid}
     
@@ -72,6 +69,10 @@ angular.module 'gateblu-ui'
 
     $scope.$on "gateblu:update", ($event, devices) ->
       $scope.devices = devices
+      $scope.lucky_robot_url = undefined
+      if _.isEmpty devices
+        $scope.lucky_robot_url = _.sample robotUrls
+
 
     $scope.$on "gateblu:device:start", ($event, device) ->
       # $("ul.devices li[data-uuid=" + device.uuid + "]").addClass "active"

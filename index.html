@@ -22,13 +22,12 @@
   </div>
 
   <div class="device-container">
-    <div class="empty-device-container text-center" ng-if="!devices || !devices.length">
+    <div class="empty-device-container text-center" ng-show="lucky_robot_url">
       <h1>No Devices!</h1>
       <div class="lucky-robot" ng-style="{'background-image': 'url(' + lucky_robot_url + ')'}"></div>
       <p class="lead">Go to <a href="https://app.octoblu.com/node-wizard" class="external-link">app.octoblu.com</a> to add some</p>
       <a href="https://app.octoblu.com/node-wizard" class="btn btn-primary btn-lg external-link">Add Devices &raquo;</a>
     </div>
-
 
     <div class="device" ng-repeat="device in devices">
       <div title="{{device.uuid}}" class="device-icon"  ng-class="{ 'device-offline' : !device.online }" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
