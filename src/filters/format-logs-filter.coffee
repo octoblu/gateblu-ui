@@ -3,8 +3,13 @@ angular.module 'gateblu-ui'
     _ = require 'lodash'
 
     stringify = (line) ->
-      return line if _.isString line
-      JSON.stringify(line).toString()
+      message = line.message
+
+      unless _.isString message
+        message = JSON.stringify(message).toString()
+
+      "#{line.timestamp} - #{message}"
+      
 
     (lines) ->
       _.map(lines, stringify).join '\n'

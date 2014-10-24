@@ -2,7 +2,7 @@ angular.module 'gateblu-ui'
   .service 'LogService', ->
     logs = []
     add : (log)=> 
-      logs.push(log)
+      logs.unshift({message: log, timestamp: new Date()})
     all : => 
       logs
     clear : =>
