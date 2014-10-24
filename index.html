@@ -30,15 +30,27 @@
     </div>
   </div>
 
-  <div class="log-container">
+  <div class="log-container" ng-show="showLogs">
     <div class="panel">
       <div class="panel-heading">
-        <h3 class="panel-title">Logs</h3>
+        <h3 class="panel-title">Logs</h3><button ng-click="showLogs = !showLogs">hide</button>
       </div>
       <div class="panel-body" ng-controller="LogController">
         <pre>{{logs | json}}</pre>
       </div>
     </div>
   </div>
+
+  <footer>
+    <div class="btn-toolbar drawer-controls">
+      <div class="tab-controls">
+        <div class="btn-group">
+          <button class="btn btn-default btn-sm" title="View Logs" ng-click="showLogs = !showLogs">
+            <i class="glyphicon glyphicon-book"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>

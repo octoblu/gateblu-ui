@@ -29,12 +29,23 @@ body {
   flex-direction: column;
 }
 
+.panel, .panel-body {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
 
 header {
   text-align: center;
   background-color: black;
   font-size: 24px;
   color: white;
+}
+
+footer {
+  padding: 10px;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .jumbotron {
