@@ -16,6 +16,10 @@ angular.module 'gateblu-ui'
     Gateblu = require("gateblu")
     gateblu = new Gateblu(config)
 
+    process.on('exit', gateblu.cleanup)
+    process.on('SIGINT', gateblu.cleanup)
+    process.on('uncaughtException', gateblu.cleanup)
+
     gateblu.on 'config', (config) =>
       configManager.saveConfig config
       $rootScope.$broadcast 'gateblu:config', config

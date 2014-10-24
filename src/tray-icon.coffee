@@ -1,6 +1,6 @@
 gui = require("nw.gui")
 click_quit = ->
-  gui.App.quit()
+  gui.App.closeAllWindows()
   return
 
 # Create a tray icon
