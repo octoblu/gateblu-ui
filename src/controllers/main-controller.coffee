@@ -14,6 +14,9 @@ angular.module 'gateblu-ui'
         GatebluService.startDevice device
     , 500, {leading: true, trailing: false})
 
+    $scope.showDevConsole = =>
+      require('nw.gui').Window.get().showDevTools()
+
     process.on "uncaughtException", (error) ->
       console.error error.message
       console.error error.stack
@@ -34,6 +37,11 @@ angular.module 'gateblu-ui'
       device = _.findWhere $scope.devices, {uuid: data.uuid}
       if device
         device.online = data.online
+
+    $scope.$on 'gateblu:device:config', ($event, data) ->
+      device = _.findWhere $scope.devices, {uuid: data.uuid}
+      if device
+        device.name = data.name
 
     $scope.$on "gateblu:refresh", ($event) ->
       LogService.add "Refreshing Device List"

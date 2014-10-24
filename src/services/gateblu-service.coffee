@@ -20,7 +20,7 @@ angular.module 'gateblu-ui'
     process.on('SIGINT', gateblu.cleanup)
     process.on('uncaughtException', gateblu.cleanup)
 
-    gateblu.on 'config', (config) =>
+    gateblu.on 'gateblu:config', (config) =>
       configManager.saveConfig config
       $rootScope.$broadcast 'gateblu:config', config
       $rootScope.$apply()
@@ -39,6 +39,10 @@ angular.module 'gateblu-ui'
 
     gateblu.on "device:status", (data) ->
       $rootScope.$broadcast 'gateblu:device:status', data
+      $rootScope.$apply()
+
+    gateblu.on "device:config", (data) ->
+      $rootScope.$broadcast 'gateblu:device:config', data
       $rootScope.$apply()
 
     gateblu.on "refresh", ->

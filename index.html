@@ -22,7 +22,7 @@
   <div class="device-container">
     <div class="device" ng-repeat="device in devices" ng-click="toggleDevice(device)" ng-class="{ 'device-offline' : !device.online }">
       <div class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
-      <strong>{{device.name}}</strong>
+      <strong>{{device.name || 'Initializing...'}}</strong>
     </div>
   </div>
 
