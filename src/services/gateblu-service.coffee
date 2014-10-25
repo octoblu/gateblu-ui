@@ -59,9 +59,11 @@ angular.module 'gateblu-ui'
 
 
     # send this back
-    stopDevice: (device) =>
-      gateblu.stopDevice device.uuid
-    startDevice: (device) =>
-      gateblu.startDevice device
-    deleteDevice: (device) =>
-      gateblu.deleteDevice device.uuid, device.token
+    stopDevice: (device, callback=->) =>
+      gateblu.stopDevice device.uuid, callback
+    startDevice: (device, callback=->) =>
+      gateblu.startDevice device, callback
+    deleteDevice: (device, callback=->) =>
+      gateblu.deleteDevice device.uuid, device.token, callback
+    stopDevices: (callback=->) =>
+      gateblu.stopDevices callback

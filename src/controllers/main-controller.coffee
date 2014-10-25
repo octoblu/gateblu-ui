@@ -16,6 +16,12 @@ angular.module 'gateblu-ui'
       './images/robot9.png'
     ]
 
+    gui = require 'nw.gui'
+    gui.Window.get().on 'close', ->
+      win = this
+      GatebluService.stopDevices ->
+        win.close true
+
     getDevice = (uuid) =>
       _.findWhere $scope.devices, {uuid: uuid}
     
