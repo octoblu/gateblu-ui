@@ -18,11 +18,12 @@ module.exports = {
   saveConfig : function(config, configPath) {
     config = config || {};
 
-    config.path       = config.path       || CONFIG_PATH;
-    config.devicePath = config.devicePath || path.join(config.path, 'devices');
-    config.tmpPath    = config.tmpPath    || path.join(config.path, 'tmp');
-    config.server     = config.server     || process.env.MESHBLU_SERVER || 'meshblu.octoblu.com';
-    config.port       = config.port       || process.env.MESHBLU_PORT   || '80';
+    config.path       = config.path         || CONFIG_PATH;
+    config.devicePath = config.devicePath   || path.join(config.path, 'devices');
+    config.tmpPath    = config.tmpPath      || path.join(config.path, 'tmp');
+    config.crashPath  = config.crashPath    || path.join(config.path, 'crash');
+    config.server     = config.server       || process.env.MESHBLU_SERVER || 'meshblu.octoblu.com';
+    config.port       = config.port         || process.env.MESHBLU_PORT   || '80';
 
     if (!config.nodePath) {
       var platformPath;

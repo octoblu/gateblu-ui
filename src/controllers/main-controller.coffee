@@ -17,6 +17,7 @@ angular.module 'gateblu-ui'
     ]
 
     gui = require 'nw.gui'
+
     gui.Window.get().on 'close', ->
       win = this
       GatebluService.stopDevices ->
@@ -69,16 +70,16 @@ angular.module 'gateblu-ui'
       console.error error.stack
       LogService.add error.message
 
-    $scope.$on "gateblu:config", ($event, config) ->
+    $scope.$on "gateblu:config", ($event, config) =>
       LogService.add "Gateway ~#{config.uuid} is online"
       $scope.name = config.name || config.uuid
+      gui.App.setCrashDumpDir config.crashPath
 
     $scope.$on "gateblu:update", ($event, devices) ->
       $scope.devices = devices
       $scope.lucky_robot_url = undefined
       if _.isEmpty devices
         $scope.lucky_robot_url = _.sample robotUrls
-
 
     $scope.$on "gateblu:device:start", ($event, device) ->
       # $("ul.devices li[data-uuid=" + device.uuid + "]").addClass "active"

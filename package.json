@@ -2,7 +2,7 @@
   "license": "MIT",
   "node-main": "",
   "description": "nu gate for *blu",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "repository": {
     "url": "https://github.com/octoblu/gateblu-ui.git",
     "type": "git"
