@@ -71,9 +71,7 @@ angular.module 'gateblu-ui'
       LogService.add error.message
 
     $scope.$on "gateblu:config", ($event, config) =>
-      console.log("I SHOULD CRASH NOW", config.crashPath);
       gui.App.setCrashDumpDir config.crashPath
-      gui.App.crashBrowser()
       LogService.add "Gateway ~#{config.uuid} is online"
       $scope.name = config.name || config.uuid
 
