@@ -5,16 +5,27 @@ angular.module 'gateblu-ui'
     fs            = require 'fs-extra'
     _             = require 'lodash'
     config        = configManager.loadConfig()
+    path          = require 'path'
 
     unless config
       configManager.saveConfig()
       config = configManager.loadConfig()
 
-    rimraf.sync config.path + "/dist"
-    fs.copySync "dist", config.path + "/dist"
-
     Gateblu = require("gateblu")
     gateblu = new Gateblu(config)
+
+    pathSep = ':'
+    platformPath = 'node-v0.10.32-linux-x64'
+
+    if process.platform == 'win32'
+      platformPath = 'node-v0.10.32-win-x86'
+      pathSep = ';'
+    else if process.platform == 'darwin'
+      platformPath = 'node-v0.10.32-darwin-x64'
+
+    process.env.PATH += pathSep + path.join(process.cwd(), 'dist', platformPath, 'bin')
+
+    console.log(process.env.PATH);
 
     process.on 'exit', (error) =>
       console.error 'exit', error

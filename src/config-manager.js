@@ -25,19 +25,6 @@ module.exports = {
     config.server     = config.server       || process.env.MESHBLU_SERVER || 'meshblu.octoblu.com';
     config.port       = config.port         || process.env.MESHBLU_PORT   || '80';
 
-    if (!config.nodePath) {
-      var platformPath;
-
-      if (process.platform === 'win32') {
-        platformPath = 'node-v0.10.32-win-x86';
-      } else if (process.platform === 'darwin') {
-        platformPath = 'node-v0.10.32-darwin-x64';
-      } else {
-        platformPath = 'node-v0.10.32-linux-x64';
-      }
-
-      config.nodePath = path.join(config.path, 'dist', platformPath, 'bin');
-    }
 
     configPath = configPath || DEFAULT_FILE;
     fs.mkdirpSync(config.path);
