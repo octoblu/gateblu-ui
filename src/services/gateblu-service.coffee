@@ -16,9 +16,17 @@ angular.module 'gateblu-ui'
     Gateblu = require("gateblu")
     gateblu = new Gateblu(config)
 
-    process.on('exit', gateblu.cleanup)
-    process.on('SIGINT', gateblu.cleanup)
-    process.on('uncaughtException', gateblu.cleanup)
+    process.on 'exit', (error) =>
+      console.error 'exit', error
+      gateblu.cleanup()
+    
+    process.on 'SIGINT', (error) =>
+      console.error 'SIGINT', error
+      gateblu.cleanup()
+
+    process.on 'uncaughtException', (error) =>
+      console.error 'uncaughtException', error
+      gateblu.cleanup()
 
     gateblu.on 'gateblu:config', (config) =>
       configManager.saveConfig config
