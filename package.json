@@ -46,7 +46,7 @@
     "angular": "^1.3.0",
     "bootstrap": "^3.2.0",
     "fs-extra": "^0.12.0",
-    "gateblu": "^2.1.2",
+    "gateblu": "^2.1.3",
     "gulp": "^3.8.9",
     "gulp-coffee": "^2.2.0",
     "gulp-concat": "^2.4.1",
