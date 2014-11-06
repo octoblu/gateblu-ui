@@ -73,7 +73,11 @@ angular.module 'gateblu-ui'
     $scope.$on "gateblu:config", ($event, config) =>
       gui.App.setCrashDumpDir config.crashPath
       LogService.add "Gateway ~#{config.uuid} is online"
-      $scope.name = config.name || config.uuid
+      $scope.gateblu = config
+
+    $scope.$on "gateblu:orig:config", ($event, config) =>
+      LogService.add "#{config.name} ~#{config.uuid} has been updated"
+      $scope.gateblu = config
 
     $scope.$on "gateblu:update", ($event, devices) ->
       $scope.devices = devices

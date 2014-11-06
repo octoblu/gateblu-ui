@@ -53,11 +53,16 @@ header {
 footer {
   padding: 10px;
   display: flex;
-  justify-content: flex-end;
+  flex-direction: row;
 }
 
 .update-container {
   background-color: green;
+  color: white;
+}
+
+.meshblu-disconnected {
+  background-color: red;
   color: white;
 }
 
@@ -89,4 +94,14 @@ footer {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+footer .gateway-uuid {
+  flex: 1;
+}
+
+footer .drawer-controls {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
 }

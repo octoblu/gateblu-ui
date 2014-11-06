@@ -44,6 +44,10 @@ angular.module 'gateblu-ui'
       $rootScope.$broadcast 'gateblu:config', config
       $rootScope.$apply()
 
+    gateblu.on 'gateblu:orig:config', (config) =>
+      $rootScope.$broadcast 'gateblu:orig:config', config
+      $rootScope.$apply()
+
     gateblu.on "update", (devices) ->
       _.each devices, (device) =>
         filename = device.type.replace ':', '/'

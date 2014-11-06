@@ -12,8 +12,13 @@
 
 <body ng-controller="MainController">
   <header>
-    Gateblu
+    {{gateblu.name || 'Gateblu'}}
   </header>
+
+  <div class="jumbotron meshblu-disconnected" ng-if="meshbluDisconnected">
+    <h1>Unable to connect to Meshblu</h1> 
+    <p>There is a problem connecting to meshblu.</p>
+  </div>
 
   <div class="jumbotron update-container" ng-if="updateAvailable">
     <h1>Updates Available</h1> 
@@ -51,6 +56,9 @@
   </div>
 
   <footer>
+    <div class="gateway-uuid">
+     ~{{gateblu.uuid}}
+    </div>
     <div class="btn-toolbar drawer-controls">
       <div class="tab-controls">
         <div class="btn-group">
