@@ -18,6 +18,8 @@ angular.module 'gateblu-ui'
 
     gui = require 'nw.gui'
 
+    $scope.connected = false
+
     gui.Window.get().on 'close', ->
       win = this
       GatebluService.stopDevices ->
@@ -71,9 +73,15 @@ angular.module 'gateblu-ui'
       LogService.add error.message
 
     $scope.$on "gateblu:config", ($event, config) =>
+      $scope.connected = true
       gui.App.setCrashDumpDir config.crashPath
       LogService.add "Gateway ~#{config.uuid} is online"
       $scope.gateblu = config
+
+    $scope.$on "gateblu:disconnected", ($event) =>
+      $scope.connected = false
+      LogService.add "Disconnected..."
+      GatebluService.stopDevices()
 
     $scope.$on "gateblu:orig:config", ($event, config) =>
       LogService.add "#{config.name} ~#{config.uuid} has been updated"

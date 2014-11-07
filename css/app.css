@@ -15,6 +15,18 @@ body {
   justify-content: space-around;
 }
 
+.connecting-container {
+  flex: 3;
+  overflow: scroll;
+  margin-bottom: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  background-color: #333;
+  color: #ddd;
+  align-items: center;
+}
+
 .log-container {
   display: flex;
   flex: 2;

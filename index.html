@@ -1,6 +1,7 @@
 <html ng-app="gateblu-ui">
 <head>
   <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" type="text/css" href="node_modules/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" type="text/css" href="css/sweet-alert.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
@@ -15,18 +16,17 @@
     {{gateblu.name || 'Gateblu'}}
   </header>
 
-  <div class="jumbotron meshblu-disconnected" ng-if="meshbluDisconnected">
-    <h1>Unable to connect to Meshblu</h1> 
-    <p>There is a problem connecting to meshblu.</p>
-  </div>
-
   <div class="jumbotron update-container" ng-if="updateAvailable">
     <h1>Updates Available</h1> 
     <p>There is a new version of Gateblu available.</p>
     <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
   </div>
 
-  <div class="device-container">
+  <div class="connecting-container" ng-if="!connected">
+    <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
+  </div>
+
+  <div class="device-container" ng-if="connected">
     <div class="empty-device-container text-center" ng-show="lucky_robot_url">
       <h1>No Devices!</h1>
       <div class="lucky-robot" ng-style="{'background-image': 'url(' + lucky_robot_url + ')'}"></div>

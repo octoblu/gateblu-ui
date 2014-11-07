@@ -25,8 +25,6 @@ angular.module 'gateblu-ui'
 
     process.env.PATH += pathSep + path.join(process.cwd(), 'dist', platformPath, 'bin')
 
-    console.log(process.env.PATH);
-
     process.on 'exit', (error) =>
       console.error 'exit', error
       gateblu.cleanup()
@@ -78,6 +76,10 @@ angular.module 'gateblu-ui'
 
     gateblu.on "stdout", (data, device) ->
       $rootScope.$broadcast 'gateblu:stdout', data, device
+      $rootScope.$apply()
+
+    gateblu.on "disconnected", ->
+      $rootScope.$broadcast 'gateblu:disconnected'
       $rootScope.$apply()
 
 
