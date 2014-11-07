@@ -1,5 +1,5 @@
-angular.module 'gateblu-ui' 
-  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->   
+angular.module 'gateblu-ui'
+  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->
     LogService.add 'Starting up!'
     _       = require("lodash")
     version = require("./package.json").version
@@ -27,7 +27,7 @@ angular.module 'gateblu-ui'
 
     getDevice = (uuid) =>
       _.findWhere $scope.devices, {uuid: uuid}
-    
+
     UpdateService.check(version).then (updateAvailable) =>
       $scope.updateAvailable = updateAvailable
 
@@ -42,7 +42,7 @@ angular.module 'gateblu-ui'
       require('nw.gui').Window.get().showDevTools()
 
     $scope.deleteDevice = (device) =>
-      sweetAlert 
+      sweetAlert
         title: 'Are you sure?'
         text: "This will remove #{device.name} ~#{device.uuid}"
         type: 'warning'
