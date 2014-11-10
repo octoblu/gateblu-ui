@@ -7,10 +7,9 @@ angular.module 'gateblu-ui'
     path          = require 'path'
     Gateblu       = require 'gateblu'
 
-
     init = =>
       config = configManager.loadConfig()
-      unless @config
+      unless config
         configManager.saveConfig()
         config = configManager.loadConfig()
 
@@ -36,7 +35,9 @@ angular.module 'gateblu-ui'
         @gateblu.cleanup()
 
       process.on 'uncaughtException', (error) =>
-        console.error 'uncaughtException', error
+        console.error 'uncaughtException'
+        console.error error.message
+        console.error error.stack
         @gateblu.cleanup()
 
       @gateblu.on 'gateblu:config', (config) =>
@@ -80,7 +81,7 @@ angular.module 'gateblu-ui'
         $rootScope.$broadcast 'gateblu:stdout', data, device
         $rootScope.$apply()
 
-      @gateblu.on "unregistered", ->
+      @gateblu.on "unregistered", =>
         @stopDevices =>
           @gateblu.removeAllListeners()
 
@@ -97,11 +98,16 @@ angular.module 'gateblu-ui'
 
     init()
       # send this back
-    stopDevice: (device, callback=->) =>
+    @stopDevice = (device, callback=->) =>
       @gateblu.stopDevice device.uuid, callback
-    startDevice: (device, callback=->) =>
+
+    @startDevice = (device, callback=->) =>
       @gateblu.startDevice device, callback
-    deleteDevice: (device, callback=->) =>
+
+    @deleteDevice = (device, callback=->) =>
       @gateblu.deleteDevice device.uuid, device.token, callback
-    stopDevices: (callback=->) =>
+
+    @stopDevices = (callback=->) =>
       @gateblu.stopDevices callback
+
+    return this
