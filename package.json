@@ -1,8 +1,8 @@
 {
   "license": "MIT",
   "node-main": "",
-  "description": "nu gate for *blu",
-  "version": "1.5.2",
+  "description": "Gateblu Cross Platform GUI",
+  "version": "1.5.3",
   "repository": {
     "url": "https://github.com/octoblu/gateblu-ui.git",
     "type": "git"
@@ -30,7 +30,7 @@
   "window": {
     "fullscreen": false,
     "resizable": true,
-    "title": "gateblu",
+    "title": "Gateblu",
     "always-on-top": false,
     "frame": true,
     "height": 700,
