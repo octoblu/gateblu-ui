@@ -1,1 +1,1 @@
-angular.module 'gateblu-ui', []
+angular.module 'gateblu-ui', ['ngMaterial']

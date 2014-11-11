@@ -1,76 +1,93 @@
 <html ng-app="gateblu-ui">
 <head>
-  <link rel="stylesheet" type="text/css" href="node_modules/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" type="text/css" href="node_modules/font-awesome/css/font-awesome.css">
-  <link rel="stylesheet" type="text/css" href="css/sweet-alert.css">
-  <link rel="stylesheet" type="text/css" href="css/app.css">
-  <script type="text/javascript" src="node_modules/jquery/dist/jquery.min.js"></script>
-  <script type="text/javascript" src="node_modules/angular/angular.js"></script>
-  <script type="text/javascript" src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="lib/sweet-alert.js"></script>
+  <script type="text/javascript" src="dist/dependencies.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/application.css">
   <script type="text/javascript" src="dist/application.js"></script>
 </head>
 
-<body ng-controller="MainController">
-  <header>
-    {{gateblu.name || 'Gateblu'}}
-  </header>
+<body ng-controller="MainController" layout="vertical">
+  <md-toolbar>
+    <h2 class="md-toolbar-tools">
+      <span>{{gateblu.name || 'Gateblu'}}</span>
+    </h2>
+  </md-toolbar>
 
-  <div class="jumbotron update-container" ng-if="updateAvailable">
-    <h1>Updates Available</h1>
-    <p>There is a new version of Gateblu available.</p>
-    <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
-  </div>
+  <span flex></span>
 
-  <div class="connecting-container" ng-if="!connected">
-    <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
-  </div>
-
-  <div class="device-container" ng-if="connected">
-    <div class="empty-device-container text-center" ng-show="lucky_robot_url">
-      <h1>No Devices!</h1>
-      <div class="lucky-robot" ng-style="{'background-image': 'url(' + lucky_robot_url + ')'}"></div>
-      <p class="lead">Go to <a href="https://app.octoblu.com/node-wizard" class="external-link">app.octoblu.com</a> to add some</p>
-      <a href="https://app.octoblu.com/node-wizard" class="btn btn-primary btn-lg external-link">Add Devices &raquo;</a>
-    </div>
-
-    <div class="device" ng-repeat="device in devices">
-      <div title="{{device.uuid}}" class="device-icon"  ng-class="{ 'device-offline' : !device.online }" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
-      <strong>{{device.name || 'Initializing...'}}</strong>
-      <br>
-      <div class="btn-group device-buttons">
-        <a class="btn-link" title="Stop" ng-click="toggleDevice(device)"><i class="glyphicon glyphicon-off text-muted"></i></a>
-        <a class="btn-link" title="Information" ng-click="showDevice(device)"><i class="glyphicon glyphicon-info-sign text-muted"></i></a>
-        <a class="btn-link external-link" title="Edit" href="https://app.octoblu.com/connect/nodes/device/{{device.uuid}}"><i class="glyphicon glyphicon-pencil text-muted"></i></a>
-        <a class="btn-link" title="Delete" ng-click="deleteDevice(device)"><i class="glyphicon glyphicon-trash text-muted"></i></a>
-      </div>
+  <div ng-if="!connected">
+    <div layout="horizontal" layout-align="center">
+      <md-progress-circular mode="indeterminate"></md-progress-circular>
+      <h1>Connecting to Octoblu...</h1>
     </div>
   </div>
 
-  <div class="log-container" ng-show="showLogs">
-    <div class="panel">
-      <div class="panel-body" ng-controller="LogController">
-        <pre>{{logs | formatLogs}}</pre>
-      </div>
+  <div ng-if="!updateAvailable" style="height: 300px;" layout="horizontal" layout-align="space-around center" layout-padding>
+    <div flex>
+      <h1>Updates Available</h1>
+      <p>There is a new version of Gateblu available.</p>
+    </div>
+    <div flex>
+      <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
     </div>
   </div>
 
-  <footer>
-    <div class="gateway-uuid">
-     ~{{gateblu.uuid}}
-    </div>
-    <div class="btn-toolbar drawer-controls">
-      <div class="tab-controls">
-        <div class="btn-group">
-          <button class="btn btn-default btn-sm" title="View Developer Console" ng-click="showDevConsole(null)">
-            <i class="glyphicon glyphicon-wrench"></i>
-          </button>
-          <button class="btn btn-default btn-sm" title="View Logs" ng-click="showLogs = !showLogs">
-            <i class="glyphicon glyphicon-book"></i>
-          </button>
+  <md-content class="md-padding" layout="vertical" layout-align="center">
+    <div ng-if="connected" layout="horizontal" style="flex-wrap: wrap;" layout-padding>
+      <div ng-repeat="device in devices" flex style="min-width: 300px; height: 400px;">
+        <div layout="vertical" class="md-whiteframe-z2" layout-fill layout-padding>
+          <div flex>
+            <h2>{{device.name || 'Initializing...'}}</h2>
+            <hr>
+          </div>
+          <div flex class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}">
+          </div>
+          <div flex style="flex: 0; height: 50px;">
+            <md-button class="md-primary">Power</md-button>
+            <md-button>Details</md-button>
+          </div>
         </div>
       </div>
     </div>
-  </footer>
+  </md-content>
+
+  <div ng-show="showLogs">
+    <md-toolbar class="md-theme-light">
+      <h1 class="md-toolbar-tools">
+        <span>Activity</span>
+      </h1>
+    </md-toolbar>
+
+    <md-content>
+      <md-list ng-controller="LogController">
+        <md-item ng-repeat="log in logs">
+          <md-item-content>
+            <div class="md-tile-content">
+              <h3>{{log.message}}</h3>
+              <p>{{log.timestamp | date : 'mediumTime'}}</p>
+            </div>
+          </md-item-content>
+          <md-divider ng-if="!$last"></md-divider>
+        </md-item>
+      </md-list>
+    </md-content>
+  </div>
+
+  <span flex></span>
+
+  <md-toolbar>
+    <div class="md-toolbar-tools">
+      <span>~{{gateblu.uuid}}</span>
+
+      <!-- fill up the space between left and right area -->
+      <span flex></span>
+  
+      <md-button ng-click="showDevConsole(null)">
+        Debug
+      </md-button>
+      <md-button ng-click="showLogs = !showLogs">
+        View Activity
+      </md-button>
+    </div>
+  </md-toolbar>
 </body>
 </html>
