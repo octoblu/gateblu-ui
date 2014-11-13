@@ -1,5 +1,7 @@
+<!DOCTYPE html>
 <html ng-app="gateblu-ui">
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script type="text/javascript" src="dist/dependencies.js"></script>
   <link rel="stylesheet" type="text/css" href="css/application.css">
   <script type="text/javascript" src="dist/application.js"></script>
@@ -14,35 +16,39 @@
 
   <span flex></span>
 
-  <div ng-if="!connected">
+  <div ng-hide="connected">
     <div layout="horizontal" layout-align="center">
       <md-progress-circular mode="indeterminate"></md-progress-circular>
       <h1>Connecting to Octoblu...</h1>
     </div>
   </div>
 
-  <div ng-if="!updateAvailable" style="height: 300px;" layout="horizontal" layout-align="space-around center" layout-padding>
-    <div flex>
-      <h1>Updates Available</h1>
-      <p>There is a new version of Gateblu available.</p>
-    </div>
-    <div flex>
-      <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
-    </div>
-  </div>
+  <md-content ng-if="connected" ng-hide="showLogs" class="md-padding" layout="vertical" layout-align="center">
+    <div layout="horizontal" style="flex-wrap: wrap;" layout-padding>
+      <div ng-show="lucky_robot_url" flex style="min-width: 300px; height: 400px;">
+        <div layout="vertical" class="md-whiteframe-z2" layout-fill layout-padding>
+          <div flex>
+            <h2>No Devices!</h2>
+            <hr>
+          </div>
+          <div flex class="device-icon" ng-style="{'background-image': 'url(' + lucky_robot_url + ')'}">
+          </div>
+          <div flex>
+            <md-button class="md-primary" ng-click="addDevices(null)">Add Devices</md-button>
+          </div>
+        </div>
+      </div>
 
-  <md-content class="md-padding" layout="vertical" layout-align="center">
-    <div ng-if="connected" layout="horizontal" style="flex-wrap: wrap;" layout-padding>
       <div ng-repeat="device in devices" flex style="min-width: 300px; height: 400px;">
         <div layout="vertical" class="md-whiteframe-z2" layout-fill layout-padding>
           <div flex>
             <h2>{{device.name || 'Initializing...'}}</h2>
             <hr>
           </div>
-          <div flex class="device-icon" ng-style="{'background-image': 'url(' + device.icon_url + ')'}">
+          <div flex class="device-icon" ng-class="{'muted': !device.online}" ng-style="{'background-image': 'url(' + device.icon_url + ')'}">
           </div>
-          <div flex style="flex: 0; height: 50px;">
-            <md-button class="md-primary">Power</md-button>
+          <div flex>
+            <md-button class="md-primary" ng-click="toggleDevice(device)">Power</md-button>
             <md-button>Details</md-button>
           </div>
         </div>
@@ -50,29 +56,34 @@
     </div>
   </md-content>
 
-  <div ng-show="showLogs">
-    <md-toolbar class="md-theme-light">
-      <h1 class="md-toolbar-tools">
-        <span>Activity</span>
-      </h1>
-    </md-toolbar>
-
-    <md-content>
-      <md-list ng-controller="LogController">
-        <md-item ng-repeat="log in logs">
-          <md-item-content>
-            <div class="md-tile-content">
-              <h3>{{log.message}}</h3>
-              <p>{{log.timestamp | date : 'mediumTime'}}</p>
-            </div>
-          </md-item-content>
-          <md-divider ng-if="!$last"></md-divider>
-        </md-item>
-      </md-list>
-    </md-content>
-  </div>
+  <md-content layout="vertical" ng-show="showLogs">
+    <md-list ng-controller="LogController">
+      <md-item ng-repeat="log in logs">
+        <md-item-content>
+          <div class="md-tile-content">
+            <h3>{{log.message}}</h3>
+            <p>{{log.timestamp | date : 'mediumTime'}}</p>
+          </div>
+        </md-item-content>
+        <md-divider ng-if="!$last"></md-divider>
+      </md-item>
+    </md-list>
+  </md-content>
 
   <span flex></span>
+
+  <md-toolbar class="md-tall" md-theme="yellow" ng-show="updateAvailable">
+    <div class="md-toolbar-tools">
+      <span>Update Available!</span>
+
+      <!-- fill up the space between left and right area -->
+      <span flex></span>
+
+      <md-button md-theme="default" class="md-raised md-primary external-link" ng-click="downloadGateblu(null)">
+        Download
+      </md-button>
+    </div>
+  </md-toolbar>
 
   <md-toolbar>
     <div class="md-toolbar-tools">
@@ -84,8 +95,11 @@
       <md-button ng-click="showDevConsole(null)">
         Debug
       </md-button>
-      <md-button ng-click="showLogs = !showLogs">
+      <md-button ng-hide="showLogs" ng-click="showLogs = true">
         View Activity
+      </md-button>
+      <md-button ng-show="showLogs" ng-click="showLogs = false">
+        Hide Activity
       </md-button>
     </div>
   </md-toolbar>

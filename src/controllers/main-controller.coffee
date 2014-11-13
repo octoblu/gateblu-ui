@@ -39,7 +39,10 @@ angular.module 'gateblu-ui'
     , 500, {leading: true, trailing: false})
 
     $scope.showDevConsole = =>
-      require('nw.gui').Window.get().showDevTools()
+      gui.Window.get().showDevTools()
+
+    $scope.downloadGateblu = =>
+      gui.Shell.openExternal 'https://gateblu.octoblu.com'
 
     $scope.deleteDevice = (device) =>
       sweetAlert
@@ -73,7 +76,6 @@ angular.module 'gateblu-ui'
       LogService.add error.message
 
     $scope.$on "gateblu:config", ($event, config) =>
-      $scope.connected = true
       gui.App.setCrashDumpDir config.crashPath
       LogService.add "Gateway ~#{config.uuid} is online"
       $scope.gateblu = config
@@ -88,6 +90,7 @@ angular.module 'gateblu-ui'
       $scope.gateblu = config
 
     $scope.$on "gateblu:update", ($event, devices) ->
+      $scope.connected = true
       $scope.devices = devices
       $scope.lucky_robot_url = undefined
       if _.isEmpty devices

@@ -20,14 +20,14 @@
     "tests"
   ],
   "resolutions": {
-    "angular": "~1.3.2"
+    "angular": "~1.3.2",
+    "angular-material": "master"
   },
   "dependencies": {
     "angular-material": "~0.5.1",
     "angular": "~1.3.2",
     "jquery": "~2.1.1",
     "font-awesome": "~4.2.0",
-    "bootstrap": "~3.3.0",
     "sweetalert": "~0.3.2"
   }
 }
