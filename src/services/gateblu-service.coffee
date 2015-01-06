@@ -5,6 +5,7 @@ angular.module 'gateblu-ui'
     fs            = require 'fs-extra'
     _             = require 'lodash'
     path          = require 'path'
+    DeviceManager = require 'gateblu-forever'
     Gateblu       = require 'gateblu'
 
     init = =>
@@ -13,7 +14,8 @@ angular.module 'gateblu-ui'
         configManager.saveConfig()
         config = configManager.loadConfig()
 
-      @gateblu = new Gateblu(config)
+      @deviceManager = new DeviceManager(config)
+      @gateblu = new Gateblu(config, @deviceManager)
 
       pathSep = ':'
       platformPath = 'node-v0.10.32-linux-x64'
