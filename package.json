@@ -39,7 +39,7 @@
     "position": "",
     "show_in_taskbar": true,
     "width": 1024,
-    "toolbar": true,
+    "toolbar": false,
     "icon": ""
   },
   "dependencies": {
