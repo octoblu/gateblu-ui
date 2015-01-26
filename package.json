@@ -47,7 +47,7 @@
     "bootstrap": "^3.2.0",
     "font-awesome": "^4.2.0",
     "fs-extra": "^0.12.0",
-    "gateblu": "^3.1.4",
+    "gateblu": "^3.1.5",
     "gateblu-forever": "^1.0.8",
     "gulp": "^3.8.9",
     "gulp-coffee": "^2.2.0",
