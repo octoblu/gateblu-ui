@@ -10,9 +10,7 @@ var DEFAULT_FILE = path.join(CONFIG_PATH, 'meshblu.json');
 module.exports = {
   loadConfig : function( configPath ) {
     configPath = configPath || DEFAULT_FILE;
-    try {
-      fs.accessSync(configPath)
-    } catch (error) {
+    if(!fs.existsSync(configPath)){
       return null;
     }
     return JSON.parse(fs.readFileSync(configPath));
