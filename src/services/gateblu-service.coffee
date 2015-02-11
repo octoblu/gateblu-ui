@@ -83,6 +83,14 @@ angular.module 'gateblu-ui'
         $rootScope.$broadcast 'gateblu:stdout', data, device
         $rootScope.$apply()
 
+      @deviceManager.on "npm:stderr", (stderr) ->
+        $rootScope.$broadcast 'gateblu:npm:stderr', stderr
+        $rootScope.$apply()
+
+      @deviceManager.on "npm:stdout", (stdout) ->
+        $rootScope.$broadcast 'gateblu:npm:stdout', stdout
+        $rootScope.$apply()
+
       @gateblu.on "unregistered", =>
         @stopDevices =>
           @gateblu.removeAllListeners()
