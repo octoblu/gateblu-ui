@@ -112,10 +112,16 @@ angular.module 'gateblu-ui'
       LogService.add "Refreshing Device List"
 
     $scope.$on "gateblu:stderr", ($event, data, device) ->
-      LogService.add "Error: #{device.name}"
       LogService.add data
+      LogService.add "Error: #{device.name}"
 
     $scope.$on "gateblu:stdout", ($event, data, device) ->
       console.log device.name, device.uuid, data
 
+    $scope.$on "gateblu:npm:stderr", ($event, stderr) ->
+      LogService.add stderr
+      LogService.add "Error: npm install"
 
+    $scope.$on "gateblu:npm:stdout", ($event, stdout) ->
+      console.log stdout
+      console.log "npm install"
