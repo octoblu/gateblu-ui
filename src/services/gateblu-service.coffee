@@ -18,13 +18,13 @@ angular.module 'gateblu-ui'
       @gateblu = new Gateblu(config, @deviceManager)
 
       pathSep = ':'
-      platformPath = 'node-v0.10.32-linux-x64'
+      platformPath = 'node-v0.10.35-linux-x64'
 
       if process.platform == 'win32'
-        platformPath = 'node-v0.10.32-win-x86'
+        platformPath = 'node-v0.10.35-win-x86'
         pathSep = ';'
       else if process.platform == 'darwin'
-        platformPath = 'node-v0.10.32-darwin-x64'
+        platformPath = 'node-v0.10.35-darwin-x64'
 
       process.env.PATH += pathSep + path.join(process.cwd(), 'dist', platformPath, 'bin')
 

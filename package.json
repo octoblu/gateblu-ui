@@ -2,7 +2,7 @@
   "license": "MIT",
   "node-main": "",
   "description": "Gateblu Cross Platform GUI",
-  "version": "1.8.2",
+  "version": "1.8.3",
   "repository": {
     "url": "https://github.com/octoblu/gateblu-ui.git",
     "type": "git"
