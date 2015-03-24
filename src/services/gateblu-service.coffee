@@ -26,7 +26,7 @@ angular.module 'gateblu-ui'
       else if process.platform == 'darwin'
         platformPath = 'node-v0.10.35-darwin-x64'
 
-      process.env.PATH += pathSep + path.join(process.cwd(), 'dist', platformPath, 'bin')
+      process.env.PATH = path.join(process.cwd(), 'dist', platformPath, 'bin') + pathSep + process.env.PATH
 
       process.on 'exit', (error) =>
         console.error 'exit', error

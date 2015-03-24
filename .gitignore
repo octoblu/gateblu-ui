@@ -45,3 +45,4 @@ libffmpegsumo.so
 index-test.html
 src/test.js
 bower_components
+*.sublime-workspace
