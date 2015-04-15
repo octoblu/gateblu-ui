@@ -1,9 +1,7 @@
 angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->
     LogService.add 'Starting up!'
-    _       = require("lodash")
-    version = require("./package.json").version
-
+    version = 'change me'
     robotUrls = [
       './images/robot1.png'
       './images/robot2.png'
@@ -15,15 +13,7 @@ angular.module 'gateblu-ui'
       './images/robot8.png'
       './images/robot9.png'
     ]
-
-    gui = require 'nw.gui'
-
     $scope.connected = false
-
-    gui.Window.get().on 'close', ->
-      win = this
-      GatebluService.stopDevices ->
-        win.close true
 
     getDevice = (uuid) =>
       _.findWhere $scope.devices, {uuid: uuid}
@@ -39,7 +29,6 @@ angular.module 'gateblu-ui'
     , 500, {leading: true, trailing: false})
 
     $scope.showDevConsole = =>
-      require('nw.gui').Window.get().showDevTools()
 
     $scope.deleteDevice = (device) =>
       sweetAlert
@@ -67,14 +56,9 @@ angular.module 'gateblu-ui'
         type: 'info'
         confirmButtonColor: '#428bca'
 
-    process.on "uncaughtException", (error) ->
-      console.error error.message
-      console.error error.stack
-      LogService.add error.message
-
     $scope.$on "gateblu:config", ($event, config) =>
       $scope.connected = true
-      gui.App.setCrashDumpDir config.crashPath
+      #gui.App.setCrashDumpDir config.crashPath
       LogService.add "Gateway ~#{config.uuid} is online"
       $scope.gateblu = config
 

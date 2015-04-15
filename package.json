@@ -1,74 +1,37 @@
 {
   "license": "MIT",
-  "node-main": "",
+  "main": "main.js",
   "description": "Gateblu Cross Platform GUI",
   "version": "1.8.4",
   "repository": {
     "url": "https://github.com/octoblu/gateblu-ui.git",
     "type": "git"
   },
-  "nodejs": true,
   "author": "Octoblu Inc.",
   "bugs": {
     "url": "https://github.com/octoblu/gateblu-ui/issues"
-  },
-  "webexe_settings": {
-    "linux-x32": false,
-    "download_dir": "/Users/jmeskill/Projects/Octoblu/Web2Executable/files/downloads",
-    "windows": true,
-    "mac": false,
-    "nw_version": "0.11.13",
-    "force_download": false,
-    "linux-x64": false
-  },
-  "single-instance": true,
-  "webkit": {
-    "page-cache": false,
-    "java": false,
-    "plugin": false
-  },
-  "window": {
-    "fullscreen": false,
-    "resizable": true,
-    "title": "Gateblu",
-    "always-on-top": false,
-    "frame": true,
-    "height": 700,
-    "visible": true,
-    "as_desktop": false,
-    "position": "",
-    "show_in_taskbar": true,
-    "width": 1024,
-    "toolbar": false,
-    "icon": ""
   },
   "dependencies": {
     "angular": "=1.3.3",
     "bootstrap": "^3.2.0",
     "debug": "^2.1.1",
-    "font-awesome": "^4.2.0",
-    "fs-extra": "^0.12.0",
+    "font-awesome": "^4.3.0",
     "gateblu": "^3.2.2",
     "gateblu-forever": "^1.4.0",
     "gulp": "^3.8.9",
     "gulp-coffee": "^2.2.0",
     "gulp-concat": "^2.4.1",
-    "jquery": "^2.1.1",
-    "lodash": "^2.4.1",
-    "meshblu": "^1.14.0",
-    "request": "^2.45.0",
-    "rimraf": "^2.2.8"
+    "jquery": "^2.1.3",
+    "lodash": "^2.4.1"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "coffee server.coffee"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "meshblu",
     "gateway",
     "gateblu"
   ],
-  "main": "index.html",
   "homepage": "https://github.com/octoblu/gateblu-ui",
   "name": "gateblu-ui"
 }
