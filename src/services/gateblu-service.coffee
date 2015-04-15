@@ -26,7 +26,8 @@ angular.module 'gateblu-ui'
             $rootScope.$broadcast event, data
             $rootScope.$apply()
 
-        ipc.on "update", (devices) ->
+        ipc.on "gateblu:update", (devices) ->
+          console.log('got update', devices);
           _.each devices, (device) =>
             filename = device.type.replace ':', '/'
             device.icon_url = "https://ds78apnml6was.cloudfront.net/#{filename}.svg"
@@ -45,6 +46,7 @@ angular.module 'gateblu-ui'
 
      stopDevices : (callback=->) =>
        @gateblu.stopDevices callback
+
     gatebluService = new GatebluService
     gatebluService.init()
     gatebluService
