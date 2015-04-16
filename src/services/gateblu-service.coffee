@@ -35,17 +35,24 @@ angular.module 'gateblu-ui'
           $rootScope.$broadcast 'gateblu:update', devices
           $rootScope.$apply()
 
-     stopDevice : (device, callback=->) =>
-       ipc.stopDevice device.uuid, callback
+      stopDevice : (device, callback=->) =>
+        @sendIpcMessage { topic: 'stopDevice', args: [device.uuid]}, callback
 
-     startDevice : (device, callback=->) =>
-       @gateblu.startDevice device, callback
+      startDevice : (device, callback=->) =>
+        @sendIpcMessage { topic: 'startDevice', args: [device]}, callback
 
-     deleteDevice : (device, callback=->) =>
-       @gateblu.deleteDevice device.uuid, device.token, callback
+      deleteDevice : (device, callback=->) =>
+        @sendIpcMessage { topic: 'deleteDevice', args: [device.uuid, device.token]}, callback
 
-     stopDevices : (callback=->) =>
-       @gateblu.stopDevices callback
+      stopDevices : (callback=->) =>
+        @sendIpcMessage { topic: 'stopDevices', args: []}, callback
+
+      sendIpcMessage : (message, callback) =>
+        ipc.send( 'asynchronous-message',
+        message,
+           (response) =>
+             callback response.error, response.message
+         )
 
     gatebluService = new GatebluService
     gatebluService.init()
@@ -84,5 +91,3 @@ angular.module 'gateblu-ui'
     #     console.error error.stack
     #     @gateblu.cleanup()
     #
-
-    return gatebluService

@@ -1,3 +1,5 @@
+_ = require 'lodash'
+
 angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->
     LogService.add 'Starting up!'
