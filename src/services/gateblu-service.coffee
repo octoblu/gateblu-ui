@@ -49,10 +49,10 @@ angular.module 'gateblu-ui'
 
       sendIpcMessage : (message, callback) =>
         ipc.send( 'asynchronous-message',
-        message,
-           (response) =>
-             callback response.error, response.message
-         )
+          message,
+          (response) =>
+           callback response.error, response.message
+       )
 
     gatebluService = new GatebluService
     gatebluService.init()

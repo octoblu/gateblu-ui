@@ -5,6 +5,7 @@ Gateblu = require 'gateblu'
 meshbluJSON = require './meshblu.json'
 _ = require 'lodash'
 ipc = require 'ipc'
+shell = require 'shell'
 
 mainWindow = null
 
@@ -48,11 +49,13 @@ app.on 'ready', ->
 
   ipc.on 'asynchronous-message', (event, message) =>
     return unless message.topic?
+    return shell.openExternal(message.link) if message.topic == 'external-link'
+
     args = message.args
     args.push (error, message) =>
       event.sender.send 'asynchronous-response', {error: error, message: message}
 
-    gateblu[message.topic].apply gateblu, args
+    gateblu[message.topic].apply gateblu, args if gateblu[message.topic]?
 
   mainWindow.loadUrl 'file://' + __dirname + '/index.html'
   mainWindow.openDevTools()
