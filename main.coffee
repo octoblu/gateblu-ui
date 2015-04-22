@@ -2,10 +2,15 @@ app = require 'app'
 BrowserWindow = require 'browser-window'
 DeviceManager = require 'gateblu-forever'
 Gateblu = require 'gateblu'
-meshbluJSON = require './meshblu.json'
+configManager = require './configManager'
 _ = require 'lodash'
 ipc = require 'ipc'
 shell = require 'shell'
+
+meshbluJSON = configManager.loadConfig()
+unless meshbluJSON
+  configManager.saveConfig()
+  meshbluJSON = configManager.loadConfig()
 
 mainWindow = null
 
@@ -37,6 +42,9 @@ initializeGateway = =>
   deviceManager = new DeviceManager(meshbluJSON)
   gateblu = new Gateblu meshbluJSON, deviceManager
 
+  gateblu.on 'gateblu:config', (config) =>
+    configManager.saveConfig config
+        
   _.each gatebluEvents, (event) =>
     gateblu.on event, (data) =>
       console.log 'gatebluEvents', event, data
