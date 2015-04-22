@@ -39,7 +39,7 @@ body {
   flex-direction:column;
 }
 
-.log-container .panel-body {  
+.log-container .panel-body {
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -106,6 +106,10 @@ footer {
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+}
+
+.gateway-uuid {
+  white-space: nowrap;
 }
 
 footer .gateway-uuid {

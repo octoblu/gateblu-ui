@@ -15,9 +15,10 @@ angular.module 'gateblu-ui'
           'gateblu:stdout'
           'gateblu:npm:stdout'
           'gateblu:npm:stderr'
-          'gateblu:unconfigured'
+          'gateblu:unregistered'
           'gateblu:disconnected'
         ]
+
         ipc.removeAllListeners()
 
         _.each eventsToForward, (event) =>
@@ -26,14 +27,16 @@ angular.module 'gateblu-ui'
             $rootScope.$broadcast event, data
             $rootScope.$apply()
 
-        ipc.on "gateblu:update", (devices) ->
-          console.log('got update', devices);
-          _.each devices, (device) =>
-            filename = device.type.replace ':', '/'
-            device.icon_url = "https://ds78apnml6was.cloudfront.net/#{filename}.svg"
+        ipc.on "gateblu:update", (devices) =>
+          console.log 'updating devices with', devices
+          @updateIcons devices
 
-          $rootScope.$broadcast 'gateblu:update', devices
-          $rootScope.$apply()
+      updateIcons : (devices) =>
+        _.each devices, (device) =>
+          filename = device.type.replace ':', '/'
+          device.icon_url = "https://ds78apnml6was.cloudfront.net/#{filename}.svg"
+        $rootScope.$broadcast 'gateblu:update', devices
+        $rootScope.$apply()
 
       stopDevice : (device, callback=->) =>
         @sendIpcMessage { topic: 'stopDevice', args: [device.uuid]}, callback
@@ -46,6 +49,10 @@ angular.module 'gateblu-ui'
 
       stopDevices : (callback=->) =>
         @sendIpcMessage { topic: 'stopDevices', args: []}, callback
+
+      refreshGateblu: =>
+        console.log 'sending refresh event'
+        @sendIpcMessage topic: 'refresh'
 
       sendIpcMessage : (message, callback) =>
         ipc.send( 'asynchronous-message',

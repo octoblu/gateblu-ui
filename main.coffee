@@ -20,7 +20,7 @@ gatebluEvents = [
   'refresh'
   'stderr'
   'stdout'
-  'unconfigured'
+  'unregistered'
   'disconnected'
 ]
 
@@ -33,32 +33,47 @@ app.on 'window-all-closed', ->
   if process.platform != 'darwin'
     app.quit()
 
-app.on 'ready', ->
-  mainWindow = new BrowserWindow(width: 800, height: 600)
+initializeGateway = =>
   deviceManager = new DeviceManager(meshbluJSON)
   gateblu = new Gateblu meshbluJSON, deviceManager
 
   _.each gatebluEvents, (event) =>
     gateblu.on event, (data) =>
+      console.log 'gatebluEvents', event, data
       event = "gateblu:#{event}" unless event.indexOf('gateblu:') == 0
       mainWindow.webContents.send event, data
 
   _.each deviceManagerEvents, (event) =>
     deviceManager.on event, (data) =>
+      console.log 'deviceManagerEvents', event, data
       mainWindow.webContents.send "gateblu:#{event}", data
 
   ipc.on 'asynchronous-message', (event, message) =>
     return unless message.topic?
+    return if message.topic == 'refresh'
     return shell.openExternal(message.link) if message.topic == 'external-link'
+    return mainWindow.toggleDevTools() if message.topic == 'dev-tools'
 
     args = message.args
-    args.push (error, message) =>
-      event.sender.send 'asynchronous-response', {error: error, message: message}
+    args.push (error, response) =>
+      console.log "#{message.topic} response:", response
+      event.sender.send 'asynchronous-response', {error: error, message: response}
 
     gateblu[message.topic].apply gateblu, args if gateblu[message.topic]?
 
+app.on 'ready', ->
+  mainWindow = new BrowserWindow(width: 800, height: 600)
+
+  ipc.on 'asynchronous-message', (event, message) ->
+    console.log 'event', event
+    console.log 'message', message
+    return unless message.topic == 'refresh'
+    initializeGateway()
+
   mainWindow.loadUrl 'file://' + __dirname + '/index.html'
-  mainWindow.openDevTools()
 
   mainWindow.on 'closed', ->
     mainWindow = null
+
+app.on 'window-all-closed', ->
+  app.quit()

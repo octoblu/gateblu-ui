@@ -3,6 +3,8 @@ _ = require 'lodash'
 angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->
     LogService.add 'Starting up!'
+    console.log 'starting gateblu'
+    GatebluService.refreshGateblu()
     version = 'change me'
     robotUrls = [
       './images/robot1.png'
@@ -30,8 +32,6 @@ angular.module 'gateblu-ui'
         GatebluService.startDevice device
     , 500, {leading: true, trailing: false})
 
-    $scope.showDevConsole = =>
-
     $scope.deleteDevice = (device) =>
       sweetAlert
         title: 'Are you sure?'
@@ -44,12 +44,6 @@ angular.module 'gateblu-ui'
       ,
         =>
           GatebluService.deleteDevice device
-          LogService.add "#{device.name} ~#{device.uuid} has been deleted"
-          sweetAlert
-            title: 'Deleted'
-            text: 'Your device has been deleted'
-            type: 'success'
-            confirmButtonColor: '#428bca'
 
     $scope.showDevice = (device) =>
       sweetAlert
@@ -111,3 +105,12 @@ angular.module 'gateblu-ui'
     $scope.$on "gateblu:npm:stdout", ($event, stdout) ->
       console.log stdout
       console.log "npm install"
+
+    $scope.$on "gateblu:unregistered", ($event, device) ->
+      msg = "#{device.name} (~#{device.uuid}) has been deleted"
+      LogService.add msg
+      sweetAlert
+        title: 'Deleted'
+        text: msg
+        type: 'success'
+        confirmButtonColor: '#428bca'
