@@ -34,7 +34,7 @@
       <a href="https://app.octoblu.com/node-wizard" class="btn btn-primary btn-lg external-link">Add Devices &raquo;</a>
     </div>
 
-    <div class="device" ng-repeat="device in devices">
+    <div class="device" ng-repeat="device in devices | orderBy: 'name'">
       <div title="{{device.uuid}}" class="device-icon"  ng-class="{ 'device-offline' : !device.online }" ng-style="{'background-image': 'url(' + device.icon_url + ')'}"></div>
       <strong>{{device.name || 'Initializing...'}}</strong>
       <br>

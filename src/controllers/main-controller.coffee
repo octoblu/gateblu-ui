@@ -85,8 +85,8 @@ angular.module 'gateblu-ui'
     $scope.$on 'gateblu:device:config', ($event, data) ->
       device = getDevice(data.uuid)
       return unless device
-      LogService.add "#{device.name} ~#{device.uuid} has been updated"
       device.name = data.name
+      LogService.add "#{device.name} ~#{device.uuid} has been updated"
 
     $scope.$on "gateblu:refresh", ($event) ->
       LogService.add "Refreshing Device List"

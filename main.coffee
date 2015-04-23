@@ -6,6 +6,7 @@ configManager = require './configManager'
 _ = require 'lodash'
 ipc = require 'ipc'
 shell = require 'shell'
+debug = require('debug')('gateblu-ui')
 
 meshbluJSON = configManager.loadConfig()
 unless meshbluJSON
@@ -44,16 +45,16 @@ initializeGateway = =>
 
   gateblu.on 'gateblu:config', (config) =>
     configManager.saveConfig config
-        
+
   _.each gatebluEvents, (event) =>
     gateblu.on event, (data) =>
-      console.log 'gatebluEvents', event, data
+      debug 'gatebluEvents', event, data
       event = "gateblu:#{event}" unless event.indexOf('gateblu:') == 0
       mainWindow.webContents.send event, data
 
   _.each deviceManagerEvents, (event) =>
     deviceManager.on event, (data) =>
-      console.log 'deviceManagerEvents', event, data
+      debug 'deviceManagerEvents', event, data
       mainWindow.webContents.send "gateblu:#{event}", data
 
   ipc.on 'asynchronous-message', (event, message) =>
@@ -64,7 +65,7 @@ initializeGateway = =>
 
     args = message.args
     args.push (error, response) =>
-      console.log "#{message.topic} response:", response
+      debug "#{message.topic} response:", response
       event.sender.send 'asynchronous-response', {error: error, message: response}
 
     gateblu[message.topic].apply gateblu, args if gateblu[message.topic]?
@@ -73,8 +74,8 @@ app.on 'ready', ->
   mainWindow = new BrowserWindow(width: 800, height: 600)
 
   ipc.on 'asynchronous-message', (event, message) ->
-    console.log 'event', event
-    console.log 'message', message
+    debug 'event', event
+    debug 'message', message
     return unless message.topic == 'refresh'
     initializeGateway()
 
