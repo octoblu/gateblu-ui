@@ -2,7 +2,8 @@
 fs = require('fs-extra')
 path = require('path')
 HOME_DIR = process.env.HOME or process.env.HOMEPATH or process.env.USERPROFILE
-CONFIG_PATH = path.join HOME_DIR, '.config', 'gateblu'
+# CONFIG_PATH = path.join HOME_DIR, '.config', 'gateblu'i
+CONFIG_PATH = '.'
 DEFAULT_FILE = path.join CONFIG_PATH, 'meshblu.json'
 module.exports =
   loadConfig: (configPath) ->
