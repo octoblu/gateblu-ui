@@ -28,6 +28,7 @@ node_modules
 .lock-wscript
 devices/*
 dist
+app/dist
 output
 node-webkit.app
 *.app
@@ -48,3 +49,5 @@ bower_components
 *.sublime-workspace
 device.json
 .DS_Store
+build
+app/package.json
