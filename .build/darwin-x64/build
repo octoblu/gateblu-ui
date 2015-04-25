@@ -6,7 +6,6 @@ if [ "$KEY_PASSWORD" == "" ]; then
 fi
 
 PLATFORM_APP_DIR=$PLATFORM_BUILD_DIR/Gateblu.app
-mv $PLATFORM_BUILD_DIR/Electron.app $PLATFORM_APP_DIR
 cp -rfp $APP_ARCHIVE $PLATFORM_APP_DIR/Contents/Resources
 
 echo "### create keychain"

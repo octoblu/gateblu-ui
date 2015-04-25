@@ -32,10 +32,13 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
 
   echo "Downloading Electron ($ELECTRON_PLATFORM)..."
 
-  ELECTRON_PLATFORM_ZIP=electron-v$ELECTRON_VERSION-$ELECTRON_PLATFORM.zip
+  ELECTRON_PLATFORM_ZIP=gateblu-v$ELECTRON_VERSION-$ELECTRON_PLATFORM.zip
   if [ ! -f $ELECTRON_PLATFORM_ZIP ]; then
     echo "Downloading $ELECTRON_PLATFORM_ZIP"
-    curl -LsO https://github.com/atom/electron/releases/download/v0.25.1/$ELECTRON_PLATFORM_ZIP
+    curl -LsO https://s3-us-west-2.amazonaws.com/gateblu/electron-binaries/$ELECTRON_PLATFORM_ZIP
+    if [ $! ]; then
+      exit 1
+    fi
   fi
 
   echo "Building ($ELECTRON_PLATFORM)..."
