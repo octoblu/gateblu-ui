@@ -19,9 +19,6 @@ angular.module 'gateblu-ui'
     ]
     $scope.connected = false
 
-    getDevice = (uuid) =>
-      _.findWhere $scope.devices, {uuid: uuid}
-
     UpdateService.check(version).then (updateAvailable) =>
       $scope.updateAvailable = updateAvailable
 
@@ -63,10 +60,6 @@ angular.module 'gateblu-ui'
       LogService.add "Disconnected..."
       GatebluService.stopDevices()
 
-    $scope.$on "gateblu:orig:config", ($event, config) =>
-      LogService.add "#{config.name} ~#{config.uuid} has been updated"
-      $scope.gateblu = config
-
     $scope.$on "gateblu:update", ($event, devices) ->
       $scope.devices = devices
       $scope.lucky_robot_url = undefined
@@ -77,15 +70,14 @@ angular.module 'gateblu-ui'
       # $("ul.devices li[data-uuid=" + device.uuid + "]").addClass "active"
 
     $scope.$on 'gateblu:device:status', ($event, data) ->
-      device = getDevice(data.uuid)
+      device = _.findWhere $scope.devices, uuid: data.uuid
       return unless device
       LogService.add "#{device.name} ~#{device.uuid} is #{if data.online then 'online' else 'offline'}"
       device.online = data.online
 
-    $scope.$on 'gateblu:device:config', ($event, data) ->
-      device = getDevice(data.uuid)
-      return unless device
-      device.name = data.name
+    $scope.$on 'gateblu:device:config', ($event, device) ->
+      $scope.devices =  _.reject $scope.devices, {uuid: device.uuid}
+      $scope.devices.push device
       LogService.add "#{device.name} ~#{device.uuid} has been updated"
 
     $scope.$on "gateblu:refresh", ($event) ->
