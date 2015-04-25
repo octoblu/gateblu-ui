@@ -86,7 +86,8 @@ angular.module 'gateblu-ui'
         @sendToGateway { topic: 'device-start', payload: device }
 
       deleteDevice : (device, callback=->) =>
-        @sendToGateway { topic: 'device-delete', deviceUuid: device.uuid }
+        @sendToGateway { topic: 'device-delete', deviceUuid: device.uuid, deviceToken: device.token }
+        @emit 'gateblu:unregistered', device
         callback()
 
       stopDevices : (callback=->) =>
@@ -101,9 +102,10 @@ angular.module 'gateblu-ui'
           @updateIcons _.compact devices if devices.length
 
       updateDevice: (device, callback) =>
+        console.log 'before device merge', device
         @skynetConnection.devices _.pick( device, 'uuid', 'token'), (results) =>
            console.log 'updateDevice results', results.devices
            return callback null, null unless results.devices?
-           callback null, _.extend({}, results.devices[0], device)
+           callback null, _.extend({}, device, results.devices[0])
 
     gatebluService = new GatebluService
