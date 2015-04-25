@@ -4,6 +4,9 @@ cache:
   directories:
   - node_modules
   - build/cache
+global:
+  env:
+    secure: FmEStOzsyGrmYPaicuoqq7hRGQUrZDfXsSTW4F/PG1UO5IHT22wq7ExVVfpG9A/zDgEWkL84RVZt4veXC3QN8kY75/z7XrbMN9pvrZRVujLlESsulGsjF+lcI+YvI32pJHD3lIAu3c1g+f96x3YhYgL7OY6Z1AA3lU4ZaMB5nlQ=
 before_script:
 - brew install curl
 script: cd $TRAVIS_BUILD_DIR && ./.build/build
@@ -22,6 +25,3 @@ deploy:
   on:
     tags: true
     all_branches: true
-global:
-  env:
-    secure: FmEStOzsyGrmYPaicuoqq7hRGQUrZDfXsSTW4F/PG1UO5IHT22wq7ExVVfpG9A/zDgEWkL84RVZt4veXC3QN8kY75/z7XrbMN9pvrZRVujLlESsulGsjF+lcI+YvI32pJHD3lIAu3c1g+f96x3YhYgL7OY6Z1AA3lU4ZaMB5nlQ=
