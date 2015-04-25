@@ -1,0 +1,27 @@
+language: objective-c
+cache:
+  bundler: true
+  directories:
+  - node_modules
+  - build/cache
+env:
+  global:
+    secure: FmEStOzsyGrmYPaicuoqq7hRGQUrZDfXsSTW4F/PG1UO5IHT22wq7ExVVfpG9A/zDgEWkL84RVZt4veXC3QN8kY75/z7XrbMN9pvrZRVujLlESsulGsjF+lcI+YvI32pJHD3lIAu3c1g+f96x3YhYgL7OY6Z1AA3lU4ZaMB5nlQ=
+before_script:
+- brew install curl
+script: cd $TRAVIS_BUILD_DIR && ./.build/build
+after_script:
+- mkdir dpl_upload
+- cp build/**/*.zip dpl_upload
+deploy:
+- provider: s3
+  access_key_id: AKIAIT4X4NDGM2WVL6VA
+  secret_access_key:
+    secure: "JQ8oehA/XSKI7HyF/bk3CNU7rQbulzECU/vMInDJJrhDd7gv9MP2M12d+DU9qh9/ESNznK0EDM0Q0pqDOWSPnA+vwbwo2FDviFF6sysmtpAQ3dwhk9V/IcSugveaa7AmNQszeCg/kpcjtlR7hIbyuATRE8NWvb0/IcoFCs/oSiY="
+  bucket: gateblu
+  region: us-west-2
+  skip_cleanup: true
+  local-dir: dpl_upload
+  on:
+    tags: true
+    all_branches: true
