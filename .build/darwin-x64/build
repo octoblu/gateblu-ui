@@ -1,0 +1,44 @@
+#!/bin/sh
+
+if [ "$KEY_PASSWORD" == "" ]; then
+  echo "KEY_PASSWORD is blank"
+  exit 1
+fi
+
+PLATFORM_APP_DIR=$PLATFORM_BUILD_DIR/Gateblu.app
+mv $PLATFORM_BUILD_DIR/Electron.app $PLATFORM_APP_DIR
+cp -rfp $APP_ARCHIVE $PLATFORM_APP_DIR/Contents/Resources
+
+echo "### create keychain"
+security create-keychain -p travis mac-build.keychain
+security import $PLATFORM_SCRIPT_DIR/certs/apple.cer -k ~/Library/Keychains/mac-build.keychain -T /usr/bin/codesign
+security import $PLATFORM_SCRIPT_DIR/certs/dist.p12 -k ~/Library/Keychains/mac-build.keychain -P $KEY_PASSWORD -T /usr/bin/codesign
+
+identity="A5D9EE988CEFE25C6D04679D00F9C8C60B63C240"
+
+echo "### signing frameworks"
+
+codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_APP_DIR/Contents/Frameworks/Electron Framework.framework/Versions/Current/Electron Framework"
+
+for file in $PLATFORM_APP_DIR/Contents/Frameworks/*/; do
+  echo "Signing $file..."
+  codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$file"
+done
+
+echo "### signing app"
+codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_APP_DIR"
+
+echo "### verifying signature"
+codesign -vvv -d "$PLATFORM_APP_DIR"
+# sudo spctl -a -vvvv "$PLATFORM_APP_DIR"
+
+echo "### remove keychain"
+security delete-keychain mac-build.keychain
+
+umount /Volumes/Gateblu
+
+echo "### building dmg..."
+
+cd $PLATFORM_BUILD_DIR
+$PLATFORM_SCRIPT_DIR/create-dmg --volname Gateblu --volicon $PLATFORM_SCRIPT_DIR/dmg/volume.icns --background $PLATFORM_SCRIPT_DIR/dmg/background.png --window-size 512 320 --icon-size 128 --icon Gateblu.app 100 180 --hide-extension Gateblu.app --app-drop-link 400 180 $PLATFORM_BUILD_DIR/Gateblu.dmg $PLATFORM_APP_DIR
+exit $!

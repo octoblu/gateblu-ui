@@ -51,7 +51,7 @@ angular.module 'gateblu-ui'
         @skynetConnection.on 'message', (data) =>
           console.log 'message', data
           if data.topic == 'device-status'
-            @emit 'gateblu:device:status', uuid: data.fromUuid, online: data.payload.online             
+            @emit 'gateblu:device:status', uuid: data.fromUuid, online: data.payload.online
 
       emit: (event, data) =>
         console.log 'emitting', event, data
@@ -86,7 +86,8 @@ angular.module 'gateblu-ui'
         @sendToGateway { topic: 'device-start', payload: device }
 
       deleteDevice : (device, callback=->) =>
-        @sendToGateway { topic: 'device-delete', args: [device.uuid, device.token]}, callback
+        @sendToGateway { topic: 'device-delete', deviceUuid: device.uuid }
+        callback()
 
       stopDevices : (callback=->) =>
         @sendToGateway { topic: 'devices-stop', args: []}, callback

@@ -49,5 +49,5 @@ bower_components
 *.sublime-workspace
 device.json
 .DS_Store
-build
+build/
 app/package.json
