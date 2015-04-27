@@ -4,7 +4,11 @@ angular.module 'gateblu-ui'
   .service 'GatebluService', ($q, $rootScope, $location) ->
     class GatebluService
       constructor : ->
-        @config = require './meshblu.json'
+        try
+          @config = require '../meshblu.json'
+        catch e
+          @config = {}
+
         @skynetConnection = meshblu.createConnection
           uuid: @config.uuid
           token: @config.token
@@ -29,21 +33,18 @@ angular.module 'gateblu-ui'
         _.each eventsToForward, (event) =>
           @skynetConnection.on event, (data) =>
             console.log event, data
-            $rootScope.$broadcast event, data
-            $rootScope.$apply()
+            @emit event, data
 
         @skynetConnection.on 'ready',  () =>
           @skynetConnection.whoami {}, (gateblu) =>
             console.log 'ready', gateblu
-            $rootScope.$broadcast 'gateblu:config', gateblu
-            @subscribeToDevices gateblu.devices
-            @updateDevices gateblu.devices
+            @emit 'gateblu:config', gateblu
+            @handleDevices gateblu.devices
 
         @skynetConnection.on 'config', (data) =>
           console.log 'config', data
           if data.uuid == @config.uuid
-            @subscribeToDevices data.devices
-            @updateDevices data.devices
+            @handleDevices data.devices
             return @emit 'gateblu:config', data
 
           return @emit 'gateblu:device:config', @updateIcon data
@@ -58,6 +59,11 @@ angular.module 'gateblu-ui'
         $rootScope.$broadcast event, data
         $rootScope.$apply()
 
+      handleDevices: (devices) =>
+        devices ?= []
+        @subscribeToDevices devices
+        @updateDevices devices
+
       sendToGateway: (message, callback=->) =>
         @skynetConnection.message(_.extend(devices: @config.uuid, message), callback)
 
@@ -67,11 +73,9 @@ angular.module 'gateblu-ui'
           @skynetConnection.subscribe device, (res) =>
             console.log 'subscribe', device.uuid, res
 
-
       updateIcons : (devices) =>
         devices = _.map devices, @updateIcon
-        $rootScope.$broadcast 'gateblu:update', devices
-        $rootScope.$apply()
+        @emit 'gateblu:update', devices
 
       updateIcon: (device) =>
         filename = device.type.replace ':', '/'

@@ -49,6 +49,13 @@ angular.module 'gateblu-ui'
         type: 'info'
         confirmButtonColor: '#428bca'
 
+    $scope.installService = =>
+      sweetAlert
+        title: "Install Gateblu service?"
+        text: "This will install the gateblu service and run in the background"
+        type: 'confirm'
+        confirmButtonColor: '#428bca'
+
     $scope.$on "gateblu:config", ($event, config) =>
       $scope.connected = true
       #gui.App.setCrashDumpDir config.crashPath
