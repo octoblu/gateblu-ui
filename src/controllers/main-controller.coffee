@@ -1,7 +1,7 @@
 _ = require 'lodash'
 
 angular.module 'gateblu-ui'
-  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService) ->
+  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService) ->
     LogService.add 'Starting up!'
     console.log 'starting gateblu'
     GatebluService.refreshGateblu()
@@ -53,8 +53,14 @@ angular.module 'gateblu-ui'
       sweetAlert
         title: "Install Gateblu service?"
         text: "This will install the gateblu service and run in the background"
-        type: 'confirm'
+        type: 'warning'
+        showCancelButton: true
         confirmButtonColor: '#428bca'
+        confirmButtonText: 'Install'
+        closeOnConfirm: false
+        ,
+        =>
+          GatebluBackendInstallerService.install()
 
     $scope.$on "gateblu:config", ($event, config) =>
       $scope.connected = true

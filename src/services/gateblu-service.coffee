@@ -1,19 +1,30 @@
 meshblu = require 'meshblu'
 async = require 'async'
+path = require 'path'
+debug = require('debug')('gateblu-ui:GatebluService')
+
 angular.module 'gateblu-ui'
   .service 'GatebluService', ($q, $rootScope, $location) ->
     class GatebluService
       constructor : ->
+        HOME_DIR = process.env.HOME or process.env.HOMEPATH or process.env.USERPROFILE
+
+        CONFIG_PATH = '.'
+
+        if process.platform == 'darwin'
+          CONFIG_PATH="#{HOME_DIR}/Library/Application Support/GatebluService"
+
+        if process.platform == 'win32'
+          CONFIG_PATH="#{process.env.LOCALAPPDATA}\\Octoblu\\GatebluService"
+
+        DEFAULT_FILE = path.join CONFIG_PATH, 'meshblu.json'
+        console.log "Loading meshblu.json", DEFAULT_FILE
         try
-          @config = require '../meshblu.json'
+          @config = require DEFAULT_FILE
         catch e
           @config = {}
 
-        @skynetConnection = meshblu.createConnection
-          uuid: @config.uuid
-          token: @config.token
-          server: @config.server
-          port: @config.port
+        @meshbluConnection = meshblu.createConnection @config
 
         eventsToForward = [
           'gateblu:config'
@@ -31,17 +42,18 @@ angular.module 'gateblu-ui'
         ]
 
         _.each eventsToForward, (event) =>
-          @skynetConnection.on event, (data) =>
+          @meshbluConnection.on event, (data) =>
             console.log event, data
             @emit event, data
 
-        @skynetConnection.on 'ready',  () =>
-          @skynetConnection.whoami {}, (gateblu) =>
+        @meshbluConnection.on 'ready',  () =>
+          console.log 'ready'
+          @meshbluConnection.whoami {}, (gateblu) =>
             console.log 'ready', gateblu
             @emit 'gateblu:config', gateblu
             @handleDevices gateblu.devices
 
-        @skynetConnection.on 'config', (data) =>
+        @meshbluConnection.on 'config', (data) =>
           console.log 'config', data
           if data.uuid == @config.uuid
             @handleDevices data.devices
@@ -49,7 +61,7 @@ angular.module 'gateblu-ui'
 
           return @emit 'gateblu:device:config', @updateIcon data
 
-        @skynetConnection.on 'message', (data) =>
+        @meshbluConnection.on 'message', (data) =>
           console.log 'message', data
           if data.topic == 'device-status'
             @emit 'gateblu:device:status', uuid: data.fromUuid, online: data.payload.online
@@ -65,12 +77,12 @@ angular.module 'gateblu-ui'
         @updateDevices devices
 
       sendToGateway: (message, callback=->) =>
-        @skynetConnection.message(_.extend(devices: @config.uuid, message), callback)
+        @meshbluConnection.message(_.extend(devices: @config.uuid, message), callback)
 
       subscribeToDevices: (devices) =>
         _.each devices, (device) =>
           console.log 'subscribing to device', device
-          @skynetConnection.subscribe device, (res) =>
+          @meshbluConnection.subscribe device, (res) =>
             console.log 'subscribe', device.uuid, res
 
       updateIcons : (devices) =>
@@ -107,7 +119,7 @@ angular.module 'gateblu-ui'
 
       updateDevice: (device, callback) =>
         console.log 'before device merge', device
-        @skynetConnection.devices _.pick( device, 'uuid', 'token'), (results) =>
+        @meshbluConnection.devices _.pick( device, 'uuid', 'token'), (results) =>
            console.log 'updateDevice results', results.devices
            return callback null, null unless results.devices?
            callback null, _.extend({}, device, results.devices[0])
