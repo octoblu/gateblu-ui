@@ -1,0 +1,31 @@
+language: objective-c
+cache:
+  bundler: true
+  directories:
+  - node_modules
+  - build/cache
+env:
+  global:
+    secure: cmK7r29eJ3JLWw6hwWmdkFASX40ciedftmamXzoOEtZMvEeAvdnjIIgcYQ/NO0+51WMlnnrEekB7h7khKvxgfCQ3S8H9Zi3vTNSKXONPcrNbLfze7FjY63yy5VsHK+PmD6Fmnj3Pl1HpQpzDaRWPrGq/uM2UYiDTpMw3K+OGPTI=
+before_script:
+- brew update
+- brew upgrade xctool || true
+- brew install curl
+- npm install
+script: cd $TRAVIS_BUILD_DIR && .build/build
+before_deploy:
+- mkdir -p dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+- cp build/**/*.zip dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+- cp build/darwin-x64/Gateblu.dmg dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+deploy:
+- provider: s3
+  access_key_id: AKIAIT4X4NDGM2WVL6VA
+  secret_access_key:
+    secure: V9Dnm09FCkdLzNFJR/LFO7kW/nSijgYAklUY0Eq/SCgvRMzTJMeT/IYXy05QUsVZhcU7sr/awWFb/XEPGEw/e4WpO7YgBipnqK3sqsRJ9f8t6RWEnFhvII3YUddtFd1sOgrvEpDR5woVxU+EBxK9vDYJ0U3TunbgmW0WSQoxD64=
+  bucket: gateblu
+  region: us-west-2
+  skip_cleanup: true
+  local-dir: dpl_s3
+  on:
+    tags: true
+    all_branches: true
