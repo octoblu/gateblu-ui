@@ -15,14 +15,17 @@ before_script:
 script: cd $TRAVIS_BUILD_DIR && .build/build
 before_deploy:
 - mkdir -p dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+- mkdir -p dpl_s3/latest
 - cp build/**/*.zip dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
 - cp build/darwin-x64/Gateblu.dmg dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+- cp -rfp dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}/* dpl_s3/latest
 deploy:
 - provider: s3
   access_key_id: AKIAIT4X4NDGM2WVL6VA
   secret_access_key:
     secure: V9Dnm09FCkdLzNFJR/LFO7kW/nSijgYAklUY0Eq/SCgvRMzTJMeT/IYXy05QUsVZhcU7sr/awWFb/XEPGEw/e4WpO7YgBipnqK3sqsRJ9f8t6RWEnFhvII3YUddtFd1sOgrvEpDR5woVxU+EBxK9vDYJ0U3TunbgmW0WSQoxD64=
   bucket: gateblu
+  upload-dir: gateblu-ui
   region: us-west-2
   skip_cleanup: true
   local-dir: dpl_s3
