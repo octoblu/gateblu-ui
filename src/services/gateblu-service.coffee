@@ -96,8 +96,7 @@ class GatebluService
     @updateDevices devices
 
   sendToGateway: (message, callback=->) =>
-    newMessage = _.extend devices: [@uuid], message
-    @meshbluConnection.message message, callback
+    @meshbluConnection.message [@uuid], message, callback
 
   subscribeToDevices: (devices) =>
     _.each devices, (device) =>
