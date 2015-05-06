@@ -135,7 +135,7 @@ class GatebluService
 
   updateDevices: (devices) =>
     async.map devices, @updateDevice, (error, devices) =>
-      @updateIcons _.compact devices if devices.length
+      @updateIcons _.compact devices
 
   updateDevice: (device, callback) =>
     console.log 'before device merge', device
