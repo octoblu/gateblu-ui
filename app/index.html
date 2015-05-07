@@ -16,11 +16,11 @@
     {{gateblu.name || 'Gateblu'}}
   </header>
 
-<!--  <div class="jumbotron">
+  <div class="jumbotron" ng-if="!isInstalled">
     <h1>Gateblu service not enabled!</h1>
     <p>Install Gateblu service.</p>
-    <a ng-click="installService()" class="btn btn-primary btn-lg">Install</a>
-  </div>-->
+    <a ng-href="{{installerLink}}" class="btn btn-primary btn-lg external-link">Install</a>
+  </div>
 
   <div class="jumbotron update-container" ng-if="updateAvailable">
     <h1>Updates Available</h1>

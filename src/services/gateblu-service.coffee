@@ -30,9 +30,31 @@ class GatebluService
         return @emit 'gateblu:error', error.message if error?
       callback null, meshblu.createConnection config
 
+  isInstalled: =>
+    fs.existsSync @getConfigPath()
+
+  getInstallerLink: =>
+    baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/latest'
+    if process.platform == 'darwin'
+      filename = 'GatebluService.pkg'
+
+    if process.platform == 'win32'
+      filename = "GatebluService-win32-#{process.arch}.msi"
+
+    "#{baseUrl}/#{filename}"
+
   start: =>
+    if @isInstalled()
+      return @startMeshbluConnection()
+
+    startupInterval = setInterval =>
+      if @isInstalled()
+        clearInterval startupInterval
+        @startMeshbluConnection()
+    , 5000
+
+  startMeshbluConnection: =>
     @createMeshbluConnection (error, @meshbluConnection) =>
-      console.log 'Starting up!'
       _.each @EVENTS_TO_FORWARD, (event) =>
         @meshbluConnection.on event, (data) =>
           console.log event, data
@@ -122,8 +144,8 @@ class GatebluService
     @sendToGateway { topic: 'device-start', payload: device }
 
   deleteDevice : (device, callback=->) =>
-    @sendToGateway { topic: 'device-delete', deviceUuid: device.uuid, deviceToken: device.token }
     @emit 'gateblu:unregistered', device
+    @sendToGateway { topic: 'device-delete', deviceUuid: device.uuid, deviceToken: device.token }
     callback()
 
   stopDevices : (callback=->) =>

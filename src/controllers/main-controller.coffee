@@ -16,6 +16,8 @@ angular.module 'gateblu-ui'
       './images/robot9.png'
     ]
     $scope.connected = false
+    $scope.isInstalled = GatebluService.isInstalled()
+    $scope.installerLink = GatebluService.getInstallerLink()
 
     UpdateService.check(version).then (updateAvailable) =>
       $scope.updateAvailable = updateAvailable
