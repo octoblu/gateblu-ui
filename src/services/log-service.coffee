@@ -1,9 +1,14 @@
-angular.module 'gateblu-ui' 
+angular.module 'gateblu-ui'
   .service 'LogService', ->
     logs = []
-    add : (log)=> 
-      logs.unshift({message: log, timestamp: new Date()})
-    all : => 
+    add : (log)=>
+      message = log
+      unless _.isString log
+        message = JSON.stringify(log).toString()
+
+      logs.unshift message: message, timestamp: new Date(), rawMessage: log
+
+    all : =>
       logs
     clear : =>
       logs.length = 0

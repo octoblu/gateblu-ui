@@ -45,30 +45,32 @@
         </div>
       </md-toolbar>
       <md-list ng-controller="LogController">
-        <!-- <md-subheader class="md-no-sticky">Gateblu Logs</md-subheader> -->
         <md-list-item class="md-3-line" ng-repeat="line in logs">
-          <!-- <img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}" /> -->
           <div class="md-list-item-text">
             <h3>{{ line.message }}</h3>
-            <h4>{{ line.timestamp }}</h4>
+            <p>{{ line.timestamp | date : 'medium' }}</p>
           </div>
+          <md-divider inset></md-divider>
         </md-list-item>
       </md-list>
     </md-content>
 
-    <div class="jumbotron" ng-if="!isInstalled">
-      <h1>Gateblu service not enabled!</h1>
-      <p>Install Gateblu service.</p>
-      <a ng-href="{{installerLink}}" class="btn btn-primary btn-lg external-link">Install</a>
+    <div class="backend-install-container" ng-if="!isInstalled" flex layout-fill>
+      <i class="fa fa-5x fa-exclamation-triangle big-icon"></i>
+      <p>Gateblu Service is not installed!</p>
+
+      <a ng-href="{{installerLink}}" class="external-link md-button md-raised" aria-label="Install">
+        <i class="fa fa-lg fa-download"></i> Install
+      </a>
     </div>
 
-    <div class="jumbotron update-container" ng-if="updateAvailable">
-      <h1>Updates Available</h1>
-      <p>There is a new version of Gateblu available.</p>
-      <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
-    </div>
-
-    <div class="connecting-container" ng-if="!connected">
+<!--     <div class="jumbotron update-container" ng-if="updateAvailable" flex layout-fill>
+  <h1>Updates Available</h1>
+  <p>There is a new version of Gateblu available.</p>
+  <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
+</div>
+ -->
+    <div class="connecting-container" ng-if="!connected" flex layout-fill>
       <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
     </div>
 
