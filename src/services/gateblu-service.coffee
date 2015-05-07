@@ -112,10 +112,15 @@ class GatebluService
     @rootScope.$broadcast event, data
     @rootScope.$apply()
 
+  deviceExists: (device, callback) =>
+    @meshbluConnection.device uuid: device.uuid, (result) =>
+      callback !result?.error?
+
   handleDevices: (devices) =>
     devices ?= []
-    @subscribeToDevices devices
-    @updateDevices devices
+    async.filterSeries devices, @deviceExists, (devices) =>
+      @subscribeToDevices devices
+      @updateDevices devices
 
   sendToGateway: (message, callback=->) =>
     newMessage = _.extend devices: [@uuid], message

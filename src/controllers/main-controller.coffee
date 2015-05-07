@@ -4,6 +4,7 @@ angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService) ->
     LogService.add 'Starting up!'
     version = require('../package.json').version
+    colors = ['green', 'yellow', 'blue', 'darkBlue', 'deepBlue', 'purple', 'lightPurple', 'red', 'pink']
     robotUrls = [
       './images/robot1.png'
       './images/robot2.png'
@@ -15,6 +16,7 @@ angular.module 'gateblu-ui'
       './images/robot8.png'
       './images/robot9.png'
     ]
+    $scope.devices = []
     $scope.connected = false
     $scope.isInstalled = GatebluService.isInstalled()
     $scope.installerLink = GatebluService.getInstallerLink()
@@ -74,7 +76,34 @@ angular.module 'gateblu-ui'
       GatebluService.stopDevices()
 
     $scope.$on "gateblu:update", ($event, devices) ->
-      $scope.devices = devices
+      $scope.handleDevices devices
+
+    $scope.updateDevice = (device) ->
+      foundDevice = _.findWhere $scope.devices, uuid: device.uuid
+      if foundDevice?
+        foundDevice.colorInt ?= parseInt(device.uuid[0..6], 16) % colors.length
+        foundDevice.background ?= colors[foundDevice.colorInt]
+        foundDevice.col_span ?= 1
+        foundDevice.row_span ?= 1
+
+        _.extend foundDevice, device
+
+    $scope.handleDevices = (devices) ->
+      devicesToDelete = _.filter $scope.devices, (device) =>
+        ! _.findWhere devices, uuid: device.uuid
+
+      devicesToAdd = _.filter devices, (device) =>
+        ! _.findWhere $scope.devices, uuid: device.uuid
+
+      _.each devicesToDelete, (device) ->
+        _.remove $scope.devices, uuid: device.uuid
+
+      _.each devicesToAdd, (device) ->
+        $scope.devices.push device
+
+      _.map devices, (device) ->
+        $scope.updateDevice device
+
       $scope.lucky_robot_url = undefined
       if _.isEmpty devices
         $scope.lucky_robot_url = _.sample robotUrls
@@ -89,8 +118,7 @@ angular.module 'gateblu-ui'
       device.online = data.online
 
     $scope.$on 'gateblu:device:config', ($event, device) ->
-      $scope.devices =  _.reject $scope.devices, {uuid: device.uuid}
-      $scope.devices.push device
+      $scope.updateDevice device
       LogService.add "#{device.name} ~#{device.uuid} has been updated"
 
     $scope.$on "gateblu:refresh", ($event) ->
