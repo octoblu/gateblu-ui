@@ -3,7 +3,7 @@ _ = require 'lodash'
 angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService) ->
     LogService.add 'Starting up!'
-    version = require('../package.json').version
+    version = require('./package.json').version
     colors = ['green', 'yellow', 'blue', 'darkBlue', 'deepBlue', 'purple', 'lightPurple', 'red', 'pink']
     robotUrls = [
       './images/robot1.png'
