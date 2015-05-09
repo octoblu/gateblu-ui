@@ -4,7 +4,7 @@ angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService) ->
     LogService.add 'Starting up!'
     version = require('./package.json').version
-    colors = ['green', 'yellow', 'blue', 'darkBlue', 'deepBlue', 'purple', 'lightPurple', 'red', 'pink']
+    colors = ['#b9f6ca', '#ffff8d', '#84ffff', '#80d8ff', '#448aff', '#b388ff', '#8c9eff', '#ff8a80', '#ff80ab']
     robotUrls = [
       './images/robot1.png'
       './images/robot2.png'
@@ -66,7 +66,6 @@ angular.module 'gateblu-ui'
 
     $scope.$on "gateblu:config", ($event, config) =>
       $scope.connected = true
-      #gui.App.setCrashDumpDir config.crashPath
       LogService.add "Gateway ~#{config.uuid} is online"
       $scope.gateblu = config
 
@@ -82,9 +81,11 @@ angular.module 'gateblu-ui'
       foundDevice = _.findWhere $scope.devices, uuid: device.uuid
       if foundDevice?
         foundDevice.colorInt ?= parseInt(device.uuid[0..6], 16) % colors.length
-        foundDevice.background ?= colors[foundDevice.colorInt]
+        foundDevice.background = colors[foundDevice.colorInt]
         foundDevice.col_span ?= 1
         foundDevice.row_span ?= 1
+        if device.online == false
+          foundDevice.background = '#f5f5f5'
 
         _.extend foundDevice, device
 

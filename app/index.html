@@ -80,7 +80,6 @@
             md-row-height-gt-md="1:1" md-row-height="4:3"
             md-gutter="8px" md-gutter-gt-sm="4px" >
 
-
         <md-grid-tile ng-if="lucky_robot_url"
                       md-rowspan="2"
                       md-colspan="2"
@@ -93,12 +92,13 @@
             <p>Add a Device</p>
           </md-grid-tile-footer>
         </md-grid-tile>
+
         <md-grid-tile ng-repeat="device in devices | orderBy: 'name'"
                       md-rowspan="{{device.row_span}}"
                       md-colspan="{{device.col_span}}"
                       md-colspan-sm="1"
-                      ng-class="device.background">
-          <md-icon md-svg-icon="{{device.icon_url}}"></md-icon>
+                      ng-style="{ 'background': device.background }">
+          <md-icon ng-class="{'device-offline': !device.online}" md-svg-icon="{{device.icon_url}}"></md-icon>
           <md-grid-tile-footer layout-align="end center" layout="row">
               <md-button style="float:right" class="md-icon-button" ng-click="device.showMore = !device.showMore" aria-label="Actions">
                 <i class="fa fa-lg fa-ellipsis-v"></i>
@@ -112,7 +112,10 @@
               <md-button ng-click="showDevice(device)" ng-show="device.showMore" style="float:right" class="md-icon-button" aria-label="Info">
                 <i class="fa fa-lg fa-info"></i>
               </md-button>
-              <p ng-show="!device.showMore">{{device.name || 'Initializing...'}}</p>
+              <p ng-show="!device.showMore">
+                {{device.name || 'Initializing...'}}
+                <span ng-show="!device.online">(offline)</span>
+              </p>
           </md-grid-tile-footer>
         </md-grid-tile>
       </md-grid-list>

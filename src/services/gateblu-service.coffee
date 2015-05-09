@@ -73,6 +73,11 @@ class GatebluService
         console.log 'notReady', data
         @emit 'gateblu:notReady'
 
+      @meshbluConnection.on 'unregister', (device) =>
+        unless data.uuid == @uuid
+          @meshbluConnection.whoami {}, (gateblu) =>
+            @handleDevices gateblu.devices
+
       @meshbluConnection.on 'config', (data) =>
         console.log 'config', data
         if data.uuid == @uuid
@@ -166,7 +171,7 @@ class GatebluService
 
   updateDevice: (device, callback) =>
     console.log 'before device merge', device
-    @meshbluConnection.devices _.pick( device, 'uuid', 'token'), (results) =>
+    @meshbluConnection.devices _.pick(device, 'uuid', 'token'), (results) =>
        console.log 'updateDevice results', results.devices
        return callback null, null unless results.devices?
        callback null, _.extend({}, device, results.devices[0])
