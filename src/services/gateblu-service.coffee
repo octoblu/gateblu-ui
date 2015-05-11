@@ -129,7 +129,7 @@ class GatebluService
       foundDevice = _.findWhere gateblu.devices, uuid: device.uuid
       _.extend foundDevice, data if foundDevice?
 
-      @meshbluConnection.update gateblu, ->
+      @meshbluConnection.update gateblu, =>
         callback()
 
   sendToGateway: (message, callback=->) =>
