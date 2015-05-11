@@ -118,7 +118,7 @@ class GatebluService
     @rootScope.$apply()
 
   deviceExists: (device, callback) =>
-    @meshbluConnection.device uuid: device.uuid, (result) =>
+    @meshbluConnection.device uuid: device.uuid, (result) ->
       callback !result?.error?
 
   handleDevices: (devices) =>
@@ -126,6 +126,14 @@ class GatebluService
     async.filterSeries devices, @deviceExists, (devices) =>
       @subscribeToDevices devices
       @updateDevices devices
+
+  updateGatewayDevice: (device, data, callback=->) =>
+    @meshbluConnection.whoami {}, (gateblu) =>
+      foundDevice = _.findWhere gateblu.devices, uuid: device.uuid
+      _.extend foundDevice, data if foundDevice?
+
+      @meshbluConnection.update gateblu, ->
+        callback()
 
   sendToGateway: (message, callback=->) =>
     newMessage = _.extend devices: [@uuid], message
@@ -147,19 +155,23 @@ class GatebluService
     return device
 
   stopDevice : (device, callback=->) =>
-    @sendToGateway { topic: 'device-stop', deviceUuid: device.uuid }
+    @updateGatewayDevice device, stop: true, callback
 
   startDevice : (device, callback=->) =>
-    console.log 'starting device', device
-    @sendToGateway { topic: 'device-start', payload: device }
+    @updateGatewayDevice device, stop: false, callback
 
   deleteDevice : (device, callback=->) =>
     @emit 'gateblu:unregistered', device
-    @sendToGateway { topic: 'device-delete', deviceUuid: device.uuid, deviceToken: device.token }
-    callback()
+    @meshbluConnection.whoami {}, (gateblu) =>
+      foundDevice = _.pull gateblu.devices, uuid: device.uuid
 
-  stopDevices : (callback=->) =>
-    @sendToGateway { topic: 'devices-stop', args: []}, callback
+      return callback() unless foundDevice?
+
+      @meshbluConnection.update gateblu, =>
+        @meshbluConnection.unregister device
+        @handleDevices gateblu.devices
+        callback()
+    callback()
 
   refreshGateblu: =>
     console.log 'sending refresh event'
