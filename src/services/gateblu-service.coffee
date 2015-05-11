@@ -57,11 +57,9 @@ class GatebluService
     @createMeshbluConnection (error, @meshbluConnection) =>
       _.each @EVENTS_TO_FORWARD, (event) =>
         @meshbluConnection.on event, (data) =>
-          console.log event, data
           @emit event, data
 
       @meshbluConnection.on 'ready',  () =>
-        console.log 'ready'
         @meshbluConnection.whoami {}, (gateblu) =>
           console.log 'ready', gateblu
           @uuid = gateblu.uuid
@@ -174,7 +172,6 @@ class GatebluService
     callback()
 
   refreshGateblu: =>
-    console.log 'sending refresh event'
     @sendToGateway topic: 'refresh'
 
   updateDevices: (devices) =>
@@ -182,9 +179,7 @@ class GatebluService
       @updateIcons _.compact devices
 
   updateDevice: (device, callback) =>
-    console.log 'before device merge', device
     @meshbluConnection.devices _.pick(device, 'uuid', 'token'), (results) =>
-       console.log 'updateDevice results', results.devices
        return callback null, null unless results.devices?
        callback null, _.extend({}, device, results.devices[0])
 
