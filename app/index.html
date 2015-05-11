@@ -97,22 +97,22 @@
                       ng-style="{ 'background': device.background }">
           <md-icon ng-class="{'device-offline': !device.online}" md-svg-icon="{{device.icon_url}}"></md-icon>
           <md-grid-tile-footer layout-align="end center" layout="row">
-              <md-button style="float:right" class="md-icon-button" ng-click="device.showMore = !device.showMore" aria-label="Actions">
-                <i class="fa fa-lg fa-ellipsis-v"></i>
-              </md-button>
-              <md-button ng-click="deleteDevice(device)" ng-show="device.showMore" style="float:right" class="md-icon-button" aria-label="Delete">
-                <i class="fa fa-lg fa-trash"></i>
-              </md-button>
-              <md-button ng-click="toggleDevice(device)" ng-show="device.showMore" style="float:right" class="md-icon-button" aria-label="Stop">
-                <i class="fa fa-lg fa-power-off"></i>
-              </md-button>
-              <md-button ng-click="showDevice(device)" ng-show="device.showMore" style="float:right" class="md-icon-button" aria-label="Info">
-                <i class="fa fa-lg fa-info"></i>
-              </md-button>
-              <p ng-show="!device.showMore">
-                {{device.name || 'Initializing...'}}
-                <span ng-show="!device.online">(offline)</span>
-              </p>
+            <md-button style="float:right" class="md-icon-button" ng-click="device.showMore = !device.showMore" aria-label="Actions">
+              <i class="fa fa-ellipsis-v"></i>
+            </md-button>
+            <md-button ng-click="showDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Info" title="Info">
+              <i class="fa fa-info"></i>
+            </md-button>
+            <md-button ng-click="toggleDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Stop" title="Start/Stop">
+              <i class="fa fa-power-off"></i>
+            </md-button>
+            <md-button ng-click="deleteDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Delete" title="Delete">
+              <i class="fa fa-trash"></i>
+            </md-button>
+            <p ng-show="!device.showMore">
+              {{device.name || 'Initializing...'}}
+              <span ng-show="!device.online">(offline)</span>
+            </p>
           </md-grid-tile-footer>
         </md-grid-tile>
       </md-grid-list>
