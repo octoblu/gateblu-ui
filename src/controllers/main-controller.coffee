@@ -109,6 +109,7 @@ angular.module 'gateblu-ui'
       return unless device
       LogService.add "#{device.name} ~#{device.uuid} is #{if data.online then 'online' else 'offline'}"
       device.online = data.online
+      $scope.updateDevice device
 
     $scope.$on 'gateblu:device:config', ($event, device) ->
       $scope.updateDevice device
