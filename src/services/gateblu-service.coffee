@@ -111,7 +111,6 @@ class GatebluService
         callback e
 
   emit: (event, data) =>
-    console.log 'emitting', event, data
     @rootScope.$broadcast event, data
     @rootScope.$apply()
 
@@ -140,7 +139,7 @@ class GatebluService
   subscribeToDevices: (devices) =>
     _.each devices, (device) =>
       console.log 'subscribing to device', device
-      @meshbluConnection.subscribe device, (res) =>
+      @meshbluConnection.subscribe device, (res) ->
         console.log 'subscribe', device.uuid, res
 
   updateIcons : (devices) =>
@@ -169,7 +168,6 @@ class GatebluService
         @meshbluConnection.unregister device
         @handleDevices gateblu.devices
         callback()
-    callback()
 
   refreshGateblu: =>
     @sendToGateway topic: 'refresh'
