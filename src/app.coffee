@@ -27,3 +27,11 @@ angular.module 'gateblu-ui', ['ngMaterial']
   $mdThemingProvider.theme 'logs'
     .primaryPalette 'green'
     .accentPalette 'blue', 'default': '500'
+
+  $mdThemingProvider.theme 'info'
+    .primaryPalette 'green'
+    .accentPalette 'green', 'default': '500'
+
+  $mdThemingProvider.theme 'confirm'
+    .primaryPalette 'red'
+    .accentPalette 'red', 'default': '500'

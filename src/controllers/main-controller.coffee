@@ -1,7 +1,7 @@
 _ = require 'lodash'
 
 angular.module 'gateblu-ui'
-  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService) ->
+  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
     LogService.add 'Starting up!'
     version = require('./package.json').version
     colors = ['#b9f6ca', '#ffff8d', '#84ffff', '#80d8ff', '#448aff', '#b388ff', '#8c9eff', '#ff8a80', '#ff80ab']
@@ -32,37 +32,29 @@ angular.module 'gateblu-ui'
     , 500, {leading: true, trailing: false})
 
     $scope.deleteDevice = (device) =>
-      sweetAlert
+      alert = $mdDialog.confirm
         title: 'Are you sure?'
-        text: "This will remove #{device.name} ~#{device.uuid}"
-        type: 'warning'
-        showCancelButton: true
-        confirmButtonColor: '#d9534f'
-        confirmButtonText: 'Delete'
-        closeOnConfirm: false
-      ,
-        =>
+        content: "This will remove #{device.name} ~#{device.uuid}"
+        ok: 'Delete'
+        cancel: 'Cancel'
+        theme: 'confirm'
+
+      $mdDialog
+        .show alert
+        .then ->
           GatebluService.deleteDevice device
 
     $scope.showDevice = (device) =>
-      sweetAlert
+      alert = $mdDialog.alert
         title: device.name
-        text: device.uuid
-        type: 'info'
-        confirmButtonColor: '#428bca'
+        content: device.uuid
+        theme: 'info'
+        ok: 'Close'
 
-    $scope.installService = =>
-      sweetAlert
-        title: "Install Gateblu service?"
-        text: "This will install the gateblu service and run in the background"
-        type: 'warning'
-        showCancelButton: true
-        confirmButtonColor: '#428bca'
-        confirmButtonText: 'Install'
-        closeOnConfirm: false
-        ,
-        =>
-          GatebluBackendInstallerService.install()
+      $mdDialog
+        .show alert
+        .finally ->
+          alert = undefined
 
     $scope.$on "gateblu:config", ($event, config) =>
       $scope.connected = true
@@ -143,8 +135,13 @@ angular.module 'gateblu-ui'
     $scope.$on "gateblu:unregistered", ($event, device) ->
       msg = "#{device.name} (~#{device.uuid}) has been deleted"
       LogService.add msg
-      sweetAlert
+      alert = $mdDialog.alert
         title: 'Deleted'
-        text: msg
-        type: 'success'
-        confirmButtonColor: '#428bca'
+        content: msg
+        ok: 'Close'
+        theme: 'info'
+
+      $mdDialog
+        .show alert
+        .finally ->
+          alert = undefined

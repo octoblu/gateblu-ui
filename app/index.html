@@ -2,7 +2,6 @@
 <head>
   <link rel="stylesheet" type="text/css" href="dist/css/angular-material.min.css">
   <link rel="stylesheet" type="text/css" href="dist/css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="css/sweet-alert.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <script type="text/javascript" src="dist/js/jquery.min.js"></script>
   <script type="text/javascript" src="dist/js/lodash.min.js"></script>
@@ -10,7 +9,6 @@
   <script type="text/javascript" src="dist/js/angular-animate.min.js"></script>
   <script type="text/javascript" src="dist/js/angular-aria.min.js"></script>
   <script type="text/javascript" src="dist/js/angular-material.min.js"></script>
-  <script type="text/javascript" src="js/sweet-alert.js"></script>
   <script type="text/javascript" src="dist/application.js"></script>
 </head>
 
@@ -22,13 +20,13 @@
           <span>{{gateblu.name || 'Gateblu'}}</span>
         </h2>
         <span flex></span>
-        <md-button class="md-icon-button" aria-label="Info" ng-click="showInfo = !showInfo">
+        <md-button class="md-icon-button" aria-label="Info" title="Gateblu Info" ng-click="showInfo = !showInfo">
           <i class="fa fa-info fa-lg"></i>
         </md-button>
-        <md-button class="md-icon-button dev-tools" aria-label="Debugger">
+        <md-button class="md-icon-button dev-tools" title="Debugger" aria-label="Debugger">
           <i class="fa fa-bug fa-lg"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="View Log" ng-click="showLogs = !showLogs">
+        <md-button class="md-icon-button" aria-label="View Log" title="View Log" ng-click="showLogs = !showLogs">
           <i class="fa fa-file-text-o fa-lg"></i>
         </md-button>
       </div>
@@ -64,12 +62,6 @@
       </a>
     </div>
 
-<!--     <div class="jumbotron update-container" ng-if="updateAvailable" flex layout-fill>
-  <h1>Updates Available</h1>
-  <p>There is a new version of Gateblu available.</p>
-  <a href="https://gateblu.octoblu.com" class="btn btn-primary btn-lg external-link">Download &raquo;</a>
-</div>
- -->
     <div class="connecting-container" ng-if="!connected" flex layout-fill>
       <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
     </div>
