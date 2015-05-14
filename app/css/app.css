@@ -176,3 +176,9 @@ footer .drawer-controls {
   font-weight: 700;
   width: 100%;
   text-align: center; }
+
+.add-device-button {
+  padding-top: 13;
+  padding-right: 0;
+  margin-right: 0;
+}

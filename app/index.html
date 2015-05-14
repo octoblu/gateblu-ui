@@ -78,14 +78,14 @@
             md-gutter="8px" md-gutter-gt-sm="4px" >
 
         <md-grid-tile ng-if="lucky_robot_url"
-                      md-rowspan="2"
-                      md-colspan="2"
+                      md-rowspan="1"
+                      md-colspan="1"
                       class="gray">
           <img class="icon" ng-src="{{lucky_robot_url}}"></img>
           <md-grid-tile-footer layout-align="end center" layout="row">
-            <md-button ng-click="showDevice(device)" style="float:right" class="md-icon-button" aria-label="Add Device">
+            <a href="https://app.octoblu.com/node-wizard" style="float:right" class="add-device-button external-link md-button" aria-label="Add Device">
               <i class="fa fa-plus fa-lg"></i>
-            </md-button>
+            </a>
             <p>Add a Device</p>
           </md-grid-tile-footer>
         </md-grid-tile>
