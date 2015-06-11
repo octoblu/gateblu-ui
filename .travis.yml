@@ -6,7 +6,8 @@ cache:
   - build/cache
 env:
   global:
-    secure: cmK7r29eJ3JLWw6hwWmdkFASX40ciedftmamXzoOEtZMvEeAvdnjIIgcYQ/NO0+51WMlnnrEekB7h7khKvxgfCQ3S8H9Zi3vTNSKXONPcrNbLfze7FjY63yy5VsHK+PmD6Fmnj3Pl1HpQpzDaRWPrGq/uM2UYiDTpMw3K+OGPTI=
+  - secure: cmK7r29eJ3JLWw6hwWmdkFASX40ciedftmamXzoOEtZMvEeAvdnjIIgcYQ/NO0+51WMlnnrEekB7h7khKvxgfCQ3S8H9Zi3vTNSKXONPcrNbLfze7FjY63yy5VsHK+PmD6Fmnj3Pl1HpQpzDaRWPrGq/uM2UYiDTpMw3K+OGPTI=
+  - secure: aEroqDGI9P3ZxnsH7bLYoM1v8BWk4DyzqlO3yznSxiHbLnj2eHq8ehmjk2LaeuzsWTfxYXUfeg5WnxWP9OC3n+Yfsv7jUlhOwH2YbNssoe6dhYw3/8BPd8Iu4qUJB8rmRYx4h7PUViSO7zUe56sRdjoyZ28mm60j/BKKctdHB3M=
 before_script:
 - brew update
 - brew upgrade xctool || true
@@ -21,9 +22,9 @@ before_deploy:
 - cp -rfp dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}/* dpl_s3/latest
 deploy:
 - provider: s3
-  access_key_id: AKIAIT4X4NDGM2WVL6VA
+  access_key_id: AKIAJH2D5IPIRHYJT5IA
   secret_access_key:
-    secure: V9Dnm09FCkdLzNFJR/LFO7kW/nSijgYAklUY0Eq/SCgvRMzTJMeT/IYXy05QUsVZhcU7sr/awWFb/XEPGEw/e4WpO7YgBipnqK3sqsRJ9f8t6RWEnFhvII3YUddtFd1sOgrvEpDR5woVxU+EBxK9vDYJ0U3TunbgmW0WSQoxD64=
+    secure: M0aUEjuuihPDcxZ9lyCo3HqGvOPmiDRnnq4UIwXrC9xTukBS2dfyDKC1sCcn1ijeGtwuw3HUGAVR/hglO13RCdKxTO1xnr4+iljxVOiVH0J3o8tqk3Is7TovmD7P8GpcI2KCgmMDf2ngq9jQWvs4tB6QGil0VcMvwe/6nTeQeMQ=
   bucket: gateblu
   upload-dir: gateblu-ui
   region: us-west-2
