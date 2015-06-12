@@ -3,6 +3,16 @@ _ = require 'lodash'
 angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
     LogService.add 'Starting up!'
+    $scope.getInstallerLink = =>
+      baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/latest'
+      if process.platform == 'darwin'
+        filename = 'Gateblu.dmg'
+
+      if process.platform == 'win32'
+        filename = "gateblu-win32-#{process.arch}.zip"
+
+      "#{baseUrl}/#{filename}"
+
     version = require('./package.json').version
     colors = ['#b9f6ca', '#ffff8d', '#84ffff', '#80d8ff', '#448aff', '#b388ff', '#8c9eff', '#ff8a80', '#ff80ab']
     robotUrls = [
@@ -19,10 +29,17 @@ angular.module 'gateblu-ui'
     $scope.devices = []
     $scope.connected = false
     $scope.isInstalled = GatebluService.isInstalled()
-    $scope.installerLink = GatebluService.getInstallerLink()
+    $scope.serviceInstallerLink = GatebluService.getInstallerLink()
+    $scope.uiInstallerLink = $scope.getInstallerLink()
 
-    UpdateService.check(version).then (updateAvailable) =>
-      $scope.updateAvailable = updateAvailable
+    GatebluService.getVersion (error, version) =>
+      $scope.serviceVersion = version
+      UpdateService.checkService version, (error, updateAvailable) =>
+        $scope.serviceUpdateAvailable = updateAvailable
+
+    $scope.uiVersion = version
+    UpdateService.checkUI version, (error, updateAvailable) =>
+      $scope.uiUpdateAvailable = updateAvailable
 
     $scope.toggleDevice = _.debounce((device) =>
       if device.online

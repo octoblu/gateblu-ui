@@ -32,7 +32,8 @@ class GatebluService
       callback null, meshblu.createConnection config
 
   isInstalled: =>
-    fs.existsSync @getConfigPath()
+    fs.existsSync(@getConfigPath()) &&
+      fs.existsSync(@getPackagePath())
 
   getInstallerLink: =>
     baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/latest'
@@ -99,13 +100,22 @@ class GatebluService
 
     return './meshblu.json'
 
+  getPackagePath: =>
+    if process.platform == 'darwin'
+      return "/Library/Octoblu/GatebluService/package.json"
+
+    if process.platform == 'win32'
+      return "#{process.env['PROGRAMFILES(X86)']}\\Octoblu\\GatebluService\\package.json"
+
+    return './meshblu.json'
+
   startService: (callback=->) =>
     if process.platform == 'darwin'
       exec '/bin/launchctl load /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
         return callback error
 
     if process.platform == 'win32'
-      exec 'start "GatebluServiceTray" "%PROGRAMFILES(X86)\\Octoblu\\GatebluService\\GatebluServiceTray.exe"', (error, stdout, stdin) =>
+      exec "start \"GatebluServiceTray\" \"#{process.env['PROGRAMFILES(X86)']}\\Octoblu\\GatebluService\\GatebluServiceTray.exe\"", (error, stdout, stdin) =>
         return callback error
 
     callback new Error "Unsupported Operating System"
@@ -132,6 +142,24 @@ class GatebluService
         callback null, require configFile
       catch e
         callback e
+
+  loadPackageJson: (callback=->) =>
+    configFile = @getPackagePath()
+
+    fs.exists configFile, (exists) =>
+      callback new Error('package.json does not exist') unless exists
+      config = {}
+
+      console.log configFile
+
+      try
+        callback null, require configFile
+      catch e
+        callback e
+
+  getVersion: (callback=->) =>
+    @loadPackageJson (error, pkg) =>
+      callback error, pkg?.version
 
   emit: (event, data) =>
     @rootScope.$broadcast event, data

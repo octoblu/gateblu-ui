@@ -39,7 +39,11 @@
     <md-toolbar md-theme="info" ng-show="showInfo">
       <span flex></span>
       <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
-        <span class="md-flex">Gateblu UUID: ~{{gateblu.uuid}}</span>
+        <div class="md-flex">
+          Gateblu UUID: ~{{gateblu.uuid}}<br>
+          Service Version: {{serviceVersion}}<br>
+          UI Version: {{uiVersion}}
+        </div>
       </h2>
     </md-toolbar>
 
@@ -47,6 +51,32 @@
       <span flex></span>
       <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
         <span class="md-flex">Gateblu Service is not running!</span>
+      </h2>
+    </md-toolbar>
+
+    <md-toolbar md-theme="warning" ng-show="serviceUpdateAvailable">
+      <span flex></span>
+      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
+        <span class="md-flex">
+          Gateblu Service has an update available!
+
+          <a ng-href="{{serviceInstallerLink}}" class="external-link md-button md-raised" aria-label="Install">
+            <i class="fa fa-lg fa-download"></i> Install
+          </a>
+        </span>
+      </h2>
+    </md-toolbar>
+
+    <md-toolbar md-theme="warning" ng-show="uiUpdateAvailable">
+      <span flex></span>
+      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
+        <span class="md-flex">
+          Gateblu has an update available!
+
+          <a ng-href="{{uiInstallerLink}}" class="external-link md-button md-raised" aria-label="Install">
+            <i class="fa fa-lg fa-download"></i> Install
+          </a>
+        </span>
       </h2>
     </md-toolbar>
 
@@ -73,7 +103,7 @@
       <i class="fa fa-5x fa-exclamation-triangle big-icon"></i>
       <p>Gateblu Service is not installed!</p>
 
-      <a ng-href="{{installerLink}}" class="external-link md-button md-raised" aria-label="Install">
+      <a ng-href="{{serviceInstallerLink}}" class="external-link md-button md-raised" aria-label="Install">
         <i class="fa fa-lg fa-download"></i> Install
       </a>
     </div>
