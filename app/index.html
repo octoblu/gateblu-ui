@@ -21,14 +21,17 @@
           <span>{{gateblu.name || 'Gateblu'}}</span>
         </h2>
         <span flex></span>
+        <md-button class="md-icon-button" aria-label="Stop / Start Service" title="Stop / Start Service" ng-click="toggleService()">
+          <i class="fa fa-lg fa-power-off" ng-class="{'muted': serviceStopped}"></i>
+        </md-button>
         <md-button class="md-icon-button" aria-label="Info" title="Gateblu Info" ng-click="showInfo = !showInfo">
-          <i class="fa fa-info fa-lg"></i>
+          <i class="fa fa-lg fa-info"></i>
         </md-button>
         <md-button class="md-icon-button dev-tools" title="Debugger" aria-label="Debugger">
-          <i class="fa fa-bug fa-lg"></i>
+          <i class="fa fa-lg fa-bug"></i>
         </md-button>
         <md-button class="md-icon-button" aria-label="View Log" title="View Log" ng-click="showLogs = !showLogs">
-          <i class="fa fa-file-text-o fa-lg"></i>
+          <i class="fa fa-lg fa-file-text-o"></i>
         </md-button>
       </div>
     </md-toolbar>
@@ -37,6 +40,13 @@
       <span flex></span>
       <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
         <span class="md-flex">Gateblu UUID: ~{{gateblu.uuid}}</span>
+      </h2>
+    </md-toolbar>
+
+    <md-toolbar md-theme="warning" ng-show="serviceStopped">
+      <span flex></span>
+      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
+        <span class="md-flex">Gateblu Service is not running!</span>
       </h2>
     </md-toolbar>
 

@@ -69,6 +69,16 @@ angular.module 'gateblu-ui'
     $scope.$on "gateblu:update", ($event, devices) ->
       $scope.handleDevices devices
 
+    $scope.toggleService = ->
+      if $scope.serviceStopped
+        GatebluService.startService (error) =>
+          console.log error
+          $scope.serviceStopped = false
+      else
+        GatebluService.stopService (error) =>
+          console.log error
+          $scope.serviceStopped = true
+
     $scope.updateDevice = (device) ->
       foundDevice = _.findWhere $scope.devices, uuid: device.uuid
       if foundDevice?

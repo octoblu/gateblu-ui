@@ -3,6 +3,7 @@ async = require 'async'
 path = require 'path'
 debug = require('debug')('gateblu-ui:GatebluService')
 fs = require 'fs-extra'
+{exec} = require 'child_process'
 
 class GatebluService
   EVENTS_TO_FORWARD = [
@@ -97,6 +98,28 @@ class GatebluService
       return "#{process.env.LOCALAPPDATA}\\Octoblu\\GatebluService\\meshblu.json"
 
     return './meshblu.json'
+
+  startService: (callback=->) =>
+    if process.platform == 'darwin'
+      exec '/bin/launchctl load /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
+        return callback error
+
+    if process.platform == 'win32'
+      exec 'start "GatebluServiceTray" "%PROGRAMFILES(X86)\\Octoblu\\GatebluService\\GatebluServiceTray.exe"', (error, stdout, stdin) =>
+        return callback error
+
+    callback new Error "Unsupported Operating System"
+
+  stopService: (callback=->) =>
+    if process.platform == 'darwin'
+      exec '/bin/launchctl unload /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
+        return callback error
+
+    if process.platform == 'win32'
+      exec 'taskkill /IM GatebluServiceTray.exe', (error, stdout, stdin) =>
+        return callback error
+
+    callback new Error "Unsupported Operating System"
 
   loadConfig: (callback=->) =>
     configFile = @getConfigPath()

@@ -182,3 +182,7 @@ footer .drawer-controls {
   padding-right: 0;
   margin-right: 0;
 }
+
+.fa.muted {
+  color: #333;
+}
