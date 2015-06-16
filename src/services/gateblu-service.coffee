@@ -29,7 +29,8 @@ class GatebluService
       if error?
         console.error "Error", error
         return @emit 'gateblu:error', error.message if error?
-      callback null, meshblu.createConnection config
+      options = _.extend auto_set_online: false, config
+      callback null, meshblu.createConnection options
 
   isInstalled: =>
     fs.existsSync(@getConfigPath()) &&
