@@ -5,6 +5,8 @@ debug = require('debug')('gateblu-ui:GatebluService')
 fs = require 'fs-extra'
 {exec} = require 'child_process'
 
+PROGRAMFILES = process.env['PROGRAMFILES(X86)'] || process.env['PROGRAMFILES']
+
 class GatebluService
   EVENTS_TO_FORWARD = [
     'gateblu:config'
@@ -106,7 +108,7 @@ class GatebluService
       return "/Library/Octoblu/GatebluService/package.json"
 
     if process.platform == 'win32'
-      return "#{process.env['PROGRAMFILES(X86)']}\\Octoblu\\GatebluService\\package.json"
+      return "#{PROGRAMFILES}\\Octoblu\\GatebluService\\package.json"
 
     return './meshblu.json'
 
@@ -116,7 +118,7 @@ class GatebluService
         return callback error
 
     if process.platform == 'win32'
-      exec "start \"GatebluServiceTray\" \"#{process.env['PROGRAMFILES(X86)']}\\Octoblu\\GatebluService\\GatebluServiceTray.exe\"", (error, stdout, stdin) =>
+      exec "start \"GatebluServiceTray\" \"#{PROGRAMFILES}\\Octoblu\\GatebluService\\GatebluServiceTray.exe\"", (error, stdout, stdin) =>
         return callback error
 
     callback new Error "Unsupported Operating System"
