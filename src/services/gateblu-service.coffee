@@ -82,7 +82,6 @@ class GatebluService
             @handleDevices gateblu.devices
 
       @meshbluConnection.on 'config', (data) =>
-        console.log 'config', data
         if data.uuid == @uuid
           @handleDevices data.devices
           return @emit 'gateblu:config', data
@@ -94,57 +93,81 @@ class GatebluService
         if data.topic == 'device-status'
           @emit 'gateblu:device:status', uuid: data.fromUuid, online: data.payload.online
 
-  getConfigPath: =>
+  getSupportPath: (fileOrPath) =>
     if process.platform == 'darwin'
-      return "#{process.env.HOME}/Library/Application Support/GatebluService/meshblu.json"
+      return "#{process.env.HOME}/Library/Application Support/GatebluService/#{fileOrPath}"
 
     if process.platform == 'win32'
-      return "#{process.env.LOCALAPPDATA}\\Octoblu\\GatebluService\\meshblu.json"
+      return "#{process.env.LOCALAPPDATA}\\Octoblu\\GatebluService\\#{fileOrPath}"
 
-    return './meshblu.json'
+    return "./#{file}"
+
+  getConfigPath: =>
+    @getSupportPath "meshblu.json"
+
+  getServiceDir: =>
+    if process.platform == 'darwin'
+      return "/Library/Octoblu/GatebluService/"
+
+    if process.platform == 'win32'
+      return "#{PROGRAMFILES}\\Octoblu\\GatebluService\\"
+
+    return '.'
 
   getPackagePath: =>
     if process.platform == 'darwin'
-      return "/Library/Octoblu/GatebluService/package.json"
+      return "#{@getServiceDir()}package.json"
 
     if process.platform == 'win32'
-      return "#{PROGRAMFILES}\\Octoblu\\GatebluService\\package.json"
+      return "#{@getServiceDir()}package.json"
 
-    return './meshblu.json'
+    return "#{@getServiceDir()}meshblu.json"
 
   startService: (callback=->) =>
     if process.platform == 'darwin'
-      exec '/bin/launchctl load /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
+      return exec '/bin/launchctl load /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
         return callback error
 
     if process.platform == 'win32'
-      exec "start \"GatebluServiceTray\" \"#{PROGRAMFILES}\\Octoblu\\GatebluService\\GatebluServiceTray.exe\"", (error, stdout, stdin) =>
+      return exec "start \"GatebluServiceTray\" \"#{PROGRAMFILES}\\Octoblu\\GatebluService\\GatebluServiceTray.exe\"", (error, stdout, stdin) =>
         return callback error
 
     callback new Error "Unsupported Operating System"
 
   stopService: (callback=->) =>
     if process.platform == 'darwin'
-      exec '/bin/launchctl unload /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
+      return exec '/bin/launchctl unload /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
         return callback error
 
     if process.platform == 'win32'
-      exec 'taskkill /IM GatebluServiceTray.exe', (error, stdout, stdin) =>
+      return exec 'taskkill /IM GatebluServiceTray.exe', (error, stdout, stdin) =>
         return callback error
 
     callback new Error "Unsupported Operating System"
+
+  removeDeviceAndTmp: (callback=->) =>
+    fs.emptyDir @getSupportPath("tmp"), (error) =>
+      fs.emptyDir @getSupportPath("devices"), (error) =>
+        callback()
+
+  removeGatebluConfig: (callback=->)=>
+    configPath = @getConfigPath()
+    fs.unlink configPath, (error) =>
+      callback()
 
   loadConfig: (callback=->) =>
     configFile = @getConfigPath()
 
     fs.exists configFile, (exists) =>
       callback new Error('meshblu.json does not exist') unless exists
-      config = {}
 
-      try
-        callback null, require configFile
-      catch e
-        callback e
+      fs.readFile configFile, (error, config) =>
+        return callback error if error?
+        try
+          config = JSON.parse config
+          callback null, config
+        catch error
+          callback error
 
   loadPackageJson: (callback=->) =>
     configFile = @getPackagePath()
@@ -153,12 +176,14 @@ class GatebluService
       callback new Error('package.json does not exist') unless exists
       config = {}
 
-      console.log configFile
+      fs.readFile configFile, (error, config) =>
+        return callback error if error?
+        try
+          config = JSON.parse config
+          callback null, config
+        catch error
+          callback error
 
-      try
-        callback null, require configFile
-      catch e
-        callback e
 
   getVersion: (callback=->) =>
     @loadPackageJson (error, pkg) =>
@@ -226,6 +251,33 @@ class GatebluService
   refreshGateblu: =>
     @sendToGateway topic: 'refresh'
 
+  unregisterGateblu: (callback) =>
+    return callback new Error("No meshblu connection") unless @meshbluConnection?
+    @loadConfig (error, config) =>
+      @meshbluConnection.unregister config
+      callback()
+
+  waitForConfig: (callback=->) =>
+    setTimeout =>
+      @loadConfig (error, config) =>
+        return @waitForConfig callback unless config.uuid?
+        callback()
+    , 1000
+
+  resetGateblu: (callback=->) =>
+    events = [
+      @stopService,
+      @unregisterGateblu,
+      @removeDeviceAndTmp,
+      @removeGatebluConfig,
+      @startService,
+      @waitForConfig
+    ]
+    async.series events, (error) =>
+      return callback error if error?
+      @startMeshbluConnection()
+      callback()
+
   updateDevices: (devices) =>
     async.map devices, @updateDevice, (error, devices) =>
       @updateIcons _.compact devices
@@ -234,6 +286,14 @@ class GatebluService
     @meshbluConnection.devices _.pick(device, 'uuid', 'token'), (results) =>
        return callback null, null unless results.devices?
        callback null, _.extend({}, device, results.devices[0])
+
+  generateSessionToken: (callback=->) =>
+    @loadConfig (error, config) =>
+      return callback error if error?
+      data = uuid: config.uuid
+      @meshbluConnection.generateAndStoreToken data, (result) =>
+        return callback new Error('unable to generate session token') unless result?.token?
+        callback error, result
 
 angular.module 'gateblu-ui'
   .service 'GatebluService', ($rootScope) ->

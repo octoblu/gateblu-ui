@@ -1,4 +1,5 @@
 _ = require 'lodash'
+shell = require 'shell'
 
 angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
@@ -85,6 +86,34 @@ angular.module 'gateblu-ui'
 
     $scope.$on "gateblu:update", ($event, devices) ->
       $scope.handleDevices devices
+
+    $scope.claimGateblu = =>
+      GatebluService.generateSessionToken (error, result) =>
+        shell.openExternal "https://app.octoblu.com/node-wizard/claim/#{result.uuid}/#{result.token}"
+
+    $scope.resetGateblu = =>
+      alert = $mdDialog.alert
+        title: 'Reset Gateblu'
+        content: 'Do you want to reset your Gateblu? This will unregister it from your account and remove all your things.'
+        ok: 'Reset'
+        theme: 'warning'
+
+      $mdDialog
+        .show alert
+        .then =>
+          $scope.handleDevices []
+          GatebluService.resetGateblu (error) =>
+            $scope.showError error if error?
+
+    $scope.showError = (error) =>
+      alert = $mdDialog.alert
+        title: 'Error'
+        content: if error?.message then error.message else error
+        ok: 'Okay'
+        theme: 'info'
+
+      $mdDialog
+        .show alert
 
     $scope.toggleService = ->
       if $scope.serviceStopped

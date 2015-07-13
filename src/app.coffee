@@ -37,5 +37,5 @@ angular.module 'gateblu-ui', ['ngMaterial']
     .accentPalette 'purple', 'default': '500'
 
   $mdThemingProvider.theme 'warning'
-    .primaryPalette 'yellow'
+    .primaryPalette 'amber'
     .accentPalette 'green', 'default': '500'
