@@ -1,8 +1,8 @@
-_ = require 'lodash'
+_     = require 'lodash'
 shell = require 'shell'
 
 angular.module 'gateblu-ui'
-  .controller 'MainController', ($scope, GatebluService, LogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
+  .controller 'MainController', ($scope, $timeout, GatebluService, LogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
     LogService.add 'Starting up!'
     $scope.getInstallerLink = =>
       baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/latest'
@@ -14,7 +14,6 @@ angular.module 'gateblu-ui'
 
       "#{baseUrl}/#{filename}"
 
-    version = require('./package.json').version
     colors = ['#b9f6ca', '#ffff8d', '#84ffff', '#80d8ff', '#448aff', '#b388ff', '#8c9eff', '#ff8a80', '#ff80ab']
     robotUrls = [
       './images/robot1.png'
@@ -33,14 +32,20 @@ angular.module 'gateblu-ui'
     $scope.serviceInstallerLink = GatebluService.getInstallerLink()
     $scope.uiInstallerLink = $scope.getInstallerLink()
 
-    GatebluService.getVersion (error, version) =>
-      $scope.serviceVersion = version
-      UpdateService.checkService version, (error, updateAvailable) =>
-        $scope.serviceUpdateAvailable = updateAvailable
+    checkVersions = =>
+      UpdateService.checkServiceVersion (error, serviceUpdateAvailable, serviceVersion) =>
+        return console.error error if error?
+        UpdateService.checkUiVersion (error, uiUpdateAvailable, uiVersion) =>
+          return console.error error if error?
+          $timeout =>
+            $scope.serviceVersion = serviceVersion
+            $scope.uiVersion = uiVersion
+            $scope.serviceUpdateAvailable = serviceUpdateAvailable
+            $scope.uiUpdateAvailable = uiUpdateAvailable
+            _.delay checkVersions, 5000
+          , 0
 
-    $scope.uiVersion = version
-    UpdateService.checkUI version, (error, updateAvailable) =>
-      $scope.uiUpdateAvailable = updateAvailable
+    checkVersions()
 
     $scope.toggleDevice = _.debounce((device) =>
       if device.online
