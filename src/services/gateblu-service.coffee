@@ -25,6 +25,7 @@ class GatebluService
 
   constructor: (dependencies={}) ->
     @rootScope = dependencies.rootScope
+    @http = dependencies.http
 
   createMeshbluConnection: (callback=->)=>
     @loadConfig (error, config) =>
@@ -35,8 +36,7 @@ class GatebluService
       callback null, meshblu.createConnection options
 
   isInstalled: =>
-    fs.existsSync(@getConfigPath()) &&
-      fs.existsSync(@getPackagePath())
+    fs.existsSync(@getPackagePath())
 
   getInstallerLink: =>
     baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/latest'
@@ -146,8 +146,8 @@ class GatebluService
     callback new Error "Unsupported Operating System"
 
   removeDeviceAndTmp: (callback=->) =>
-    fs.emptyDir @getSupportPath("tmp"), (error) =>
-      fs.emptyDir @getSupportPath("devices"), (error) =>
+    fs.emptyDir @getSupportPath("tmp"), =>
+      fs.emptyDir @getSupportPath("devices"), =>
         callback()
 
   removeGatebluConfig: (callback=->)=>
@@ -155,35 +155,39 @@ class GatebluService
     fs.unlink configPath, (error) =>
       callback()
 
-  loadConfig: (callback=->) =>
+  createMeshbluJSON: (callback=->) =>
     configFile = @getConfigPath()
+    fs.mkdir path.dirname(configFile), =>
+      @stopService =>
+        @http.post 'https://meshblu.octoblu.com/devices', type: 'device:gateblu'
+          .success (result) =>
+            fs.writeFile configFile, JSON.stringify(result, null, 2), (error) =>
+              return callback error if error?
+              @startService =>
+                callback null, result
+          .error callback
 
+  getConfigFile: (configFile, callback=->) =>
     fs.exists configFile, (exists) =>
-      callback new Error('meshblu.json does not exist') unless exists
-
+      return callback null unless exists
       fs.readFile configFile, (error, config) =>
-        return callback error if error?
+        return callback null if error?
         try
           config = JSON.parse config
           callback null, config
         catch error
-          callback error
+          callback null, config
+
+  loadConfig: (callback=->) =>
+    configFile = @getConfigPath()
+    @getConfigFile configFile, (error, config) =>
+      return callback error if error?
+      return callback null, config if config?.uuid?
+      @createMeshbluJSON callback
 
   loadPackageJson: (callback=->) =>
     configFile = @getPackagePath()
-
-    fs.exists configFile, (exists) =>
-      callback new Error('package.json does not exist') unless exists
-      config = {}
-
-      fs.readFile configFile, (error, config) =>
-        return callback error if error?
-        try
-          config = JSON.parse config
-          callback null, config
-        catch error
-          callback error
-
+    @getConfigFile configFile, callback
 
   getVersion: (callback=->) =>
     @loadPackageJson (error, pkg) =>
@@ -270,8 +274,7 @@ class GatebluService
       @unregisterGateblu,
       @removeDeviceAndTmp,
       @removeGatebluConfig,
-      @startService,
-      @waitForConfig
+      @loadConfig
     ]
     async.series events, (error) =>
       return callback error if error?
@@ -296,7 +299,7 @@ class GatebluService
         callback error, result
 
 angular.module 'gateblu-ui'
-  .service 'GatebluService', ($rootScope) ->
-    gatebluService = new GatebluService rootScope: $rootScope
+  .service 'GatebluService', ($rootScope, $http) ->
+    gatebluService = new GatebluService rootScope: $rootScope, http: $http
     gatebluService.start()
     gatebluService
