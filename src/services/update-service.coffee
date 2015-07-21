@@ -2,6 +2,7 @@ _ = require 'lodash'
 request = require 'request'
 cmp = require 'semver-compare'
 fs    = require 'fs'
+path  = require 'path'
 
 angular.module 'gateblu-ui'
   .service 'UpdateService', (LogService, GatebluService, $http) ->
@@ -25,7 +26,7 @@ angular.module 'gateblu-ui'
             callback error, updateAvailable, version
 
       checkUiVersion : (callback=->) =>
-        fs.readFile './package.json', (error, config) =>
+        fs.readFile path.resolve('./package.json'), (error, config) =>
           return callback error if error?
           try
             config = JSON.parse config

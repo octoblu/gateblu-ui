@@ -16,7 +16,7 @@ mkdir -p $BUILD_DIR $CACHE_DIR/electron
 
 echo "Installing node_modules..."
 npm install --silent
-node_modules/.bin/gulp --silent
+node_modules/.bin/gulp
 
 echo "Copying app..."
 cp -rfp app $BUILD_DIR
