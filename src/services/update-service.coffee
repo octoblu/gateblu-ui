@@ -26,7 +26,7 @@ angular.module 'gateblu-ui'
             callback error, updateAvailable, version
 
       checkUiVersion : (callback=->) =>
-        fs.readFile path.resolve('./package.json'), (error, config) =>
+        fs.readFile path.resolve(__dirname + '/package.json'), (error, config) =>
           return callback error if error?
           try
             config = JSON.parse config
