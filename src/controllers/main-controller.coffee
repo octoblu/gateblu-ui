@@ -2,7 +2,7 @@ _     = require 'lodash'
 shell = require 'shell'
 
 angular.module 'gateblu-ui'
-  .controller 'MainController', ($scope, $timeout, GatebluService, LogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
+  .controller 'MainController', ($scope, $timeout, GatebluService, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
     LogService.add 'Starting up!'
     $scope.getInstallerLink = =>
       baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/latest'
@@ -207,6 +207,7 @@ angular.module 'gateblu-ui'
         $scope.lucky_robot_url = _.sample robotUrls
 
     $scope.$on "gateblu:device:start", ($event, device) ->
+      DeviceLogService.add device.uuid, 'config', "Device start"
       # $("ul.devices li[data-uuid=" + device.uuid + "]").addClass "active"
 
     $scope.$on 'gateblu:device:status', ($event, data) ->
@@ -215,20 +216,21 @@ angular.module 'gateblu-ui'
       LogService.add "#{device.name} ~#{device.uuid} is #{if data.online then 'online' else 'offline'}"
       device.online = data.online
       $scope.updateDevice device
+      DeviceLogService.add device.uuid, 'config', "Device online"
 
     $scope.$on 'gateblu:device:config', ($event, device) ->
       $scope.updateDevice device
       LogService.add "#{device.name} ~#{device.uuid} has been updated"
+      DeviceLogService.add device.uuid, 'config', "Device updated"
 
     $scope.$on "gateblu:refresh", ($event) ->
       LogService.add "Refreshing Device List"
 
     $scope.$on "gateblu:stderr", ($event, data, device) ->
-      LogService.add data
-      LogService.add "Error: #{device.name}"
+      DeviceLogService.add device.uuid, 'error', data
 
     $scope.$on "gateblu:stdout", ($event, data, device) ->
-      console.log device.name, device.uuid, data
+      DeviceLogService.add device.uuid, 'info', data
 
     $scope.$on "gateblu:npm:stderr", ($event, stderr) ->
       LogService.add stderr

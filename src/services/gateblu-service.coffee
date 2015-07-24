@@ -63,8 +63,8 @@ class GatebluService
   startMeshbluConnection: =>
     @createMeshbluConnection (error, @meshbluConnection) =>
       _.each @EVENTS_TO_FORWARD, (event) =>
-        @meshbluConnection.on event, (data) =>
-          @emit event, data
+        @meshbluConnection.on event, (data, device) =>
+          @emit event, data, device
 
       @meshbluConnection.on 'ready',  () =>
         @meshbluConnection.whoami {}, (gateblu) =>
@@ -91,7 +91,7 @@ class GatebluService
         return @emit 'gateblu:device:config', @updateIcon data
 
       @meshbluConnection.on 'message', (data) =>
-        @DeviceLogService.add data.fromUuid, 'message', if data?.paylad? then data.payload else data
+        @DeviceLogService.add data.fromUuid, 'message', if data?.payload? then data.payload else data
         if data.topic == 'device-status'
           @emit 'gateblu:device:status', uuid: data.fromUuid, online: data.payload.online
 
