@@ -78,6 +78,10 @@ body {
   height: 100%;
 }
 
+.log-error {
+  color: red !important;
+}
+
 .panel, .panel-body {
   margin-bottom: 0;
   padding-bottom: 0;
@@ -206,4 +210,8 @@ footer .drawer-controls {
 
 .icon-green {
   color: rgb(76,175,80);
+}
+
+.icon-yellow {
+  color: gold;
 }

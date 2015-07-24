@@ -29,8 +29,14 @@
         <md-button class="md-icon-button" aria-label="View Log" title="View Log" ng-click="showLogs = !showLogs">
           <i class="fa fa-lg fa-file-text-o"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="Stop / Start Service" title="Stop / Start Service" ng-click="toggleService()">
+        <md-button class="md-icon-button" aria-label="Stop / Start Service" title="Stop / Start Service" ng-click="toggleService()" ng-if="!serviceChanging">
           <i class="fa fa-lg fa-power-off" ng-class="{'muted': serviceStopped, 'icon-green': !serviceStopped}"></i>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Hard Restart" title="Hard Restart" ng-click="hardRestartGateblu()" ng-if="!serviceChanging">
+          <i class="fa fa-lg fa-bolt icon-yellow"></i>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Service Loading" title="Service Loading" ng-if="serviceChanging">
+          <i class="fa fa-lg fa-spinner fa-spin"></i>
         </md-button>
         <md-button class="md-icon-button" aria-label="Reset" title="Gateblu Reset" ng-click="resetGateblu()">
           <i class="fa fa-lg fa-trash-o destructive-icon"></i>
@@ -106,6 +112,39 @@
           </div>
           <md-divider inset></md-divider>
         </md-list-item>
+        <md-list-item class="md-3-line" ng-if="!logs">
+          <div class="md-list-item-text">
+            <h3>No logs available</h3>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-content>
+
+    <md-content class="log-container" md-theme="logs" layout-fill layout="column" ng-show="showLogForDevice">
+      <md-toolbar md-scroll-shrink>
+        <div class="md-toolbar-tools">
+          <h3>
+            <span>Device Log <span ng-if="showLogForDevice">({{showLogForDevice}})</span></span>
+          </h3>
+          <span flex></span>
+          <md-button ng-click="toggleDeviceLog(showLogForDevice)" class="md-button md-raised" aria-label="Toggle Device Log">
+            <i class="fa fa-lg fa-close"></i> Close
+          </md-button>
+        </div>
+      </md-toolbar>
+      <md-list ng-controller="DeviceLogController">
+        <md-list-item class="md-3-line" ng-repeat="line in logs[showLogForDevice]">
+          <div class="md-list-item-text" >
+            <h3 ng-class="{'log-error': line.type == 'error'}">{{ line.message }}</h3>
+            <p ng-class="{'log-error': line.type == 'error'}"><span><strong>Type:</strong> {{line.type}}</span> <span><strong>Date:</strong> {{ line.timestamp | date : 'medium' }}</span></p>
+          </div>
+          <md-divider inset></md-divider>
+        </md-list-item>
+        <md-list-item class="md-3-line" ng-if="!logs[showLogForDevice]">
+          <div class="md-list-item-text">
+            <h3>No logs available</h3>
+          </div>
+        </md-list-item>
       </md-list>
     </md-content>
 
@@ -122,7 +161,7 @@
       <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
     </div>
 
-    <div class="grid-device-container" ng-if="connected" flex>
+    <div class="grid-device-container" ng-if="connected && !showLogForDevice && !showLogs" flex>
       <md-grid-list
             md-cols-sm="1" md-cols-md="3" md-cols-gt-md="4"
             md-row-height-gt-md="1:1" md-row-height="4:3"

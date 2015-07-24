@@ -67,26 +67,37 @@ angular.module 'gateblu-ui'
         .then ->
           GatebluService.deleteDevice device
 
+    $scope.listenToDevice = (device) =>
+      GatebluService.getLogForDevice device.uuid
+
+    $scope.toggleDeviceLog = (uuid) =>
+      return $scope.showLogForDevice = null if !_.isEmpty $scope.showLogForDevice
+      $scope.showLogForDevice = uuid;
+
     $scope.showDevice = (device) =>
-      alert = $mdDialog.alert
+      alert = $mdDialog.confirm
         title: device.name
         content: device.uuid
         theme: 'info'
-        ok: 'Close'
+        cancel: 'Close'
+        ok: 'Show Logs'
 
       $mdDialog
         .show alert
-        .finally ->
+        .then =>
+          alert = undefined
+          $scope.toggleDeviceLog device.uuid
+        .catch =>
           alert = undefined
 
     $scope.$on "gateblu:config", ($event, config) =>
       $scope.connected = true
-      LogService.add "Gateway ~#{config.uuid} is online"
+      LogService.add "Gateway ~#{config.uuid} config changed"
       $scope.gateblu = config
 
     $scope.$on "gateblu:disconnected", ($event) =>
       $scope.connected = false
-      LogService.add "Disconnected..."
+      LogService.add "Disconnected"
       GatebluService.stopDevices()
 
     $scope.$on "gateblu:update", ($event, devices) ->
@@ -96,11 +107,33 @@ angular.module 'gateblu-ui'
       GatebluService.generateSessionToken (error, result) =>
         shell.openExternal "https://app.octoblu.com/node-wizard/claim/#{result.uuid}/#{result.token}"
 
+    $scope.hardRestartGateblu = =>
+      alert = $mdDialog.confirm
+        title: 'Hard Restart Gateblu'
+        content: 'This will stop gateblu service, remove the devices and modules cache, then start gateblu. It will take a few minutes to redownload and configure the devices.'
+        ok: 'Hard Restart'
+        cancel: 'Cancel'
+        theme: 'warning'
+
+      $scope.serviceChanging = true
+
+      $mdDialog
+        .show alert
+        .then =>
+          GatebluService.hardRestartGateblu (error) =>
+            $timeout =>
+              $scope.serviceChanging = false
+            , 1000
+            $scope.showError error if error?
+        .catch =>
+          $scope.serviceChanging = false
+
     $scope.resetGateblu = =>
-      alert = $mdDialog.alert
+      alert = $mdDialog.confirm
         title: 'Reset Gateblu'
         content: 'Do you want to reset your Gateblu? This will unregister it from your account and remove all your things.'
         ok: 'Reset'
+        cancel: 'Cancel'
         theme: 'warning'
 
       $mdDialog
@@ -121,14 +154,21 @@ angular.module 'gateblu-ui'
         .show alert
 
     $scope.toggleService = ->
+      $scope.serviceChanging = true
       if $scope.serviceStopped
         GatebluService.startService (error) =>
-          console.log error
-          $scope.serviceStopped = false
+          LogService.add error if error?
+          $timeout =>
+            $scope.serviceChanging = false
+            $scope.serviceStopped = false
+          , 1000
       else
         GatebluService.stopService (error) =>
-          console.log error
-          $scope.serviceStopped = true
+          LogService.add error if error?
+          $timeout =>
+            $scope.serviceChanging = false
+            $scope.serviceStopped = true
+          , 1000
 
     $scope.updateDevice = (device) ->
       foundDevice = _.findWhere $scope.devices, uuid: device.uuid
@@ -140,7 +180,9 @@ angular.module 'gateblu-ui'
         if device.online == false
           foundDevice.background = '#f5f5f5'
 
-        _.extend foundDevice, device
+        $timeout =>
+          _.extend foundDevice, device
+        , 0
 
     $scope.handleDevices = (devices) ->
       devicesToDelete = _.filter $scope.devices, (device) =>
@@ -153,10 +195,12 @@ angular.module 'gateblu-ui'
         _.remove $scope.devices, uuid: device.uuid
 
       _.each devicesToAdd, (device) ->
+        $scope.listenToDevice(device);
         $scope.devices.push device
 
       _.map devices, (device) ->
         $scope.updateDevice device
+
 
       $scope.lucky_robot_url = undefined
       if _.isEmpty devices

@@ -4,7 +4,7 @@
   "homepage": "https://github.com/octoblu/gateblu-ui",
   "main": "main.js",
   "description": "Gateblu Cross Platform GUI",
-  "version": "2.6.3",
+  "version": "2.7.0",
   "repository": {
     "url": "https://github.com/octoblu/gateblu-ui.git",
     "type": "git"
@@ -22,7 +22,8 @@
     "lodash": "^3.8.0",
     "meshblu": "^1.29.0",
     "request": "^2.57.0",
-    "semver-compare": "^1.0.0"
+    "semver-compare": "^1.0.0",
+    "tail": "^0.4.0"
   },
   "devDependencies": {
     "angular": "^1.3.15",

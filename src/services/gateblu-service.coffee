@@ -2,8 +2,9 @@ meshblu = require 'meshblu'
 async = require 'async'
 path = require 'path'
 debug = require('debug')('gateblu-ui:GatebluService')
-fs = require 'fs-extra'
+fsExtra = require 'fs-extra'
 {exec} = require 'child_process'
+{Tail} = require 'tail'
 
 PROGRAMFILES = process.env['PROGRAMFILES(X86)'] || process.env['PROGRAMFILES']
 
@@ -26,6 +27,7 @@ class GatebluService
   constructor: (dependencies={}) ->
     @rootScope = dependencies.rootScope
     @http = dependencies.http
+    @DeviceLogService = dependencies.DeviceLogService
 
   createMeshbluConnection: (callback=->)=>
     @loadConfig (error, config) =>
@@ -36,7 +38,7 @@ class GatebluService
       callback null, meshblu.createConnection options
 
   isInstalled: =>
-    fs.existsSync(@getPackagePath())
+    fsExtra.existsSync(@getPackagePath())
 
   getInstallerLink: =>
     baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/latest'
@@ -89,7 +91,7 @@ class GatebluService
         return @emit 'gateblu:device:config', @updateIcon data
 
       @meshbluConnection.on 'message', (data) =>
-        console.log 'message', data
+        @DeviceLogService.add data.fromUuid, 'message', if data?.paylad? then data.payload else data
         if data.topic == 'device-status'
           @emit 'gateblu:device:status', uuid: data.fromUuid, online: data.payload.online
 
@@ -100,7 +102,7 @@ class GatebluService
     if process.platform == 'win32'
       return "#{process.env.LOCALAPPDATA}\\Octoblu\\GatebluService\\#{fileOrPath}"
 
-    return "./#{file}"
+    return "./#{filePath}"
 
   getConfigPath: =>
     @getSupportPath "meshblu.json"
@@ -146,31 +148,31 @@ class GatebluService
     callback new Error "Unsupported Operating System"
 
   removeDeviceAndTmp: (callback=->) =>
-    fs.emptyDir @getSupportPath("tmp"), =>
-      fs.emptyDir @getSupportPath("devices"), =>
+    fsExtra.emptyDir @getSupportPath("tmp"), =>
+      fsExtra.emptyDir @getSupportPath("devices"), =>
         callback()
 
   removeGatebluConfig: (callback=->)=>
     configPath = @getConfigPath()
-    fs.unlink configPath, (error) =>
+    fsExtra.unlink configPath, (error) =>
       callback()
 
   createMeshbluJSON: (callback=->) =>
     configFile = @getConfigPath()
-    fs.mkdir path.dirname(configFile), =>
+    fsExtra.mkdir path.dirname(configFile), =>
       @stopService =>
         @http.post 'https://meshblu.octoblu.com/devices', type: 'device:gateblu'
           .success (result) =>
-            fs.writeFile configFile, JSON.stringify(result, null, 2), (error) =>
+            fsExtra.writeFile configFile, JSON.stringify(result, null, 2), (error) =>
               return callback error if error?
               @startService =>
                 callback null, result
           .error callback
 
   getConfigFile: (configFile, callback=->) =>
-    fs.exists configFile, (exists) =>
+    fsExtra.exists configFile, (exists) =>
       return callback null unless exists
-      fs.readFile configFile, (error, config) =>
+      fsExtra.readFile configFile, (error, config) =>
         return callback null if error?
         try
           config = JSON.parse config
@@ -220,6 +222,7 @@ class GatebluService
     @meshbluConnection.message newMessage, callback
 
   subscribeToDevices: (devices) =>
+    return false;
     _.each devices, (device) =>
       console.log 'subscribing to device', device
       @meshbluConnection.subscribe device, (res) ->
@@ -281,6 +284,17 @@ class GatebluService
       @startMeshbluConnection()
       callback()
 
+  hardRestartGateblu: (callback=->) =>
+    events = [
+      @stopService,
+      @removeDeviceAndTmp,
+      @startService
+    ]
+    async.series events, (error) =>
+      return callback error if error?
+      @startMeshbluConnection()
+      callback()
+
   updateDevices: (devices) =>
     async.map devices, @updateDevice, (error, devices) =>
       @updateIcons _.compact devices
@@ -298,8 +312,25 @@ class GatebluService
         return callback new Error('unable to generate session token') unless result?.token?
         callback error, result
 
+  waitForLog: (uuid, callback=->) =>
+    filePath = @getSupportPath "devices/#{uuid}/meshblu.json"
+    fsExtra.exists filePath, (exists) =>
+      return _.delay @waitForLog, 1000, uuid, callback unless exists
+      callback()
+
+  getLogForDevice: (uuid, lineCallback=->) =>
+    @meshbluConnection.subscribe uuid: uuid
+    @waitForLog uuid, =>
+      outLog = new Tail(@getSupportPath("devices/#{uuid}/forever.stdout"));
+      outLog.on "line", (line) =>
+        @DeviceLogService.add uuid, "info", line
+
+      errLog = new Tail(@getSupportPath("devices/#{uuid}/forever.stderr"));
+      errLog.on "line", (line) =>
+        @DeviceLogService.add uuid, "error", line
+
 angular.module 'gateblu-ui'
-  .service 'GatebluService', ($rootScope, $http) ->
-    gatebluService = new GatebluService rootScope: $rootScope, http: $http
+  .service 'GatebluService', ($rootScope, $http, DeviceLogService) ->
+    gatebluService = new GatebluService rootScope: $rootScope, http: $http, DeviceLogService: DeviceLogService
     gatebluService.start()
     gatebluService
