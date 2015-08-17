@@ -5,6 +5,14 @@ if [ "$KEY_PASSWORD" == "" ]; then
   exit 1
 fi
 
+echo '### downloading Gateblu Service'
+
+if [ ! -f $PLATFORM_BUILD_DIR/GatebluService.pkg ]; then
+  pushd $PLATFORM_BUILD_DIR
+  curl -sO https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/latest/GatebluService.pkg
+  popd
+fi
+
 PLATFORM_APP_DIR=$PLATFORM_BUILD_DIR/Gateblu.app
 cp -rfp $APP_ARCHIVE $PLATFORM_APP_DIR/Contents/Resources
 
@@ -31,6 +39,45 @@ echo "### verifying signature"
 codesign -vvv -d "$PLATFORM_APP_DIR"
 # sudo spctl -a -vvvv "$PLATFORM_APP_DIR"
 
+echo "### building packages"
+pushd $PLATFORM_BUILD_DIR
+
+mkdir -p GatebluApp
+mv Gateblu.app GatebluApp
+
+pkgbuild --analyze --root ./GatebluApp \
+  $PLATFORM_BUILD_DIR/GatebluAppComponents.plist
+
+pkgbuild --root ./GatebluApp \
+  --identifier com.octoblu.GatebluApp \
+  --version 1.0 \
+  --ownership recommended \
+  --component-plist $PLATFORM_BUILD_DIR/GatebluAppComponents.plist \
+  --install-location "/Applications" \
+  ./GatebluApp.pkg
+
+codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/GatebluApp.pkg"
+
+pkgutil --expand GatebluService.pkg GatebluService
+pkgutil --flatten GatebluService/GatebluServiceCore.pkg GatebluServiceCore.pkg
+pkgutil --flatten GatebluService/node.pkg node.pkg
+pkgutil --flatten GatebluService/npm.pkg npm.pkg
+
+codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/GatebluServiceCore.pkg"
+codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/node.pkg"
+codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/npm.pkg"
+
+mkdir -p $PLATFORM_BUILD_DIR/dmg
+
+productbuild --distribution $PLATFORM_SCRIPT_DIR/installer/distribution.plist \
+  --resources $PLATFORM_BUILD_DIR \
+  --package-path $PLATFORM_BUILD_DIR \
+  $PLATFORM_BUILD_DIR/dmg/Gateblu\ Installer.pkg
+
+codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/dmg/Gateblu Installer.pkg"
+
+popd
+
 echo "### remove keychain"
 security delete-keychain mac-build.keychain
 
@@ -38,6 +85,14 @@ umount /Volumes/Gateblu
 
 echo "### building dmg..."
 
-cd $PLATFORM_BUILD_DIR
-$PLATFORM_SCRIPT_DIR/create-dmg --volname Gateblu --volicon $PLATFORM_SCRIPT_DIR/dmg/volume.icns --background $PLATFORM_SCRIPT_DIR/dmg/background.png --window-size 512 320 --icon-size 128 --icon Gateblu.app 100 180 --hide-extension Gateblu.app --app-drop-link 400 180 $PLATFORM_BUILD_DIR/Gateblu.dmg $PLATFORM_APP_DIR
+pushd $PLATFORM_BUILD_DIR
+$PLATFORM_SCRIPT_DIR/create-dmg --volname Gateblu \
+  --volicon $PLATFORM_SCRIPT_DIR/dmg/volume.icns \
+  --background $PLATFORM_SCRIPT_DIR/dmg/background.png \
+  --window-size 512 320 \
+  --icon-size 128 \
+  --icon Gateblu\ Installer.pkg 256 200 \
+  --hide-extension Gateblu\ Installer.pkg \
+  $PLATFORM_BUILD_DIR/Gateblu.dmg \
+  $PLATFORM_BUILD_DIR/dmg
 exit $!
