@@ -4,8 +4,8 @@ shell = require 'shell'
 angular.module 'gateblu-ui'
   .controller 'MainController', ($scope, $timeout, GatebluService, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, $mdDialog) ->
     LogService.add 'Starting up!'
-    $scope.getInstallerLink = =>
-      baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/latest'
+    $scope.getInstallerLink = (version='latest')=>
+      baseUrl = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/#{version}"
       if process.platform == 'darwin'
         filename = 'Gateblu.dmg'
 
@@ -29,19 +29,21 @@ angular.module 'gateblu-ui'
     $scope.devices = []
     $scope.connected = false
     $scope.isInstalled = GatebluService.isInstalled()
-    $scope.serviceInstallerLink = GatebluService.getInstallerLink()
-    $scope.uiInstallerLink = $scope.getInstallerLink()
 
     checkVersions = =>
-      UpdateService.checkServiceVersion (error, serviceUpdateAvailable, serviceVersion) =>
+      UpdateService.checkServiceVersion (error, serviceUpdateAvailable, serviceVersion, newServiceVersion) =>
         return console.error error if error?
-        UpdateService.checkUiVersion (error, uiUpdateAvailable, uiVersion) =>
+        UpdateService.checkUiVersion (error, uiUpdateAvailable, uiVersion, newUiVersion) =>
           return console.error error if error?
           $timeout =>
             $scope.serviceVersion = serviceVersion
+            $scope.newServiceVersion = newServiceVersion
             $scope.uiVersion = uiVersion
+            $scope.newUiVersion = newUiVersion
             $scope.serviceUpdateAvailable = serviceUpdateAvailable
             $scope.uiUpdateAvailable = uiUpdateAvailable
+            $scope.serviceInstallerLink = GatebluService.getInstallerLink "v#{newServiceVersion}"
+            $scope.uiInstallerLink = $scope.getInstallerLink "v#{newUiVersion}"
             _.delay checkVersions, 5000
           , 0
 

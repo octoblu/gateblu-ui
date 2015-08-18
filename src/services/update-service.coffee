@@ -11,19 +11,19 @@ angular.module 'gateblu-ui'
         request.get 'https://registry.npmjs.org/gateblu-forever', json: true, (error, response, body) =>
           return callback error unless body?
           updateAvailable = cmp(body['dist-tags'].latest, version) > 0
-          callback error, updateAvailable
+          callback error, updateAvailable, body['dist-tags'].latest
 
       checkUI : (version, callback=->) =>
         request.get 'https://registry.npmjs.org/gateblu-ui', json: true, (error, response, body) =>
           return callback error unless body?
           updateAvailable = cmp(body['dist-tags'].latest, version) > 0
-          callback error, updateAvailable
+          callback error, updateAvailable, body['dist-tags'].latest
 
       checkServiceVersion : (callback=->) =>
         GatebluService.getVersion (error, version) =>
           return callback error if error?
-          service.checkService version, (error, updateAvailable) =>
-            callback error, updateAvailable, version
+          service.checkService version, (error, updateAvailable, newVersion) =>
+            callback error, updateAvailable, version, newVersion
 
       checkUiVersion : (callback=->) =>
         fs.readFile path.resolve(__dirname + '/package.json'), (error, config) =>
@@ -33,6 +33,6 @@ angular.module 'gateblu-ui'
           catch error
             return callback error
 
-          service.checkUI config.version, (error, updateAvailable) =>
-            callback error, updateAvailable, config.version
+          service.checkUI config.version, (error, updateAvailable, newVersion) =>
+            callback error, updateAvailable, config.version, newVersion
     service

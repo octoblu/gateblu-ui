@@ -40,8 +40,8 @@ class GatebluService
   isInstalled: =>
     fsExtra.existsSync(@getPackagePath())
 
-  getInstallerLink: =>
-    baseUrl = 'https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/latest'
+  getInstallerLink: (version='latest') =>
+    baseUrl = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/#{version}"
     if process.platform == 'darwin'
       filename = 'GatebluService.pkg'
 
