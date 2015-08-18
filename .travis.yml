@@ -38,8 +38,9 @@ deploy:
   clean_up: false
   email: sqrt@octoblu.com
   api_key:
-    secure: "JgeXPAYKIqEduKlCPqkMnYQSr1cmpFw678lRW6JE3u77bTYEG1T3a+qZhyb/Y53FZ9qJiQ48JiH9t1AkPCC/0WCh7Yy2t51k1qqdvSVbXnWAcVFBbBjH0B19+sPP6rgLj4TvqdHISeVLVyY3vEzQLXdW0vZHWyCm1aRfgJuAFBg="
+    secure: JgeXPAYKIqEduKlCPqkMnYQSr1cmpFw678lRW6JE3u77bTYEG1T3a+qZhyb/Y53FZ9qJiQ48JiH9t1AkPCC/0WCh7Yy2t51k1qqdvSVbXnWAcVFBbBjH0B19+sPP6rgLj4TvqdHISeVLVyY3vEzQLXdW0vZHWyCm1aRfgJuAFBg=
   on:
     tags: true
     all_branches: true
-
+api_key:
+  secure: Bv8IjAeWO61NYzZWzOdPmW1/5fqUNyRzioy4MLewce1azEEdHmn/4GC0g0KzyQXsjQ2QD6EhzyXh7OaP3qIdcZAss5c3hVN4mAtJL15aTgCePtuoKhKSQO3Rv7mDCaftD013rJ68yn44cP0wB+TgS0djmY4Q0PuvtMq6G5o0Pik=

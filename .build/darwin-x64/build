@@ -20,8 +20,10 @@ echo "### create keychain"
 security create-keychain -p travis mac-build.keychain
 security import $PLATFORM_SCRIPT_DIR/certs/apple.cer -k ~/Library/Keychains/mac-build.keychain -T /usr/bin/codesign
 security import $PLATFORM_SCRIPT_DIR/certs/dist.p12 -k ~/Library/Keychains/mac-build.keychain -P $KEY_PASSWORD -T /usr/bin/codesign
+security import $PLATFORM_SCRIPT_DIR/certs/installer.p12 -k ~/Library/Keychains/mac-build.keychain -P $KEY_PASSWORD -T /usr/bin/codesign
 
 identity="A5D9EE988CEFE25C6D04679D00F9C8C60B63C240"
+identity_name="Developer ID Installer: Octoblu Inc. (JLSZ8Q5945)"
 
 echo "### signing frameworks"
 
@@ -34,10 +36,6 @@ done
 
 echo "### signing app"
 codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_APP_DIR"
-
-echo "### verifying signature"
-codesign -vvv -d "$PLATFORM_APP_DIR"
-# sudo spctl -a -vvvv "$PLATFORM_APP_DIR"
 
 echo "### building packages"
 pushd $PLATFORM_BUILD_DIR
@@ -72,11 +70,15 @@ mkdir -p $PLATFORM_BUILD_DIR/dmg
 productbuild --distribution $PLATFORM_SCRIPT_DIR/installer/distribution.plist \
   --resources $PLATFORM_BUILD_DIR \
   --package-path $PLATFORM_BUILD_DIR \
-  $PLATFORM_BUILD_DIR/dmg/Gateblu\ Installer.pkg
-
-codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/dmg/Gateblu Installer.pkg"
+  --keychain ~/Library/Keychains/mac-build.keychain \
+  --sign "$identity_name" \
+  "$PLATFORM_BUILD_DIR/dmg/Gateblu Installer.pkg"
 
 popd
+
+echo "### verifying signature"
+codesign -vvv -d "$PLATFORM_APP_DIR"
+codesign -vvv -d "$PLATFORM_BUILD_DIR/dmg/Gateblu Installer.pkg"
 
 echo "### remove keychain"
 security delete-keychain mac-build.keychain
