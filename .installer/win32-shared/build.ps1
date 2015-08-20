@@ -27,6 +27,14 @@ $tmp_dir = [io.path]::GetTempFileName()
 $wix_template_dir = "$shared_dir\wix"
 $wix_dir = "C:\Program Files (x86)\WiX Toolset v3.9\bin"
 
+if($env:APPVEYOR_REPO_TAG_NAME){
+  $gateblu_version=$env:APPVEYOR_REPO_TAG_NAME
+} else {
+  $gateblu_version='latest'
+}
+
+echo "Building Gateblu $gateblu_version"
+
 @(
     $output_dir
     $tmp_dir
@@ -47,26 +55,38 @@ echo "Copying to $tmp_dir..."
 robocopy $script_dir\..\.. $tmp_dir /S /NFL /NDL /NS /NC /NJH /NJS /XD .git installer .installer coverage test node_modules
 robocopy $shared_dir\assets $tmp_dir /S /NFL /NDL /NS /NC /NJH /NJS
 
-@(
-    "gateblu-$platform.zip"
-) |
-Where-Object { (!(Test-Path $cache_dir\$_)) } |
-ForEach-Object {
-  $source = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/latest/$_"
-  $destination = "$cache_dir\$_"
-  echo "Downloading $cache_dir\$_..."
-  Invoke-WebRequest $source -OutFile $destination
+
+$destination = "$cache_dir/gateblu-$platform-$gateblu_version.zip"
+If(!(Test-Path $destination)) {
+  $source = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/$gateblu_version/gateblu-$platform.zip"
+  echo "Downloading $destination..."
+  for($i=1; $i -le 60; $i++) {
+    echo "Checking $i for $source..."
+    Invoke-WebRequest $source -OutFile $destination | Out-Null
+
+    If(Test-Path $destination) {
+      break
+    }
+    Start-Sleep -s 30;
+  }
+}
+
+If(!(Test-Path "$destination")) {
+  echo "$destination not found, giving up."
+  exit 1
 }
 
 echo "Adding GatebluApp..."
-$source = "$cache_dir\gateblu-$platform.zip"
+$source = "$destination"
 pushd $tmp_dir
 7z -y x $source | Out-Null
 popd
 
+$gateblu_legal_version = "$gateblu_version" -replace 'v', ''
+
 #Generate the installer
 . $wix_dir\heat.exe dir $tmp_dir -srd -dr INSTALLDIR -cg MainComponentGroup -out $shared_dir\wix\directory.wxs -ke -sfrag -gg -var var.SourceDir -sreg -scom
-. $wix_dir\candle.exe -dCacheDir="$cache_dir" -dSourceDir="$tmp_dir" $wix_template_dir\*.wxs -o $output_dir\\ -ext WiXUtilExtension
+. $wix_dir\candle.exe -dCacheDir="$cache_dir" -dSourceDir="$tmp_dir" -dProductVersion="$gateblu_legal_version" $wix_template_dir\*.wxs -o $output_dir\\ -ext WiXUtilExtension
 . $wix_dir\light.exe -o $output_dir\GatebluApp-$platform.msi $output_dir\*.wixobj -cultures:en-US -ext WixUIExtension.dll -ext WiXUtilExtension
 
 # Optional digital sign the certificate.

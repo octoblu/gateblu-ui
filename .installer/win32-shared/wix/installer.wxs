@@ -2,15 +2,17 @@
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
      xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
 
-  <Product Id="D87C7EDF-24E3-4509-AB1A-AA7E1BCBD89C"
+  <Product Id="*"
           UpgradeCode="381835F6-B008-45AF-B062-AAF2F972AE6D"
-          Language='1033' Codepage='1252' Version='1.0.0'
+          Language='1033' Codepage='1252' Version='$(var.ProductVersion)'
           Name="GatebluApp"
           Manufacturer='Octoblu'>
 
     <Package Id='*' Keywords='Installer' Description="Octoblu IOT Gateway App"
-          Comments='Blaaaa' Manufacturer='Octoblu'
+          Comments='' Manufacturer='Octoblu'
           InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <MajorUpgrade DowngradeErrorMessage="Can’t downgrade." />
 
     <Media Id='1' EmbedCab='yes' Cabinet="main.cab" />
 
@@ -24,6 +26,24 @@
     <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
 
     <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id="DesktopFolder" Name="Desktop">
+        <Component Id="ApplicationShortcutDesktop" Guid="*">
+          <Shortcut Id="ApplicationDesktopShortcut"
+             Name="Gateblu"
+             Description="Octoblu IoT Gateway"
+             Target="[INSTALLDIR]gateblu.exe"
+             WorkingDirectory="INSTALLDIR"/>
+          <RemoveFolder Id="DesktopFolder" On="uninstall"/>
+          <RegistryValue
+            Root="HKCU"
+            Key="Software/Gateblu"
+            Name="installed"
+            Type="integer"
+            Value="1"
+            KeyPath="yes"/>
+        </Component>
+      </Directory>
+
       <Directory Id='ProgramFilesFolder' Name='PFiles'>
         <Directory Id='Octoblu_Folder' Name='Octoblu'>
           <Directory Id='INSTALLDIR' Name='Gateblu'>
@@ -34,9 +54,7 @@
 
     <Feature Id='Complete' Level='1'>
       <ComponentGroupRef Id='MainComponentGroup' />
-      <Component Id="node_component" Guid="{AAAAAAAA-C0C2-4D3F-BC22-EC7AE4963FFF}" Directory="INSTALLDIR">
-        <File Id="gateblu" KeyPath="yes" Source="$(var.CacheDir)\gateblu.exe" />
-      </Component>
+      <ComponentRef Id="ApplicationShortcutDesktop" />
     </Feature>
 
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
