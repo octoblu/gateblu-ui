@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+
+  <Product Id="D87C7EDF-24E3-4509-AB1A-AA7E1BCBD89C"
+          UpgradeCode="381835F6-B008-45AF-B062-AAF2F972AE6D"
+          Language='1033' Codepage='1252' Version='1.0.0'
+          Name="GatebluApp"
+          Manufacturer='Octoblu'>
+
+    <Package Id='*' Keywords='Installer' Description="Octoblu IOT Gateway App"
+          Comments='Blaaaa' Manufacturer='Octoblu'
+          InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
+
+    <Media Id='1' EmbedCab='yes' Cabinet="main.cab" />
+
+    <WixVariable Id="WixUILicenseRtf" Value="$(var.SourceDir)\LICENSE.rtf" />
+    <!-- <WixVariable Id="WixUIBannerBmp" Value="$(var.SourceDir)\public\images\msi-banner.bmp" /> -->
+    <!-- <WixVariable Id="WixUIDialogBmp" Value="$(var.SourceDir)\public\images\msi-welcome.bmp" /> -->
+
+    <Icon Id="icon.ico" SourceFile="$(var.SourceDir)\images\gateblu.ico"/>
+    <Property Id="ARPPRODUCTICON" Value="icon.ico" />
+    <Property Id="MSIUSEREALADMINDETECTION" Value="1" />
+    <Property Id="ASSISTANCE_START_VIA_REGISTRY">1</Property>
+
+    <Directory Id='TARGETDIR' Name='SourceDir'>
+      <Directory Id='ProgramFilesFolder' Name='PFiles'>
+        <Directory Id='Octoblu_Folder' Name='Octoblu'>
+          <Directory Id='INSTALLDIR' Name='Gateblu'>
+          </Directory>
+        </Directory>
+      </Directory>
+    </Directory>
+
+    <Feature Id='Complete' Level='1'>
+      <ComponentGroupRef Id='MainComponentGroup' />
+      <Component Id="node_component" Guid="{AAAAAAAA-C0C2-4D3F-BC22-EC7AE4963FFF}" Directory="INSTALLDIR">
+        <File Id="gateblu" KeyPath="yes" Source="$(var.CacheDir)\gateblu.exe" />
+      </Component>
+    </Feature>
+
+    <Property Id="WIXUI_INSTALLDIR" Value="INSTALLDIR" />
+
+    <UIRef Id="WixUI" />
+  </Product>
+</Wix>
