@@ -16,7 +16,7 @@ mkdir -p $BUILD_DIR $CACHE_DIR/electron
 
 echo "Installing node_modules..."
 npm install --silent
-node_modules/.bin/gulp --silent
+node_modules/.bin/gulp
 
 echo "Copying app..."
 cp -rfp app $BUILD_DIR
@@ -45,7 +45,7 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
   PLATFORM_BUILD_DIR=$BUILD_DIR/$ELECTRON_PLATFORM
   PLATFORM_SCRIPT_DIR=$SCRIPT_DIR/$ELECTRON_PLATFORM
   platform_build_script=$PLATFORM_SCRIPT_DIR/build
-  rm -rf $PLATFORM_BUILD_DIR
+  sudo rm -rf $PLATFORM_BUILD_DIR
   mkdir -p $PLATFORM_BUILD_DIR
   cd $PLATFORM_BUILD_DIR
 

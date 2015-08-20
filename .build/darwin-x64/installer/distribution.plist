@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<installer-gui-script minSpecVersion="2">
+    <pkg-ref id="com.octoblu.GatebluApp.pkg"/>
+    <pkg-ref id="com.octoblu.GatebluServiceCore.pkg"/>
+    <pkg-ref id="com.octoblu.GatebluService.nodejs.pkg"/>
+    <pkg-ref id="com.octoblu.GatebluService.node.npm.pkg"/>
+    <options customize="never" require-scripts="false"/>
+    <volume-check>
+        <allowed-os-versions>
+            <os-version min="10.9"/>
+        </allowed-os-versions>
+    </volume-check>
+    <choices-outline>
+        <line choice="default">
+            <line choice="com.octoblu.GatebluApp.pkg"/>
+            <line choice="com.octoblu.GatebluServiceCore.pkg"/>
+            <line choice="com.octoblu.GatebluService.nodejs.pkg"/>
+            <line choice="com.octoblu.GatebluService.node.npm.pkg"/>
+        </line>
+    </choices-outline>
+    <choice id="default"/>
+    <choice id="com.octoblu.GatebluApp.pkg" visible="false">
+        <pkg-ref id="com.octoblu.GatebluApp.pkg"/>
+    </choice>
+    <pkg-ref id="com.octoblu.GatebluApp.pkg" version="1.0" onConclusion="none">GatebluApp.pkg</pkg-ref>
+    <choice id="com.octoblu.GatebluServiceCore.pkg" visible="false">
+        <pkg-ref id="com.octoblu.GatebluServiceCore.pkg"/>
+    </choice>
+    <pkg-ref id="com.octoblu.GatebluServiceCore.pkg" version="1.0" onConclusion="none">GatebluServiceCore.pkg</pkg-ref>
+    <choice id="com.octoblu.GatebluService.nodejs.pkg" visible="false">
+        <pkg-ref id="com.octoblu.GatebluService.nodejs.pkg"/>
+    </choice>
+    <pkg-ref id="com.octoblu.GatebluService.nodejs.pkg" version="1.0" onConclusion="none">node.pkg</pkg-ref>
+    <choice id="com.octoblu.GatebluService.node.npm.pkg" visible="false">
+        <pkg-ref id="com.octoblu.GatebluService.node.npm.pkg"/>
+    </choice>
+    <pkg-ref id="com.octoblu.GatebluService.node.npm.pkg" version="1.0" onConclusion="none">npm.pkg</pkg-ref>
+</installer-gui-script>

@@ -36,10 +36,9 @@ deploy:
 - provider: npm
   skip_cleanup: true
   clean_up: false
-  email: sqrt@octoblu.com
+  email: serveradmin@octoblu.com
   api_key:
-    secure: "JgeXPAYKIqEduKlCPqkMnYQSr1cmpFw678lRW6JE3u77bTYEG1T3a+qZhyb/Y53FZ9qJiQ48JiH9t1AkPCC/0WCh7Yy2t51k1qqdvSVbXnWAcVFBbBjH0B19+sPP6rgLj4TvqdHISeVLVyY3vEzQLXdW0vZHWyCm1aRfgJuAFBg="
+    secure: BG9vlC2mjJkK9XJlL4/XE+pVvuZqDvadGA1YjUgmlv/slehYIx9ugpd0VFMJbObmr/+va24hHgJySkZtaJ1vGYAnbPbfWY+JMoNkHiXz7BFX4zYuMJtkzi3HIMexcZOj3oJwhSLGwrwEUHtLIATJeyX++H28mEjyW8VQgi3Eq6E=
   on:
     tags: true
     all_branches: true
-

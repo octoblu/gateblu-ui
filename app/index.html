@@ -4,7 +4,6 @@
   <link rel="stylesheet" type="text/css" href="dist/css/font-awesome.min.css">
   <link rel="stylesheet" type="text/css" href="css/app.css">
   <script type="text/javascript" src="dist/js/jquery.min.js"></script>
-  <script type="text/javascript" src="dist/js/lodash.min.js"></script>
   <script type="text/javascript" src="dist/js/angular.min.js"></script>
   <script type="text/javascript" src="dist/js/angular-animate.min.js"></script>
   <script type="text/javascript" src="dist/js/angular-aria.min.js"></script>
@@ -21,9 +20,6 @@
           <span>{{gateblu.name || 'Gateblu'}}</span>
         </h2>
         <span flex></span>
-        <md-button class="md-icon-button" aria-label="Stop / Start Service" title="Stop / Start Service" ng-click="toggleService()">
-          <i class="fa fa-lg fa-power-off" ng-class="{'muted': serviceStopped}"></i>
-        </md-button>
         <md-button class="md-icon-button" aria-label="Info" title="Gateblu Info" ng-click="showInfo = !showInfo">
           <i class="fa fa-lg fa-info"></i>
         </md-button>
@@ -33,51 +29,71 @@
         <md-button class="md-icon-button" aria-label="View Log" title="View Log" ng-click="showLogs = !showLogs">
           <i class="fa fa-lg fa-file-text-o"></i>
         </md-button>
+        <md-button class="md-icon-button" aria-label="Stop / Start Service" title="Stop / Start Service" ng-click="toggleService()" ng-if="!serviceChanging">
+          <i class="fa fa-lg fa-power-off" ng-class="{'muted': serviceStopped, 'icon-green': !serviceStopped}"></i>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Hard Restart" title="Hard Restart" ng-click="hardRestartGateblu()" ng-if="!serviceChanging">
+          <i class="fa fa-lg fa-bolt icon-yellow"></i>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Service Loading" title="Service Loading" ng-if="serviceChanging">
+          <i class="fa fa-lg fa-spinner fa-spin"></i>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Reset" title="Gateblu Reset" ng-click="resetGateblu()">
+          <i class="fa fa-lg fa-trash-o destructive-icon"></i>
+        </md-button>
       </div>
     </md-toolbar>
 
     <md-toolbar md-theme="info" ng-show="showInfo">
-      <span flex></span>
-      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
-        <div class="md-flex">
-          Gateblu UUID: ~{{gateblu.uuid}}<br>
-          Service Version: {{serviceVersion}}<br>
-          UI Version: {{uiVersion}}
-        </div>
-      </h2>
+      <div class="md-toolbar-tools">
+        <h2>
+          <b>UUID:</b> ~{{gateblu.uuid}}
+        </h2>
+        <span flex></span>
+        <h2>
+          <b>Service Version</b>: {{serviceVersion}}<br>
+          <b>UI Version</b>: {{uiVersion}}
+        </h2>
+      </div>
     </md-toolbar>
 
     <md-toolbar md-theme="warning" ng-show="serviceStopped">
-      <span flex></span>
-      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
-        <span class="md-flex">Gateblu Service is not running!</span>
-      </h2>
+      <div class="md-toolbar-tools">
+        <h2>
+          <i class="fa fa-exclamation-triangle"></i>
+          <span class="md-flex">Gateblu Service is not running!</span>
+        </h2>
+      </div>
     </md-toolbar>
 
     <md-toolbar md-theme="warning" ng-show="serviceUpdateAvailable">
-      <span flex></span>
-      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
-        <span class="md-flex">
-          Gateblu Service has an update available!
-
-          <a ng-href="{{serviceInstallerLink}}" class="external-link md-button md-raised" aria-label="Install">
-            <i class="fa fa-lg fa-download"></i> Install
-          </a>
-        </span>
-      </h2>
+      <div class="md-toolbar-tools">
+        <h2>
+          <i class="fa fa-exclamation-triangle"></i>
+          <span>
+            Gateblu Service has an update available! (v{{newServiceVersion}})
+          </span>
+        </h2>
+        <span flex></span>
+        <md-button ng-href="{{serviceInstallerLink}}" class="external-link md-button md-raised" aria-label="Install">
+          <i class="fa fa-lg fa-download"></i> Install
+        </md-button>
+      </div>
     </md-toolbar>
 
     <md-toolbar md-theme="warning" ng-show="uiUpdateAvailable">
-      <span flex></span>
-      <h2 class="md-toolbar-tools md-toolbar-tools-bottom">
-        <span class="md-flex">
-          Gateblu has an update available!
-
-          <a ng-href="{{uiInstallerLink}}" class="external-link md-button md-raised" aria-label="Install">
-            <i class="fa fa-lg fa-download"></i> Install
-          </a>
-        </span>
-      </h2>
+      <div class="md-toolbar-tools">
+        <h2>
+          <i class="fa fa-exclamation-triangle"></i>
+          <span>
+            Gateblu has an update available! (v{{newUiVersion}})
+          </span>
+        </h2>
+        <span flex></span>
+        <md-button ng-href="{{uiInstallerLink}}" class="external-link md-button md-raised" aria-label="Install">
+          <i class="fa fa-lg fa-download"></i> Install
+        </md-button>
+      </div>
     </md-toolbar>
 
     <md-content class="log-container" md-theme="logs" layout-fill layout="column" ng-show="showLogs">
@@ -96,6 +112,39 @@
           </div>
           <md-divider inset></md-divider>
         </md-list-item>
+        <md-list-item class="md-3-line" ng-if="!logs">
+          <div class="md-list-item-text">
+            <h3>No logs available</h3>
+          </div>
+        </md-list-item>
+      </md-list>
+    </md-content>
+
+    <md-content class="log-container" md-theme="logs" layout-fill layout="column" ng-show="showLogForDevice">
+      <md-toolbar md-scroll-shrink>
+        <div class="md-toolbar-tools">
+          <h3>
+            <span>Device Log <span ng-if="showLogForDevice">({{showLogForDevice}})</span></span>
+          </h3>
+          <span flex></span>
+          <md-button ng-click="toggleDeviceLog(showLogForDevice)" class="md-button md-raised" aria-label="Toggle Device Log">
+            <i class="fa fa-lg fa-close"></i> Close
+          </md-button>
+        </div>
+      </md-toolbar>
+      <md-list ng-controller="DeviceLogController">
+        <md-list-item class="md-3-line" ng-repeat="line in logs[showLogForDevice]">
+          <div class="md-list-item-text" >
+            <h3 ng-class="{'log-error': line.type == 'error'}">{{ line.message }}</h3>
+            <p ng-class="{'log-error': line.type == 'error'}"><span><strong>Type:</strong> {{line.type}}</span> <span><strong>Date:</strong> {{ line.timestamp | date : 'medium' }}</span></p>
+          </div>
+          <md-divider inset></md-divider>
+        </md-list-item>
+        <md-list-item class="md-3-line" ng-if="!logs[showLogForDevice]">
+          <div class="md-list-item-text">
+            <h3>No logs available</h3>
+          </div>
+        </md-list-item>
       </md-list>
     </md-content>
 
@@ -112,22 +161,39 @@
       <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
     </div>
 
-    <div class="grid-device-container" ng-if="connected" flex>
+    <div class="grid-device-container" ng-if="connected && !showLogForDevice && !showLogs" flex>
       <md-grid-list
             md-cols-sm="1" md-cols-md="3" md-cols-gt-md="4"
             md-row-height-gt-md="1:1" md-row-height="4:3"
             md-gutter="8px" md-gutter-gt-sm="4px" >
 
-        <md-grid-tile ng-if="lucky_robot_url"
+        <md-grid-tile ng-if="lucky_robot_url && gateblu.owner"
                       md-rowspan="1"
                       md-colspan="1"
                       class="gray">
-          <img class="icon" ng-src="{{lucky_robot_url}}"></img>
+          <div class="device-icon-png" ng-style="{'background-image': 'url('+lucky_robot_url+')'}"></div>
           <md-grid-tile-footer layout-align="end center" layout="row">
-            <a href="https://app.octoblu.com/node-wizard" style="float:right" class="add-device-button external-link md-button" aria-label="Add Device">
+            <a href="https://app.octoblu.com/things" style="float:right" class="add-device-button external-link md-button" aria-label="Add Device">
               <i class="fa fa-plus fa-lg"></i>
             </a>
             <p>Add a Device</p>
+          </md-grid-tile-footer>
+        </md-grid-tile>
+
+        <md-grid-tile ng-if="!gateblu.owner"
+                      ng-click="claimGateblu()"
+                      md-rowspan="1"
+                      md-colspan="1"
+                      style="background: #84ffff;">
+          <i class="fa fa-5x fa-flag"></i>
+
+          <md-grid-tile-footer layout-align="end center" layout="row">
+            <md-button aria-label="Claim Gateblu">
+              Claim Gateblu
+            </md-button>
+            <md-button class="claim-gateblu-button-icon" aria-label="Claim Gateblu">
+              <i class="fa fa-link fa-lg pull-right"></i>
+            </md-button>
           </md-grid-tile-footer>
         </md-grid-tile>
 
