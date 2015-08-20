@@ -9,7 +9,7 @@
           Manufacturer='Octoblu'>
 
     <Package Id='*' Keywords='Installer' Description="Octoblu IOT Gateway App"
-          Comments='' Manufacturer='Octoblu'
+          Comments='Comments are required' Manufacturer='Octoblu'
           InstallerVersion='100' Languages='1033' Compressed='yes' SummaryCodepage='1252' />
 
     <MajorUpgrade DowngradeErrorMessage="Can’t downgrade." />
