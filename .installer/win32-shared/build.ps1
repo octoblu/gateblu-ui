@@ -32,6 +32,7 @@ if($env:APPVEYOR_REPO_TAG_NAME){
 } else {
   $gateblu_version='latest'
 }
+$gateblu_legal_version = "$gateblu_version" -replace 'v', ''
 
 echo "Building Gateblu $gateblu_version"
 
@@ -55,8 +56,14 @@ echo "Copying to $tmp_dir..."
 robocopy $script_dir\..\.. $tmp_dir /S /NFL /NDL /NS /NC /NJH /NJS /XD .git installer .installer coverage test node_modules
 robocopy $shared_dir\assets $tmp_dir /S /NFL /NDL /NS /NC /NJH /NJS
 
+$destination = "$cache_dir\GatebluService.msi"
+If(!(Test-Path $destination)) {
+  $source = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/latest/GatebluService-$platform.msi"
+  echo "Downloading $destination..."
+  Invoke-WebRequest $source -OutFile $destination | Out-Null
+}
 
-$destination = "$cache_dir/gateblu-$platform-$gateblu_version.zip"
+$destination = "$cache_dir\gateblu-$platform-$gateblu_version.zip"
 If(!(Test-Path $destination)) {
   $source = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/$gateblu_version/gateblu-$platform.zip"
   echo "Downloading $destination..."
@@ -82,8 +89,6 @@ pushd $tmp_dir
 7z -y x $source | Out-Null
 popd
 
-$gateblu_legal_version = "$gateblu_version" -replace 'v', ''
-
 #Generate the installer
 . $wix_dir\heat.exe dir $tmp_dir -srd -dr INSTALLDIR -cg MainComponentGroup -out $shared_dir\wix\directory.wxs -ke -sfrag -gg -var var.SourceDir -sreg -scom
 . $wix_dir\candle.exe -dCacheDir="$cache_dir" -dSourceDir="$tmp_dir" -dProductVersion="$gateblu_legal_version" $wix_template_dir\*.wxs -o $output_dir\\ -ext WiXUtilExtension
@@ -92,6 +97,12 @@ $gateblu_legal_version = "$gateblu_version" -replace 'v', ''
 # Optional digital sign the certificate.
 # You have to previously import it.
 #. "C:\Program Files (x86)\Microsoft SDKs\Windows\v7.1A\Bin\signtool.exe" sign /n "Auth10" .\output\installer.msi
+
+Copy-Item $output_dir\GatebluApp-$platform.msi $tmp_dir\GatebluApp.msi
+Copy-Item $cache_dir\GatebluService.msi $tmp_dir\GatebluService.msi
+
+. $wix_dir\candle.exe -dSourceDir="$tmp_dir" -dProductVersion="$gateblu_legal_version" -ext WixNetFxExtension -ext WixBalExtension -ext WixUtilExtension -o $output_dir\\ $shared_dir\wix-burn\burn.wxs
+. $wix_dir\light.exe -o $output_dir\gateblu-$platform.exe -ext WixNetFxExtension -ext WixBalExtension -ext WixUtilExtension $output_dir\burn.wixobj
 
 #Remove the temp
 Remove-Item $tmp_dir -Recurse -Force

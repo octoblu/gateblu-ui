@@ -1,0 +1,20 @@
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi"
+     xmlns:bal="http://schemas.microsoft.com/wix/BalExtension"
+     xmlns:util="http://schemas.microsoft.com/wix/UtilExtension">
+  <Bundle Name="Gateblu"
+    Version="$(var.ProductVersion)"
+    Manufacturer="Octoblu"
+    UpgradeCode="381835F6-B008-45AF-B062-BBF2F972AE6D"
+    Copyright="2015"
+    IconSourceFile="$(var.SourceDir)\images\gateblu.ico">
+
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense">
+      <bal:WixStandardBootstrapperApplication LicenseFile="$(var.SourceDir)\LICENSE.rtf" />
+    </BootstrapperApplicationRef>
+
+    <Chain>
+      <MsiPackage Id="GatebluApp" Compressed="yes" Visible="yes" />
+      <MsiPackage Id="GatebluService" SourceFile="$(var.SourceDir)\GatebluService.msi" Compressed="yes" Visible="yes" />
+    </Chain>
+  </Bundle>
+</Wix>
