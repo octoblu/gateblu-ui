@@ -13,7 +13,7 @@
     </BootstrapperApplicationRef>
 
     <Chain>
-      <MsiPackage Id="GatebluApp" Compressed="yes" Visible="yes" />
+      <MsiPackage Id="GatebluApp" SourceFile="$(var.SourceDir)\GatebluApp.msi" Compressed="yes" Visible="yes" />
       <MsiPackage Id="GatebluService" SourceFile="$(var.SourceDir)\GatebluService.msi" Compressed="yes" Visible="yes" />
     </Chain>
   </Bundle>
