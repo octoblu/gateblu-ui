@@ -10,7 +10,7 @@ angular.module 'gateblu-ui'
         filename = 'Gateblu.dmg'
 
       if process.platform == 'win32'
-        filename = "gateblu-win32-#{process.arch}.zip"
+        filename = "gateblu-win32-#{process.arch}.exe"
 
       "#{baseUrl}/#{filename}"
 

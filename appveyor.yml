@@ -30,6 +30,7 @@ after_build:
         mkdir output\latest | Out-Null
       }
   - ps: cp '.\.installer\win32-*\output\*.msi' output\$env:TAG_NAME
+  - ps: cp '.\.installer\win32-*\output\*.exe' output\$env:TAG_NAME
   - ps: >-
       if($env:APPVEYOR_REPO_TAG_NAME){
         cp "output\$env:TAG_NAME\*" output\latest
