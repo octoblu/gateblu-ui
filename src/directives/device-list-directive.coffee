@@ -4,3 +4,5 @@ angular.module 'gateblu-ui'
     scope:
       devices: '='
     templateUrl: 'pages/device-list.html'
+    controller: 'DeviceListController'
+    

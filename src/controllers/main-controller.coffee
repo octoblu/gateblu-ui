@@ -79,6 +79,14 @@ class MainController
       uuids = _.pluck @scope.devices, 'uuid'
       @scope.refreshing = ! _.isEqual uuids, @scope.deviceUuids
 
+    @rootScope.$on 'log:open:device', ($event, device) =>
+      @scope.showLog = true
+      @scope.logTitle = "Device Log (~#{device.uuid})"
+      @scope.logLines = @DeviceLogService.get device.uuid
+
+    @rootScope.$on 'log:close', ($event) =>
+      @scope.showLog = false
+
     @rootScope.$on 'error', ($event, error) =>
       alert = @mdDialog.alert
         title: 'An error has occurred'
@@ -90,14 +98,8 @@ class MainController
   setupScope: =>
     @scope.connecting = true
     @scope.refreshing = false
+    @scope.showLog = false
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
-
-    @scope.toggleDevice = _.debounce (device) =>
-      if device.online
-        @GatebluServiceManager.stopDevice device
-      else
-        @GatebluServiceManager.startDevice device
-    , 500, {leading: true, trailing: false}
 
     @scope.getInstallerLink = (version='latest') =>
       baseUrl = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/#{version}"
@@ -109,41 +111,13 @@ class MainController
 
       "#{baseUrl}/#{filename}"
 
-    @scope.deleteDevice = (device) =>
-      alert = @mdDialog.confirm
-        title: 'Are you sure?'
-        content: "This will remove #{device.name} ~#{device.uuid}"
-        ok: 'Delete'
-        cancel: 'Cancel'
-        theme: 'confirm'
-
-      @mdDialog
-        .show alert
-        .then =>
-          @GatebluServiceManager.deleteDevice device
+    @scope.showMainLog = (device) =>
+      @scope.showLog = true
+      @scope.logTitle = 'Gateblu Log'
+      @scope.logLines = @LogService.all()
 
     @scope.listenToDevice = (device) =>
       @GatebluServiceManager.getLogForDevice device.uuid
-
-    @scope.toggleDeviceLog = (uuid) =>
-      return @scope.showLogForDevice = null if !_.isEmpty @scope.showLogForDevice
-      @scope.showLogForDevice = uuid;
-
-    @scope.showDevice = (device) =>
-      alert = @mdDialog.confirm
-        title: device.name
-        content: device.uuid
-        theme: 'info'
-        cancel: 'Close'
-        ok: 'Show Logs'
-
-      @mdDialog
-        .show alert
-        .then =>
-          alert = undefined
-          @scope.toggleDeviceLog device.uuid
-        .catch =>
-          alert = undefined
 
     @scope.claimGateblu = =>
       @GatebluServiceManager.generateSessionToken (error, result) =>
