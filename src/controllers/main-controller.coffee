@@ -61,11 +61,12 @@ class MainController
 
   setupRootScope: =>
     @rootScope.$on "gateblu:connected", ($event) =>
-      @scope.connected = true
+      @scope.connecting = false
+      @scope.refreshing = true
       @LogService.add "Gateblu Connected"
 
     @rootScope.$on "gateblu:disconnected", ($event) =>
-      @scope.connected = false
+      @scope.connecting = true
       @LogService.add "Gateblu Disconnected"
 
     @rootScope.$on 'gateblu:refreshDevices', ($event, data={}) =>
@@ -86,8 +87,8 @@ class MainController
         .show alert
 
   setupScope: =>
-    @scope.connected = false
-    @scope.refreshing = true
+    @scope.connecting = true
+    @scope.refreshing = false
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
 
     @scope.toggleDevice = _.debounce (device) =>

@@ -157,16 +157,10 @@
       </md-button>
     </div>
 
-    <div class="connecting-container" ng-if="!connected" flex layout-fill>
-      <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
-    </div>
+    <full-screen-spinner message="Connecting to Octoblu..." ng-if="connecting"></full-screen-spinner>
+    <full-screen-spinner message="Loading Devices..." ng-if="refreshing"></full-screen-spinner>
 
-    <div class="connecting-container" ng-if="connected && refreshing" flex layout-fill>
-      <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Loading Devices...</h1>
-    </div>
-
-
-    <div class="grid-device-container" ng-if="connected && !showLogForDevice && !showLogs" flex>
+    <div class="grid-device-container" ng-if="!connecting && !showLogForDevice && !showLogs" flex>
       <md-grid-list
             md-cols-sm="1" md-cols-md="3" md-cols-gt-md="4"
             md-row-height-gt-md="1:1" md-row-height="4:3"
