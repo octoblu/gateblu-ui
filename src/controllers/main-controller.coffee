@@ -66,6 +66,9 @@ class MainController
       @scope.refreshing = true
       @LogService.add "Gateblu Connected"
 
+    @rootScope.$on 'gateblu:whoami', ($event, config) =>
+      @scope.gatebluConfig = config
+
     @rootScope.$on "gateblu:disconnected", ($event) =>
       @scope.connecting = true
       @LogService.add "Gateblu Disconnected"
@@ -77,7 +80,9 @@ class MainController
     @rootScope.$on 'gateblu:devices', ($event, devices) =>
       @scope.devices = _.map devices, @updateDevice
       uuids = _.pluck @scope.devices, 'uuid'
-      @scope.refreshing = ! _.isEqual uuids, @scope.deviceUuids
+      doneLoadingDevices = ! _.isEqual uuids, @scope.deviceUuids
+      @scope.refreshing = doneLoadingDevices
+      @scope.serviceChanging = doneLoadingDevices
 
     @rootScope.$on 'log:open:device', ($event, device) =>
       @scope.showLog = true
@@ -91,6 +96,7 @@ class MainController
       alert = @mdDialog.alert
         title: 'An error has occurred'
         content: error.message
+        ok: 'Close'
 
       @mdDialog
         .show alert
@@ -99,6 +105,7 @@ class MainController
     @scope.connecting = true
     @scope.refreshing = false
     @scope.showLog = false
+    @scope.serviceChanging = true
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
 
     @scope.getInstallerLink = (version='latest') =>
