@@ -4,7 +4,9 @@ angular.module 'gateblu-ui'
       message = line.message
 
       unless _.isString message
-        message = JSON.stringify(message).toString()
+        try
+          message = JSON.stringify(message).toString()
+        catch
 
       "#{line.timestamp} - #{message}"
 

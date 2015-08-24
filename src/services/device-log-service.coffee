@@ -4,7 +4,10 @@ angular.module 'gateblu-ui'
     _callbacks = []
     add: (uuid, type, log)=>
       message = log
-      message = JSON.stringify(log).toString() unless _.isString log
+      try
+        message = JSON.stringify(log).toString() unless _.isString log
+      catch
+
       logs[uuid] ?= []
       entry = type: type, message: message, timestamp: new Date(), rawMessage: log
       logs[uuid].unshift entry
