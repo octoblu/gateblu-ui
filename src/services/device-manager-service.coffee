@@ -11,7 +11,7 @@ class DeviceManagerService
     callback()
 
   broadcast: =>
-    @rootScope.$broadcast 'gateblu:devices', @devices
+    @rootScope.$emit 'gateblu:devices', @devices
     @rootScope.$apply()
 
   removeDevice: (device, callback=->) =>

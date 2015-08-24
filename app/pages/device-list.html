@@ -1,0 +1,33 @@
+<div class="grid-device-container" flex>
+  <md-grid-list
+        md-cols-sm="1" md-cols-md="3" md-cols-gt-md="4"
+        md-row-height-gt-md="1:1" md-row-height="4:3"
+        md-gutter="8px" md-gutter-gt-sm="4px" >
+
+    <md-grid-tile ng-repeat="device in devices track by $index | orderBy: 'name'"
+                  md-rowspan="{{device.row_span}}"
+                  md-colspan="{{device.col_span}}"
+                  md-colspan-sm="1"
+                  ng-style="{ 'background': device.background }">
+      <md-icon ng-class="{'device-offline': !device.online}" md-svg-icon="{{device.icon_url}}"></md-icon>
+      <md-grid-tile-footer layout-align="end center" layout="row">
+        <md-button style="float:right" class="md-icon-button" ng-click="device.showMore = !device.showMore" aria-label="Actions">
+          <i class="fa fa-ellipsis-v"></i>
+        </md-button>
+        <md-button ng-click="showDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Info" title="Info">
+          <i class="fa fa-info"></i>
+        </md-button>
+        <md-button ng-click="toggleDeviceLog(device.uuid)" ng-show="device.showMore" class="md-icon-button" aria-label="Show Logs" title="Show Logs">
+          <i class="fa fa-file-text-o"></i>
+        </md-button>
+        <md-button ng-click="deleteDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Delete" title="Delete">
+          <i class="fa fa-trash"></i>
+        </md-button>
+        <p ng-show="!device.showMore">
+          {{device.name || 'Initializing...'}}
+          <span ng-show="!device.online">(offline)</span>
+        </p>
+      </md-grid-tile-footer>
+    </md-grid-tile>
+  </md-grid-list>
+</div>

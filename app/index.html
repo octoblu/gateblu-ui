@@ -160,69 +160,7 @@
     <full-screen-spinner message="Connecting to Octoblu..." ng-if="connecting"></full-screen-spinner>
     <full-screen-spinner message="Loading Devices..." ng-if="refreshing"></full-screen-spinner>
 
-    <div class="grid-device-container" ng-if="!connecting && !showLogForDevice && !showLogs" flex>
-      <md-grid-list
-            md-cols-sm="1" md-cols-md="3" md-cols-gt-md="4"
-            md-row-height-gt-md="1:1" md-row-height="4:3"
-            md-gutter="8px" md-gutter-gt-sm="4px" >
-
-        <md-grid-tile ng-if="lucky_robot_url && gateblu.owner"
-                      md-rowspan="1"
-                      md-colspan="1"
-                      class="gray">
-          <div class="device-icon-png" ng-style="{'background-image': 'url('+lucky_robot_url+')'}"></div>
-          <md-grid-tile-footer layout-align="end center" layout="row">
-            <a href="https://app.octoblu.com/things" style="float:right" class="add-device-button external-link md-button" aria-label="Add Device">
-              <i class="fa fa-plus fa-lg"></i>
-            </a>
-            <p>Add a Device</p>
-          </md-grid-tile-footer>
-        </md-grid-tile>
-
-        <md-grid-tile ng-if="!gateblu.owner"
-                      ng-click="claimGateblu()"
-                      md-rowspan="1"
-                      md-colspan="1"
-                      style="background: #84ffff;">
-          <i class="fa fa-5x fa-flag"></i>
-
-          <md-grid-tile-footer layout-align="end center" layout="row">
-            <md-button aria-label="Claim Gateblu">
-              Claim Gateblu
-            </md-button>
-            <md-button class="claim-gateblu-button-icon" aria-label="Claim Gateblu">
-              <i class="fa fa-link fa-lg pull-right"></i>
-            </md-button>
-          </md-grid-tile-footer>
-        </md-grid-tile>
-
-        <md-grid-tile ng-repeat="device in devices | orderBy: 'name'"
-                      md-rowspan="{{device.row_span}}"
-                      md-colspan="{{device.col_span}}"
-                      md-colspan-sm="1"
-                      ng-style="{ 'background': device.background }">
-          <md-icon ng-class="{'device-offline': !device.online}" md-svg-icon="{{device.icon_url}}"></md-icon>
-          <md-grid-tile-footer layout-align="end center" layout="row">
-            <md-button style="float:right" class="md-icon-button" ng-click="device.showMore = !device.showMore" aria-label="Actions">
-              <i class="fa fa-ellipsis-v"></i>
-            </md-button>
-            <md-button ng-click="showDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Info" title="Info">
-              <i class="fa fa-info"></i>
-            </md-button>
-            <md-button ng-click="toggleDeviceLog(device.uuid)" ng-show="device.showMore" class="md-icon-button" aria-label="Show Logs" title="Show Logs">
-              <i class="fa fa-file-text-o"></i>
-            </md-button>
-            <md-button ng-click="deleteDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Delete" title="Delete">
-              <i class="fa fa-trash"></i>
-            </md-button>
-            <p ng-show="!device.showMore">
-              {{device.name || 'Initializing...'}}
-              <span ng-show="!device.online">(offline)</span>
-            </p>
-          </md-grid-tile-footer>
-        </md-grid-tile>
-      </md-grid-list>
-    </div>
+    <device-list devices="devices" ng-if="!connecting && !refreshing && gateblu.owner"></device-list>
 
   </md-content>
 </body>

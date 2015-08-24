@@ -15,6 +15,7 @@ class MainController
     @GatebluService = dependencies.GatebluService
     @DeviceManagerService = dependencies.DeviceManagerService
     @mdDialog = dependencies.mdDialog
+    @interval = dependencies.interval
 
     @colors = ['#b9f6ca', '#ffff8d', '#84ffff', '#80d8ff', '#448aff', '#b388ff', '#8c9eff', '#ff8a80', '#ff80ab']
 
@@ -24,7 +25,7 @@ class MainController
     @setupScope()
     @checkVersions()
 
-    setInterval =>
+    @interval =>
       @checkVersions()
     , 1000 * 60 * 30
 
@@ -225,11 +226,12 @@ class MainController
           alert = undefined
 
 angular.module 'gateblu-ui'
-  .controller 'MainController', ($rootScope, $scope, $timeout, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->
+  .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->
     new MainController
       rootScope: $rootScope
       scope: $scope
       timeout: $timeout
+      interval: $interval
       mdDialog: $mdDialog
       GatebluServiceManager: GatebluServiceManager
       LogService: LogService
