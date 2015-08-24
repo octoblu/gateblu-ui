@@ -1,10 +1,12 @@
 fs = require 'fs-extra'
 jsonfile = require 'jsonfile'
+request = require 'request'
 
 PROGRAMFILES = process.env['PROGRAMFILES(X86)'] || process.env['PROGRAMFILES']
 
 class ConfigService
   constructor: (dependencies={}) ->
+    @meshbluConfigFile = @getSupportPath 'meshblu.json'
     @reset()
 
   reset: =>
@@ -12,8 +14,11 @@ class ConfigService
     @uiPackageJson = @loadUIPackageJson()
     @meshbluConfig = @loadMeshbluConfig()
 
+  meshbluConfigExists: =>
+    fs.existsSync @meshbluConfigFile
+
   loadMeshbluConfig: =>
-    jsonfile.readFileSync @getSupportPath 'meshblu.json', throws: false
+    jsonfile.readFileSync @meshbluConfigFile, throws: false if @meshbluConfigExists
 
   loadServicePackageJson: =>
     jsonfile.readFileSync @getServicePackagePath(), throws: false

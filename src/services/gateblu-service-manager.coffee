@@ -13,7 +13,6 @@ class GatebluServiceManager
     @http = dependencies.http
     @DeviceLogService = dependencies.DeviceLogService
     @ConfigService = dependencies.ConfigService
-    console.log JSON.stringify @ConfigService.meshbluConfig
     @meshbluHttp = new MeshbluHttp @ConfigService.meshbluConfig
 
   whoami: (callback=->)=>
@@ -74,64 +73,16 @@ class GatebluServiceManager
       @ConfigService.getSupportPath 'devices'
     ]
 
-    async.each directories, emptyDir, callback
+    async.each directories, fsExtra.emptyDir, callback
 
   removeGatebluConfig: (callback=->)=>
     configPath = @getConfigPath()
     fsExtra.unlink configPath, (error) =>
       callback()
 
-  createMeshbluJSON: (callback=->) =>
-    configFile = @getConfigPath()
-    fsExtra.mkdir path.dirname(configFile), =>
-      @stopService =>
-        @http.post 'https://meshblu.octoblu.com/devices', type: 'device:gateblu'
-          .success (result) =>
-            fsExtra.writeFile configFile, JSON.stringify(result, null, 2), (error) =>
-              return callback error if error?
-              @startService =>
-                callback null, result
-          .error callback
-
-  getConfigFile: (configFile, callback=->) =>
-    fs.exists configFile, (exists) =>
-      return callback new Error('Config File Not Found') unless exists
-
-      fs.readFile configFile, (error, config) =>
-        return callback error if error?
-        try
-          config = JSON.parse config
-        catch error
-          return callback error
-
-        callback null, config
-
   emit: (event, data) =>
     @rootScope.$broadcast event, data
     @rootScope.$apply()
-
-  updateGatewayDevice: (device, stop, callback=->) =>
-    query =
-      uuid: @ConfigService.meshbluConfig.uuid
-      'devices.uuid': device.uuid
-
-    update =
-      $set:
-        'devices.$.stop': stop
-
-    @meshbluHttp.updateDangerously query, update, (error) =>
-      return callback error if error?
-      callback()
-
-  sendToGateway: (message, callback=->) =>
-    newMessage = _.extend devices: [@uuid], message
-    @meshbluConnection.message newMessage, callback
-
-  stopDevice: (device, callback=->) =>
-    @updateGatewayDevice device, true, callback
-
-  startDevice: (device, callback=->) =>
-    @updateGatewayDevice device, false, callback
 
   deleteDevice: (device, callback=->) =>
     @emit 'gateblu:unregistered', device

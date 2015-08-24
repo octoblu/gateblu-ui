@@ -161,6 +161,11 @@
       <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Connecting to Octoblu...</h1>
     </div>
 
+    <div class="connecting-container" ng-if="connected && refreshing" flex layout-fill>
+      <h1 class="text-center"><i class="fa fa-circle-o-notch fa-spin"></i> Loading Devices...</h1>
+    </div>
+
+
     <div class="grid-device-container" ng-if="connected && !showLogForDevice && !showLogs" flex>
       <md-grid-list
             md-cols-sm="1" md-cols-md="3" md-cols-gt-md="4"
@@ -210,8 +215,8 @@
             <md-button ng-click="showDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Info" title="Info">
               <i class="fa fa-info"></i>
             </md-button>
-            <md-button ng-click="toggleDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Stop" title="Start/Stop">
-              <i class="fa fa-power-off"></i>
+            <md-button ng-click="toggleDeviceLog(device.uuid)" ng-show="device.showMore" class="md-icon-button" aria-label="Show Logs" title="Show Logs">
+              <i class="fa fa-file-text-o"></i>
             </md-button>
             <md-button ng-click="deleteDevice(device)" ng-show="device.showMore" class="md-icon-button" aria-label="Delete" title="Delete">
               <i class="fa fa-trash"></i>

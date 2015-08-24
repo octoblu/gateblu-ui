@@ -9,6 +9,7 @@ class GatebluService
     @DeviceManagerService = dependencies.DeviceManagerService
 
   start: =>
+    @ConfigService.reset()
     meshbluConfig = _.clone @ConfigService.meshbluConfig
     meshbluConfig.auto_set_online = false
 
@@ -20,11 +21,18 @@ class GatebluService
     @gateblu.on 'ready', =>
       @broadcast 'gateblu:connected'
 
-    @gateblu.on 'gateblu:config', (config) =>
+    @gateblu.on 'config', (config) =>
       @broadcast 'gateblu:config', config
+
+    @gateblu.on 'refreshDevices', (data) =>
+      @broadcast 'gateblu:refreshDevices', data
 
     @gateblu.on 'notReady', (error) =>
       @broadcast 'gateblu:disconnected', error
+
+  whenConfigExists: (callback=->) =>
+    return callback() if @ConfigService.meshbluConfigExists()
+    _.delay @whenConfigExists, 2000, callback
 
   broadcast: (event, data) =>
     @rootScope.$broadcast event, data
@@ -38,5 +46,7 @@ angular.module 'gateblu-ui'
       ConfigService: ConfigService
       DeviceManagerService: DeviceManagerService
 
-    gatebluService.start()
+    gatebluService.whenConfigExists =>
+      gatebluService.start()
+
     gatebluService

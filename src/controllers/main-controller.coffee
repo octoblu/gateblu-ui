@@ -68,8 +68,14 @@ class MainController
       @scope.connected = false
       @LogService.add "Gateblu Disconnected"
 
+    @rootScope.$on 'gateblu:refreshDevices', ($event, data={}) =>
+      @scope.deviceUuids = data.deviceUuids
+      @scope.refreshing = true
+
     @rootScope.$on 'gateblu:devices', ($event, devices) =>
       @scope.devices = _.map devices, @updateDevice
+      uuids = _.pluck @scope.devices, 'uuid'
+      @scope.refreshing = ! _.isEqual uuids, @scope.deviceUuids
 
     @rootScope.$on 'error', ($event, error) =>
       alert = @mdDialog.alert
@@ -81,6 +87,7 @@ class MainController
 
   setupScope: =>
     @scope.connected = false
+    @scope.refreshing = true
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
 
     @scope.toggleDevice = _.debounce (device) =>

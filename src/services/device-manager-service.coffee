@@ -16,9 +16,7 @@ class DeviceManagerService
 
   removeDevice: (device, callback=->) =>
     console.log 'removeDevice', device.uuid
-    console.log JSON.stringify @devices
     _.pull @devices, device
-    console.log JSON.stringify @devices
     @broadcast()
     callback()
 
