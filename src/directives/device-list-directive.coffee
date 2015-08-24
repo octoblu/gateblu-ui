@@ -4,5 +4,3 @@ angular.module 'gateblu-ui'
     scope:
       devices: '='
     templateUrl: 'pages/device-list.html'
-    link: ($scope, element, attrs) =>
-      $scope.devices = attrs.devices
