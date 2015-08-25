@@ -118,10 +118,8 @@ class GatebluServiceManager
       callback()
 
   generateSessionToken: (callback=->) =>
-    @ConfigService.loadMeshbluConfig (error, config) =>
-      return callback error if error?
-      data = uuid: config.uuid
-      @meshbluHttp.generateAndStoreToken data, (error, result) =>
+      uuid = @ConfigService.meshbluConfig.uuid
+      @meshbluHttp.generateAndStoreToken uuid, (error, result) =>
         return callback error if error?
         callback null, result
 

@@ -112,8 +112,9 @@
 
     <full-screen-spinner message="Connecting to Octoblu..." ng-if="connecting"></full-screen-spinner>
     <full-screen-spinner message="Loading Devices..." ng-if="refreshing"></full-screen-spinner>
-    <full-screen-message message="No Devices." ng-if="!notReady && (!devices || devices.length === 0)"></full-screen-message>
+    <full-screen-message message="No Devices." ng-if="gatebluConfig.owner && !notReady && (!devices || devices.length === 0)"></full-screen-message>
     <full-screen-message message="Meshblu Authentication Failed" ng-if="notReady"></full-screen-message>
+    <full-screen-message button-title="Claim Gateblu" event-name="gateblu:claim" ng-if="!gatebluConfig.owner"></full-screen-message>
 
     <device-list devices="devices" ng-if="!connecting && !refreshing && gateblu.owner && devices && devices.length > 0"></device-list>
 

@@ -68,6 +68,11 @@ class MainController
       console.log 'gateblu connected'
       @LogService.add "Gateblu Connected"
 
+    @rootScope.$on 'gateblu:claim', ($event) =>
+      @GatebluServiceManager.generateSessionToken (error, result) =>
+        return @rootScope.$broadcast 'error', error if error?
+        shell.openExternal "https://app.octoblu.com/node-wizard/claim/#{result.uuid}/#{result.token}"
+
     @rootScope.$on 'gateblu:config', ($event, config) =>
       console.log 'config'
       @scope.gatebluConfig = config
@@ -143,10 +148,6 @@ class MainController
 
     @scope.listenToDevice = (device) =>
       @GatebluServiceManager.getLogForDevice device.uuid
-
-    @scope.claimGateblu = =>
-      @GatebluServiceManager.generateSessionToken (error, result) =>
-        shell.openExternal "https://app.octoblu.com/node-wizard/claim/#{result.uuid}/#{result.token}"
 
     @scope.hardRestartGateblu = =>
       alert = @mdDialog.confirm
