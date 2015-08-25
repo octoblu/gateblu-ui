@@ -105,7 +105,7 @@
       </md-button>
     </div>
 
-    <log ng-if="showLog" log-lines="logLines" title="logTitle"></log>
+    <log ng-if="showLog && !fullscreen" log-lines="logLines" title="logTitle"></log>
     <full-screen-message ng-if="fullscreen" message="fullscreen.message" spinner="fullscreen.spinner" button-title="fullscreen.buttonTitle" event-name="fullscreen.eventName"></full-screen-message>
     <device-list ng-if="!fullscreen" devices="devices"></device-list>
 
