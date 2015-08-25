@@ -62,11 +62,10 @@ class MainController
 
   setupRootScope: =>
     @rootScope.$on "gateblu:connected", ($event) =>
-      @scope.notReady = false
-      @scope.connecting = false
-      @scope.refreshing = true
-      console.log 'gateblu connected'
       @LogService.add "Gateblu Connected"
+      @scope.fullscreen =
+        message: 'Loading Devices...'
+        spinner: true
 
     @rootScope.$on 'gateblu:claim', ($event) =>
       @GatebluServiceManager.generateSessionToken (error, result) =>
@@ -74,37 +73,37 @@ class MainController
         shell.openExternal "https://app.octoblu.com/node-wizard/claim/#{result.uuid}/#{result.token}"
 
     @rootScope.$on 'gateblu:config', ($event, config) =>
-      console.log 'config'
+      @LogService.add 'Gateblu Config Changed'
       @scope.gatebluConfig = config
+      @scope.fullscreen = null if @scope.fullscreen?.waitForConfig
 
     @rootScope.$on 'gateblu:notReady', ($event, config) =>
-      console.log 'notReady'
-      @scope.notReady = true
-      @scope.connecting = false
-      @scope.refreshing = false
+      @LogService.add "Meshblu Authentication Failed"
+      @scope.fullscreen =
+        message: 'Meshblu Authentication Failed'
 
     @rootScope.$on "gateblu:disconnected", ($event) =>
-      @scope.connecting = true
-      @scope.refreshing = false
-      console.log 'gateblu disconnected'
       @LogService.add "Gateblu Disconnected"
+      @scope.fullscreen =
+        message: 'Reconnecting to Octoblu...'
+        spinner: true
 
     @rootScope.$on 'gateblu:refreshDevices', ($event, data={}) =>
-      console.log 'refresh devices: ' + JSON.stringify data.deviceUuids
+      @LogService.add 'Refreshing Devices'
       if _.isEmpty data.deviceUuids
-        @scope.refreshing = false
-        @scope.serviceChanging = false
+        @scope.fullscreen = null
         return
       @scope.deviceUuids = data.deviceUuids
-      @scope.refreshing = true
+      @scope.fullscreen =
+        message: 'Loading Devices...'
+        spinner: true
 
     @rootScope.$on 'gateblu:devices', ($event, devices) =>
+      @LogService.add 'Received Device List'
       @scope.devices = _.map devices, @updateDevice
       uuids = _.pluck @scope.devices, 'uuid'
-      doneLoadingDevices = ! _.isEqual uuids, @scope.deviceUuids
-      console.log 'done loading devices, ' + doneLoadingDevices
-      @scope.refreshing = doneLoadingDevices
-      @scope.serviceChanging = doneLoadingDevices
+      if _.isEqual uuids, @scope.deviceUuids
+        @scope.fullscreen = null
 
     @rootScope.$on 'log:open:device', ($event, device) =>
       @scope.showLog = true
@@ -115,20 +114,21 @@ class MainController
       @scope.showLog = false
 
     @rootScope.$on 'error', ($event, error) =>
+      @LogService.add error?.message
       alert = @mdDialog.alert
         title: 'An error has occurred'
-        content: error.message
+        content: error?.message
         ok: 'Close'
 
       @mdDialog
         .show alert
 
   setupScope: =>
-    @scope.connecting = true
-    @scope.refreshing = false
+    @scope.fullscreen =
+      message: 'Connecting to Octoblu...'
+      spinner: true
+
     @scope.showLog = false
-    @scope.notReady = false
-    @scope.serviceChanging = true
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
 
     @scope.getInstallerLink = (version='latest') =>
@@ -157,18 +157,11 @@ class MainController
         cancel: 'Cancel'
         theme: 'warning'
 
-      @scope.serviceChanging = true
-
       @mdDialog
         .show alert
         .then =>
           @GatebluServiceManager.hardRestartGateblu (error) =>
-            @timeout =>
-              @scope.serviceChanging = false
-            , 1000
             @scope.showError error if error?
-        .catch =>
-          @scope.serviceChanging = false
 
     @scope.resetGateblu = =>
       alert = @mdDialog.confirm
@@ -195,14 +188,23 @@ class MainController
         .show alert
 
     @scope.startService = =>
-      @scope.serviceChanging = true
+      @scope.fullscreen =
+        message: "Starting Service..."
+        spinner: true
+        waitForConfig: true
       @GatebluServiceManager.startService (error) =>
         @LogService.add error if error?
 
     @scope.stopService = =>
-      @scope.serviceChanging = true
+      @scope.fullscreen =
+        message: "Stopping Service..."
+        spinner: true
+        waitForConfig: true
       @GatebluServiceManager.stopService (error) =>
         @LogService.add error if error?
+
+    @scope.toggleInfo = =>
+      @scope.showInfo = !@scope.showInfo
 
     @scope.$on "gateblu:unregistered", ($event, device) =>
       msg = "#{device.name} (~#{device.uuid}) has been deleted"

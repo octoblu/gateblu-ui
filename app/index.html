@@ -14,34 +14,31 @@
 
 <body ng-controller="MainController">
   <md-content>
-    <md-toolbar>
-      <div class="md-toolbar-tools" ng-if="!notReady">
+    <md-toolbar ng-if="!fullscreen">
+      <div class="md-toolbar-tools">
         <h2>
           <span>{{gateblu.name || 'Gateblu'}}</span>
         </h2>
         <span flex></span>
-        <md-button class="md-icon-button" aria-label="Service Loading" title="Service Loading" ng-if="serviceChanging">
-          <i class="fa fa-lg fa-spinner fa-spin"></i>
-        </md-button>
-        <md-button class="md-icon-button" aria-label="Info" title="Gateblu Info" ng-click="showInfo = !showInfo" ng-if="!serviceChanging">
+        <md-button class="md-icon-button" aria-label="Info" title="Gateblu Info" ng-click="toggleInfo()">
           <i class="fa fa-lg fa-info"></i>
         </md-button>
-        <md-button class="md-icon-button dev-tools" title="Debugger" aria-label="Debugger" ng-if="!serviceChanging">
+        <md-button class="md-icon-button dev-tools" title="Debugger" aria-label="Debugger">
           <i class="fa fa-lg fa-bug"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="View Log" title="View Log" ng-click="showMainLog()" ng-if="!serviceChanging">
+        <md-button class="md-icon-button" aria-label="View Log" title="View Log" ng-click="showMainLog()">
           <i class="fa fa-lg fa-file-text-o"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="Stop Service" title="Stop Service" ng-click="stopService()" ng-if="!serviceChanging && gatebluConfig.online">
+        <md-button class="md-icon-button" aria-label="Stop Service" title="Stop Service" ng-click="stopService()" ng-if="gatebluConfig.online">
           <i class="fa fa-lg fa-power-off icon-green"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="Start Service" title="Start Service" ng-click="startService()" ng-if="!serviceChanging && !gatebluConfig.online">
+        <md-button class="md-icon-button" aria-label="Start Service" title="Start Service" ng-click="startService()" ng-if="!gatebluConfig.online">
           <i class="fa fa-lg fa-power-off muted"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="Hard Restart" title="Hard Restart" ng-click="hardRestartGateblu()" ng-if="!serviceChanging">
+        <md-button class="md-icon-button" aria-label="Hard Restart" title="Hard Restart" ng-click="hardRestartGateblu()">
           <i class="fa fa-lg fa-bolt" ng-class="{'muted': !gatebluConfig.online, 'icon-yellow': gatebluConfig.online}"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="Reset" title="Gateblu Reset" ng-click="resetGateblu()" ng-if="!serviceChanging">
+        <md-button class="md-icon-button" aria-label="Reset" title="Gateblu Reset" ng-click="resetGateblu()">
           <i class="fa fa-lg fa-trash-o destructive-icon"></i>
         </md-button>
       </div>
@@ -60,7 +57,7 @@
       </div>
     </md-toolbar>
 
-    <md-toolbar md-theme="warning" ng-if="!gatebluConfig.online && !connecting && !refreshing">
+    <md-toolbar md-theme="warning" ng-if="!gatebluConfig.online && !fullscreen">
       <div class="md-toolbar-tools">
         <h2>
           <i class="fa fa-exclamation-triangle"></i>
@@ -99,8 +96,6 @@
       </div>
     </md-toolbar>
 
-    <log ng-if="showLog" log-lines="logLines" title="logTitle"></log>
-
     <div class="backend-install-container" ng-if="!isInstalled" flex layout-fill>
       <i class="fa fa-5x fa-exclamation-triangle big-icon"></i>
       <p>Gateblu Service is not installed!</p>
@@ -110,13 +105,9 @@
       </md-button>
     </div>
 
-    <full-screen-spinner message="Connecting to Octoblu..." ng-if="connecting"></full-screen-spinner>
-    <full-screen-spinner message="Loading Devices..." ng-if="refreshing"></full-screen-spinner>
-    <full-screen-message message="No Devices." ng-if="gatebluConfig.owner && !notReady && (!devices || devices.length === 0)"></full-screen-message>
-    <full-screen-message message="Meshblu Authentication Failed" ng-if="notReady"></full-screen-message>
-    <full-screen-message button-title="Claim Gateblu" event-name="gateblu:claim" ng-if="!gatebluConfig.owner"></full-screen-message>
-
-    <device-list devices="devices" ng-if="!connecting && !refreshing && gateblu.owner && devices && devices.length > 0"></device-list>
+    <log ng-if="showLog" log-lines="logLines" title="logTitle"></log>
+    <full-screen-message ng-if="fullscreen" message="fullscreen.message" spinner="fullscreen.spinner" button-title="fullscreen.buttonTitle" event-name="fullscreen.eventName"></full-screen-message>
+    <device-list ng-if="!fullscreen" devices="devices"></device-list>
 
   </md-content>
 </body>

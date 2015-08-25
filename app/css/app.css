@@ -44,10 +44,9 @@ body {
   color: orange;
 }
 
-.connecting-container {
+.full-screen-container {
   flex: 3;
   overflow: scroll;
-  margin-top: -64px;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
