@@ -62,19 +62,34 @@ class MainController
 
   setupRootScope: =>
     @rootScope.$on "gateblu:connected", ($event) =>
+      @scope.notReady = false
       @scope.connecting = false
       @scope.refreshing = true
+      console.log 'gateblu connected'
       @LogService.add "Gateblu Connected"
 
     @rootScope.$on 'gateblu:config', ($event, config) =>
-      console.log config.online
+      console.log 'config'
       @scope.gatebluConfig = config
+
+    @rootScope.$on 'gateblu:notReady', ($event, config) =>
+      console.log 'notReady'
+      @scope.notReady = true
+      @scope.connecting = false
+      @scope.refreshing = false
 
     @rootScope.$on "gateblu:disconnected", ($event) =>
       @scope.connecting = true
+      @scope.refreshing = false
+      console.log 'gateblu disconnected'
       @LogService.add "Gateblu Disconnected"
 
     @rootScope.$on 'gateblu:refreshDevices', ($event, data={}) =>
+      console.log 'refresh devices: ' + JSON.stringify data.deviceUuids
+      if _.isEmpty data.deviceUuids
+        @scope.refreshing = false
+        @scope.serviceChanging = false
+        return
       @scope.deviceUuids = data.deviceUuids
       @scope.refreshing = true
 
@@ -82,6 +97,7 @@ class MainController
       @scope.devices = _.map devices, @updateDevice
       uuids = _.pluck @scope.devices, 'uuid'
       doneLoadingDevices = ! _.isEqual uuids, @scope.deviceUuids
+      console.log 'done loading devices, ' + doneLoadingDevices
       @scope.refreshing = doneLoadingDevices
       @scope.serviceChanging = doneLoadingDevices
 
@@ -106,6 +122,7 @@ class MainController
     @scope.connecting = true
     @scope.refreshing = false
     @scope.showLog = false
+    @scope.notReady = false
     @scope.serviceChanging = true
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
 

@@ -15,7 +15,7 @@
 <body ng-controller="MainController">
   <md-content>
     <md-toolbar>
-      <div class="md-toolbar-tools">
+      <div class="md-toolbar-tools" ng-if="!notReady">
         <h2>
           <span>{{gateblu.name || 'Gateblu'}}</span>
         </h2>
@@ -112,8 +112,10 @@
 
     <full-screen-spinner message="Connecting to Octoblu..." ng-if="connecting"></full-screen-spinner>
     <full-screen-spinner message="Loading Devices..." ng-if="refreshing"></full-screen-spinner>
+    <full-screen-message message="No Devices." ng-if="!notReady && (!devices || devices.length === 0)"></full-screen-message>
+    <full-screen-message message="Meshblu Authentication Failed" ng-if="notReady"></full-screen-message>
 
-    <device-list devices="devices" ng-if="!connecting && !refreshing && gateblu.owner"></device-list>
+    <device-list devices="devices" ng-if="!connecting && !refreshing && gateblu.owner && devices && devices.length > 0"></device-list>
 
   </md-content>
 </body>
