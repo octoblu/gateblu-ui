@@ -20,10 +20,9 @@ class GatebluService
 
     @gateblu.on 'ready', =>
       @broadcast 'gateblu:connected'
-
-      @gateblu.whoami (error, data) =>
+      @gateblu.whoami (error, config) =>
         return @broadcast 'error', error if error?
-        @broadcast 'gateblu:whoami', data
+        @broadcast 'gateblu:config', config
 
     @gateblu.on 'config', (config) =>
       @broadcast 'gateblu:config', config

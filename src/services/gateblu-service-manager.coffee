@@ -1,4 +1,3 @@
-meshblu = require 'meshblu'
 MeshbluHttp = require 'meshblu-http'
 async = require 'async'
 path = require 'path'
@@ -49,10 +48,12 @@ class GatebluServiceManager
     if process.platform == 'darwin'
       return exec '/bin/launchctl load /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
         return callback error
+        callback()
 
     if process.platform == 'win32'
       return exec "start \"GatebluServiceTray\" \"#{PROGRAMFILES}\\Octoblu\\GatebluService\\GatebluServiceTray.exe\"", (error, stdout, stdin) =>
         return callback error
+        callback()
 
     callback new Error "Unsupported Operating System"
 
@@ -60,10 +61,12 @@ class GatebluServiceManager
     if process.platform == 'darwin'
       return exec '/bin/launchctl unload /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
         return callback error
+        callback()
 
     if process.platform == 'win32'
       return exec 'taskkill /IM GatebluServiceTray.exe', (error, stdout, stdin) =>
         return callback error
+        callback()
 
     callback new Error "Unsupported Operating System"
 

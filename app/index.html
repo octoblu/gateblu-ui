@@ -32,8 +32,11 @@
         <md-button class="md-icon-button" aria-label="View Log" title="View Log" ng-click="showMainLog()" ng-if="!serviceChanging">
           <i class="fa fa-lg fa-file-text-o"></i>
         </md-button>
-        <md-button class="md-icon-button" aria-label="Stop / Start Service" title="Stop / Start Service" ng-click="toggleService()" ng-if="!serviceChanging">
-          <i class="fa fa-lg fa-power-off" ng-class="{'muted': !gatebluConfig.online, 'icon-green': gatebluConfig.online}"></i>
+        <md-button class="md-icon-button" aria-label="Stop Service" title="Stop Service" ng-click="stopService()" ng-if="!serviceChanging && gatebluConfig.online">
+          <i class="fa fa-lg fa-power-off icon-green"></i>
+        </md-button>
+        <md-button class="md-icon-button" aria-label="Start Service" title="Start Service" ng-click="startService()" ng-if="!serviceChanging && !gatebluConfig.online">
+          <i class="fa fa-lg fa-power-off muted"></i>
         </md-button>
         <md-button class="md-icon-button" aria-label="Hard Restart" title="Hard Restart" ng-click="hardRestartGateblu()" ng-if="!serviceChanging">
           <i class="fa fa-lg fa-bolt" ng-class="{'muted': !gatebluConfig.online, 'icon-yellow': gatebluConfig.online}"></i>

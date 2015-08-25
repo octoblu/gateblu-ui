@@ -66,7 +66,8 @@ class MainController
       @scope.refreshing = true
       @LogService.add "Gateblu Connected"
 
-    @rootScope.$on 'gateblu:whoami', ($event, config) =>
+    @rootScope.$on 'gateblu:config', ($event, config) =>
+      console.log config.online
       @scope.gatebluConfig = config
 
     @rootScope.$on "gateblu:disconnected", ($event) =>
@@ -175,22 +176,15 @@ class MainController
       @mdDialog
         .show alert
 
-    @scope.toggleService = =>
+    @scope.startService = =>
       @scope.serviceChanging = true
-      if @scope.serviceStopped
-        @GatebluServiceManager.startService (error) =>
-          @LogService.add error if error?
-          @timeout =>
-            @scope.serviceChanging = false
-            @scope.serviceStopped = false
-          , 1000
-      else
-        @GatebluServiceManager.stopService (error) =>
-          @LogService.add error if error?
-          @timeout =>
-            @scope.serviceChanging = false
-            @scope.serviceStopped = true
-          , 1000
+      @GatebluServiceManager.startService (error) =>
+        @LogService.add error if error?
+
+    @scope.stopService = =>
+      @scope.serviceChanging = true
+      @GatebluServiceManager.stopService (error) =>
+        @LogService.add error if error?
 
     @scope.$on "gateblu:unregistered", ($event, device) =>
       msg = "#{device.name} (~#{device.uuid}) has been deleted"

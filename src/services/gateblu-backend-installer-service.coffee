@@ -1,4 +1,3 @@
-meshblu = require 'meshblu'
 async = require 'async'
 
 class GatebluBackendInstallerService
