@@ -47,12 +47,12 @@ class GatebluServiceManager
   startService: (callback=->) =>
     if process.platform == 'darwin'
       return exec '/bin/launchctl load /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
-        return callback error
+        return callback error if error?
         callback()
 
     if process.platform == 'win32'
       return exec "start \"GatebluServiceTray\" \"#{PROGRAMFILES}\\Octoblu\\GatebluService\\GatebluServiceTray.exe\"", (error, stdout, stdin) =>
-        return callback error
+        return callback error if error?
         callback()
 
     callback new Error "Unsupported Operating System"
@@ -60,12 +60,12 @@ class GatebluServiceManager
   stopService: (callback=->) =>
     if process.platform == 'darwin'
       return exec '/bin/launchctl unload /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
-        return callback error
+        return callback error if error?
         callback()
 
     if process.platform == 'win32'
       return exec 'taskkill /IM GatebluServiceTray.exe', (error, stdout, stdin) =>
-        return callback error
+        return callback error if error?
         callback()
 
     callback new Error "Unsupported Operating System"
@@ -92,9 +92,7 @@ class GatebluServiceManager
 
     @meshbluHttp.unregister device, (error) =>
       return callback error if error?
-
-      # this forces a refresh of the devices array
-      @stopDevice device, callback
+      callback()
 
   resetGateblu: (callback=->) =>
     events = [
@@ -118,27 +116,32 @@ class GatebluServiceManager
       callback()
 
   generateSessionToken: (callback=->) =>
-      uuid = @ConfigService.meshbluConfig.uuid
-      @meshbluHttp.generateAndStoreToken uuid, (error, result) =>
-        return callback error if error?
-        callback null, result
+    uuid = @ConfigService.meshbluConfig.uuid
+    @meshbluHttp.generateAndStoreToken uuid, (error, result) =>
+      return callback error if error?
+      callback null, result
 
   waitForLog: (uuid, callback=->) =>
-    filePath = @ConfigService.getSupportPath "devices/#{uuid}/meshblu.json"
-    fsExtra.exists filePath, (exists) =>
+    fsExtra.exists @ConfigService.meshbluConfigFile, (exists) =>
       return _.delay @waitForLog, 1000, uuid, callback unless exists
       callback()
 
-  getLogForDevice: (uuid, lineCallback=->) =>
-    @meshbluConnection.subscribe uuid: uuid
+  getLogForDevice: (uuid) =>
     @waitForLog uuid, =>
-      outLog = new Tail(@ConfigService.getSupportPath("devices/#{uuid}/forever.stdout"));
+      outLog = new Tail @ConfigService.getSupportPath("devices/#{uuid}/forever.stdout"), "\n", {}, true
       outLog.on "line", (line) =>
         @DeviceLogService.add uuid, "info", line
 
-      errLog = new Tail(@ConfigService.getSupportPath("devices/#{uuid}/forever.stderr"));
+      outLog.on 'error', (error) =>
+        @DeviceLogService.add uuid, 'error', error?.message if error?
+
+      errLog = new Tail @ConfigService.getSupportPath("devices/#{uuid}/forever.stderr"), "\n", {}, true
       errLog.on "line", (line) =>
         @DeviceLogService.add uuid, "error", line
+
+      errLog.on 'error', (error) =>
+        @DeviceLogService.add uuid, 'error', error?.message if error?
+
 
 angular.module 'gateblu-ui'
   .service 'GatebluServiceManager', ($rootScope, $http, DeviceLogService, ConfigService) ->

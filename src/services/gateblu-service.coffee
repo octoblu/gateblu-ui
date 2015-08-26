@@ -19,7 +19,6 @@ class GatebluService
       @broadcast 'error', error if error?
 
     @gateblu.on 'ready', =>
-      console.log 'ready'
       @broadcast 'gateblu:connected'
       @gateblu.whoami (error, config) =>
         return @broadcast 'error', error if error?
@@ -32,11 +31,19 @@ class GatebluService
       @broadcast 'gateblu:refreshDevices', data
 
     @gateblu.on 'disconnected', (error) =>
-      console.log 'disconnected'
       @broadcast 'gateblu:disconnected', error
 
     @gateblu.on 'notReady', (error) =>
       @broadcast 'gateblu:notReady', error
+
+    @gateblu.on 'device:config', (config) =>
+      @broadcast 'gateblu:device:config', config
+
+    @gateblu.on 'message', (message) =>
+      @broadcast 'gateblu:message', message
+
+    @gateblu.on 'device:message', (message) =>
+      @broadcast 'gateblu:device:message', message
 
   whenConfigExists: (callback=->) =>
     return callback() if @ConfigService.meshbluConfigExists()

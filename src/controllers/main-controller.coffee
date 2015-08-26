@@ -77,6 +77,12 @@ class MainController
       @scope.gatebluConfig = config
       @scope.fullscreen = null if @scope.fullscreen?.waitForConfig
 
+    @rootScope.$on 'gateblu:device:config', ($event, config) =>
+      device = _.findWhere @scope.devices, uuid: config.uuid
+      if device
+        device.online = config.online
+        device.name = config.name
+
     @rootScope.$on 'gateblu:notReady', ($event, config) =>
       @LogService.add "Meshblu Authentication Failed"
       @scope.fullscreen =
@@ -217,8 +223,10 @@ class MainController
 
       @mdDialog
         .show alert
-        .finally =>
-          alert = undefined
+
+    @scope.$watch 'deviceUuids', (deviceUuids) =>
+      _.each deviceUuids, (uuid) =>
+        @GatebluServiceManager.getLogForDevice uuid
 
 angular.module 'gateblu-ui'
   .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->

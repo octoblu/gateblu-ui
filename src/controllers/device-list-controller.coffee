@@ -4,6 +4,7 @@ class DeviceListController
     @scope = dependencies.scope
     @GatebluServiceManager = dependencies.GatebluServiceManager
     @mdDialog = dependencies.mdDialog
+
     @scope.deleteDevice = (device) =>
       alert = @mdDialog.confirm
         title: 'Are you sure?'
@@ -26,11 +27,6 @@ class DeviceListController
 
       @mdDialog
         .show alert
-        .then =>
-          alert = undefined
-          @scope.toggleDeviceLog device.uuid
-        .catch =>
-          alert = undefined
 
     @scope.showDeviceLog = (device) =>
       @rootScope.$broadcast 'log:open:device', device
