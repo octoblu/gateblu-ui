@@ -14,7 +14,7 @@
 
 <body ng-controller="MainController">
   <md-content>
-    <md-toolbar ng-if="!fullscreen">
+    <md-toolbar ng-if="!fullscreen || fullscreen.menu">
       <div class="md-toolbar-tools">
         <h2>
           <span>{{gateblu.name || 'Gateblu'}}</span>
@@ -105,7 +105,7 @@
       </md-button>
     </div>
 
-    <log ng-if="showLog && !fullscreen" log-lines="logLines" title="logTitle"></log>
+    <log ng-if="(showLog && !fullscreen) || (showLog && fullscreen.menu)" log-lines="logLines" title="logTitle"></log>
     <full-screen-message ng-if="fullscreen" message="fullscreen.message" spinner="fullscreen.spinner" button-title="fullscreen.buttonTitle" event-name="fullscreen.eventName"></full-screen-message>
     <device-list ng-if="!showLog && !fullscreen" devices="devices"></device-list>
 

@@ -10,6 +10,7 @@ class GatebluServiceManager
   constructor: (dependencies={}) ->
     @rootScope = dependencies.rootScope
     @http = dependencies.http
+    @LogService = dependencies.LogService
     @DeviceLogService = dependencies.DeviceLogService
     @ConfigService = dependencies.ConfigService
     @meshbluHttp = new MeshbluHttp @ConfigService.meshbluConfig
@@ -44,7 +45,14 @@ class GatebluServiceManager
   getConfigPath: =>
     @getSupportPath "meshblu.json"
 
+  stopAndStartService: (callback=->) =>
+    @stopService (error) =>
+      @startService (error) =>
+        return callback error if error?
+        callback()
+
   startService: (callback=->) =>
+    @LogService.add "Starting Service", 'info'
     if process.platform == 'darwin'
       return exec '/bin/launchctl load /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
         return callback error if error?
@@ -58,6 +66,7 @@ class GatebluServiceManager
     callback new Error "Unsupported Operating System"
 
   stopService: (callback=->) =>
+    @LogService.add "Stopping Service", 'info'
     if process.platform == 'darwin'
       return exec '/bin/launchctl unload /Library/LaunchAgents/com.octoblu.GatebluService.plist', (error, stdout, stdin) =>
         return callback error if error?
@@ -79,40 +88,45 @@ class GatebluServiceManager
     async.each directories, fsExtra.emptyDir, callback
 
   removeGatebluConfig: (callback=->)=>
-    configPath = @getConfigPath()
-    fsExtra.unlink configPath, (error) =>
+    fsExtra.unlink @ConfigService.meshbluConfigFile, (error) =>
       callback()
 
   emit: (event, data) =>
     @rootScope.$broadcast event, data
     @rootScope.$apply()
 
-  deleteDevice: (device, callback=->) =>
-    @emit 'gateblu:unregistered', device
-
+  deleteDevice: (device) =>
     @meshbluHttp.unregister device, (error) =>
-      return callback error if error?
-      callback()
+      return @emit 'error', error if error?
+      @emit 'device:unregistered', device
+
+  unregisterGateblu: (callback=->) =>
+    @meshbluHttp.unregister @ConfigService.meshbluConfig, callback
 
   resetGateblu: (callback=->) =>
+    @LogService.add 'Resetting Gateblu', 'warning'
     events = [
-      @stopService
+      (callback=->) => @stopService => callback()
       @unregisterGateblu
       @removeDeviceAndTmp
       @removeGatebluConfig
+      (callback=->) => @startService => callback()
     ]
     async.series events, (error) =>
+      @LogService.add 'Reset Gateblu', 'info'
       return callback error if error?
       callback()
 
   hardRestartGateblu: (callback=->) =>
+    @LogService.add 'Hard restart Gateblu', 'warning'
     events = [
-      @stopService
+      (callback=->) => @stopService => callback()
       @removeDeviceAndTmp
-      @startService
+      (callback=->) => @startService => callback()
     ]
     async.series events, (error) =>
       return callback error if error?
+      @LogService.add 'Successfully restarted Gateblu', 'info'
       callback()
 
   generateSessionToken: (callback=->) =>
@@ -144,9 +158,10 @@ class GatebluServiceManager
 
 
 angular.module 'gateblu-ui'
-  .service 'GatebluServiceManager', ($rootScope, $http, DeviceLogService, ConfigService) ->
+  .service 'GatebluServiceManager', ($rootScope, $http, LogService, DeviceLogService, ConfigService) ->
     new GatebluServiceManager
       rootScope: $rootScope
       http: $http
+      LogService: LogService
       DeviceLogService: DeviceLogService
       ConfigService: ConfigService

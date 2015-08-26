@@ -19,7 +19,7 @@ class MainController
 
     @colors = ['#b9f6ca', '#ffff8d', '#84ffff', '#80d8ff', '#448aff', '#b388ff', '#8c9eff', '#ff8a80', '#ff80ab']
 
-    @LogService.add 'Starting up!'
+    @LogService.add 'Starting up!', 'info'
 
     @setupRootScope()
     @setupScope()
@@ -62,7 +62,7 @@ class MainController
 
   setupRootScope: =>
     @rootScope.$on "gateblu:connected", ($event) =>
-      @LogService.add "Gateblu Connected"
+      @LogService.add "Gateblu Connected", 'info'
       @scope.fullscreen =
         message: 'Loading Devices...'
         spinner: true
@@ -73,43 +73,58 @@ class MainController
         shell.openExternal "https://app.octoblu.com/node-wizard/claim/#{result.uuid}/#{result.token}"
 
     @rootScope.$on 'gateblu:config', ($event, config) =>
-      @LogService.add 'Gateblu Config Changed'
+      @LogService.add 'Gateblu Config Changed', 'info'
       @scope.gatebluConfig = config
       @scope.fullscreen = null if @scope.fullscreen?.waitForConfig
+      unless config.owner?
+        @scope.fullscreen =
+          buttonTitle: 'Claim Gateblu'
+          eventName: 'gateblu:claim'
+          claiming: true
+          menu: true
 
     @rootScope.$on 'gateblu:device:config', ($event, config) =>
       device = _.findWhere @scope.devices, uuid: config.uuid
-      if device
-        device.online = config.online
-        device.name = config.name
+      return unless device?
+      device.online = config.online
+      device.name = config.name
 
     @rootScope.$on 'gateblu:notReady', ($event, config) =>
-      @LogService.add "Meshblu Authentication Failed"
+      @LogService.add "Meshblu Authentication Failed", 'error'
       @scope.fullscreen =
         message: 'Meshblu Authentication Failed'
 
     @rootScope.$on "gateblu:disconnected", ($event) =>
-      @LogService.add "Gateblu Disconnected"
+      @LogService.add "Gateblu Disconnected", 'warning'
       @scope.fullscreen =
         message: 'Reconnecting to Octoblu...'
         spinner: true
 
     @rootScope.$on 'gateblu:refreshDevices', ($event, data={}) =>
-      @LogService.add 'Refreshing Devices'
-      if _.isEmpty data.deviceUuids
-        @scope.fullscreen = null
-        return
+      @LogService.add 'Refreshing Devices', 'info'
       @scope.deviceUuids = data.deviceUuids
+      return if @showNoDevices data.deviceUuids
       @scope.fullscreen =
         message: 'Loading Devices...'
         spinner: true
 
     @rootScope.$on 'gateblu:devices', ($event, devices) =>
-      @LogService.add 'Received Device List'
+      @LogService.add 'Received Device List', 'info'
       @scope.devices = _.map devices, @updateDevice
       uuids = _.pluck @scope.devices, 'uuid'
       if _.isEqual uuids, @scope.deviceUuids
         @scope.fullscreen = null
+
+    @rootScope.$on "device:unregistering", ($event, device) =>
+      @fullscreen =
+        message: 'Deleting Device...'
+        spinner: true
+
+    @rootScope.$on "device:unregistered", ($event, device) =>
+      msg = "#{device.name} (~#{device.uuid}) has been deleted"
+      @DeviceLogService.add device.uuid, 'warning', msg
+      @LogService.add msg, 'warning'
+      @fullscreen = null
 
     @rootScope.$on 'log:open:device', ($event, device) =>
       @scope.showLog = true
@@ -120,14 +135,15 @@ class MainController
       @scope.showLog = false
 
     @rootScope.$on 'error', ($event, error) =>
-      @LogService.add error?.message
-      alert = @mdDialog.alert
-        title: 'An error has occurred'
-        content: error?.message
-        ok: 'Close'
+      @scope.showError error
 
-      @mdDialog
-        .show alert
+  showNoDevices: (uuids) =>
+    showNoDevices = _.isEmpty(uuids) && !@scope.fullscreen?.claiming
+    return true unless showNoDevices
+    @scope.fullscreen =
+      message: 'No Devices'
+      menu: true
+      spinner: false
 
   setupScope: =>
     @scope.fullscreen =
@@ -166,6 +182,9 @@ class MainController
       @mdDialog
         .show alert
         .then =>
+          @fullscreen =
+            message : 'Restarting Gateblu'
+            spinner: true
           @GatebluServiceManager.hardRestartGateblu (error) =>
             @scope.showError error if error?
 
@@ -180,15 +199,38 @@ class MainController
       @mdDialog
         .show alert
         .then =>
-          @GatebluService.resetGateblu (error) =>
+          @fullscreen =
+            message : 'Resetting Gateblu'
+            spinner: true
+          @GatebluServiceManager.resetGateblu (error) =>
             @scope.showError error if error?
+            @scope.promptToClose() unless error?
+            @rootScope.$apply()
+
+    @scope.promptToClose = =>
+      alert = @mdDialog.alert
+        title: 'Close Gateblu'
+        content: "Please quit Gateblu and reopen."
+        ok: 'Okay'
+        theme: 'warning'
+
+      @mdDialog
+        .show alert
+        .then =>
+          @fullscreen =
+            message: 'Close Application'
 
     @scope.showError = (error) =>
+      try
+        errorMessage = error.toString()
+      catch
+        errorMessage = JSON.stringify error
+      @LogService.add errorMessage, 'error'
       alert = @mdDialog.alert
         title: 'Error'
-        content: error?.message ? error
+        content: errorMessage
         ok: 'Okay'
-        theme: 'info'
+        theme: 'warning'
 
       @mdDialog
         .show alert
@@ -198,8 +240,8 @@ class MainController
         message: "Starting Service..."
         spinner: true
         waitForConfig: true
-      @GatebluServiceManager.startService (error) =>
-        @LogService.add error if error?
+      @GatebluServiceManager.stopAndStartService (error) =>
+        @LogService.add error, 'error' if error?
 
     @scope.stopService = =>
       @scope.fullscreen =
@@ -207,22 +249,10 @@ class MainController
         spinner: true
         waitForConfig: true
       @GatebluServiceManager.stopService (error) =>
-        @LogService.add error if error?
+        @LogService.add error, 'error' if error?
 
     @scope.toggleInfo = =>
       @scope.showInfo = !@scope.showInfo
-
-    @scope.$on "gateblu:unregistered", ($event, device) =>
-      msg = "#{device.name} (~#{device.uuid}) has been deleted"
-      @LogService.add msg
-      alert = @mdDialog.alert
-        title: 'Deleted'
-        content: msg
-        ok: 'Close'
-        theme: 'info'
-
-      @mdDialog
-        .show alert
 
     @scope.$watch 'deviceUuids', (deviceUuids) =>
       _.each deviceUuids, (uuid) =>

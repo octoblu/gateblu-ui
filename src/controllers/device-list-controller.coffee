@@ -16,6 +16,7 @@ class DeviceListController
       @mdDialog
         .show alert
         .then =>
+          @rootScope.$broadcast 'device:unregistering', device
           @GatebluServiceManager.deleteDevice device
 
     @scope.showDevice = (device) =>
