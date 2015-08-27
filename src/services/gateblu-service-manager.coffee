@@ -4,7 +4,7 @@ path = require 'path'
 debug = require('debug')('gateblu-ui:GatebluService')
 fsExtra = require 'fs-extra'
 {exec} = require 'child_process'
-{Tail} = require 'tail'
+Tail = require 'tail-forever'
 
 class GatebluServiceManager
   constructor: (dependencies={}) ->
@@ -135,26 +135,27 @@ class GatebluServiceManager
       return callback error if error?
       callback null, result
 
-  waitForLog: (uuid, callback=->) =>
-    fsExtra.exists @ConfigService.meshbluConfigFile, (exists) =>
-      return _.delay @waitForLog, 1000, uuid, callback unless exists
+  waitForLog: (path, callback=->) =>
+    fsExtra.exists path, (exists) =>
+      return _.delay @waitForLog, 1000, path, callback unless exists
       callback()
 
   getLogForDevice: (uuid) =>
-    @waitForLog uuid, =>
-      outLog = new Tail @ConfigService.getSupportPath("devices/#{uuid}/forever.stdout"), "\n", {}, true
-      outLog.on "line", (line) =>
-        @DeviceLogService.add uuid, "info", line
+    stdoutFile = @ConfigService.getSupportPath "devices/#{uuid}/forever.stdout"
+    stderrFile = @ConfigService.getSupportPath "devices/#{uuid}/forever.stderr"
+    outLog = new Tail stdoutFile, {start: 0}
+    outLog.on "line", (line) =>
+      @DeviceLogService.add uuid, "info", line
 
-      outLog.on 'error', (error) =>
-        @DeviceLogService.add uuid, 'error', error?.message if error?
+    outLog.on 'error', (error) =>
+      @DeviceLogService.add uuid, 'error', error?.message if error?
 
-      errLog = new Tail @ConfigService.getSupportPath("devices/#{uuid}/forever.stderr"), "\n", {}, true
-      errLog.on "line", (line) =>
-        @DeviceLogService.add uuid, "error", line
+    errLog = new Tail stderrFile, {start: 0}
+    errLog.on "line", (line) =>
+      @DeviceLogService.add uuid, "error", line
 
-      errLog.on 'error', (error) =>
-        @DeviceLogService.add uuid, 'error', error?.message if error?
+    errLog.on 'error', (error) =>
+      @DeviceLogService.add uuid, 'error', error?.message if error?
 
 
 angular.module 'gateblu-ui'

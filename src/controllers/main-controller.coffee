@@ -129,10 +129,12 @@ class MainController
     @rootScope.$on 'log:open:device', ($event, device) =>
       @scope.showLog = true
       @scope.logTitle = "Device Log (~#{device.uuid})"
+      @scope.showingLogForDevice = device.uuid
       @scope.logLines = @DeviceLogService.get device.uuid
 
     @rootScope.$on 'log:close', ($event) =>
       @scope.showLog = false
+      @scope.showingLogForDevice = null
 
     @rootScope.$on 'error', ($event, error) =>
       @scope.showError error
@@ -150,8 +152,13 @@ class MainController
       message: 'Connecting to Octoblu...'
       spinner: true
 
+    @scope.showingLogForDevice = null
     @scope.showLog = false
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
+    @scope.deviceLogs = {}
+
+    @DeviceLogService.listen (uuid, msg) =>
+      @scope.logLines = @DeviceLogService.get uuid if @scope.showingLogForDevice == uuid
 
     @scope.getInstallerLink = (version='latest') =>
       baseUrl = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/#{version}"

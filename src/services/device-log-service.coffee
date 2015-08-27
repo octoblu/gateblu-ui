@@ -1,5 +1,5 @@
 angular.module 'gateblu-ui'
-  .service 'DeviceLogService', ->
+  .service 'DeviceLogService', ($timeout)->
     logs = {}
     _callbacks = []
     add: (uuid, type, log)=>
@@ -11,7 +11,9 @@ angular.module 'gateblu-ui'
       logs[uuid] ?= []
       entry = type: type, message: message, timestamp: new Date(), rawMessage: log
       logs[uuid].unshift entry
-      _.each _callbacks, (callback) => callback uuid, entry
+      $timeout =>
+        _.each _callbacks, (callback) => callback uuid, entry
+      , 0
     get: (uuid) => logs[uuid]
     all: => logs
     clear: => logs[uuid] = []
