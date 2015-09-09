@@ -132,7 +132,7 @@ class MainController
       @scope.showingLogForDevice = device.uuid
       @scope.logLines = @DeviceLogService.get device.uuid
 
-    @rootScope.$on 'log:add:device', ($event, entry) =>
+    @rootScope.$on 'log:device:add', ($event, entry) =>
       @scope.logLines = @DeviceLogService.get entry.uuid if @scope.showingLogForDevice == entry.uuid
 
     @rootScope.$on 'log:close', ($event) =>

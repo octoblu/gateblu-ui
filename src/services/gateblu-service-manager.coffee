@@ -4,7 +4,6 @@ path = require 'path'
 debug = require('debug')('gateblu-ui:GatebluService')
 fsExtra = require 'fs-extra'
 {exec} = require 'child_process'
-Tail = require 'tail-forever'
 
 class GatebluServiceManager
   constructor: (dependencies={}) ->
@@ -139,24 +138,6 @@ class GatebluServiceManager
     fsExtra.exists path, (exists) =>
       return _.delay @waitForLog, 1000, path, callback unless exists
       callback()
-
-  # getLogForDevice: (uuid) =>
-  #   stdoutFile = @ConfigService.getSupportPath "devices/#{uuid}/forever.stdout"
-  #   stderrFile = @ConfigService.getSupportPath "devices/#{uuid}/forever.stderr"
-  #   outLog = new Tail stdoutFile, {start: 0}
-  #   outLog.on "line", (line) =>
-  #     @DeviceLogService.add uuid, "info", line
-  #
-  #   outLog.on 'error', (error) =>
-  #     @DeviceLogService.add uuid, 'error', error?.message if error?
-  #
-  #   errLog = new Tail stderrFile, {start: 0}
-  #   errLog.on "line", (line) =>
-  #     @DeviceLogService.add uuid, "error", line
-  #
-  #   errLog.on 'error', (error) =>
-  #     @DeviceLogService.add uuid, 'error', error?.message if error?
-  #
 
 angular.module 'gateblu-ui'
   .service 'GatebluServiceManager', ($rootScope, $http, LogService, DeviceLogService, ConfigService) ->

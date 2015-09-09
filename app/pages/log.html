@@ -13,8 +13,12 @@
   <md-list>
     <md-list-item class="md-3-line" ng-repeat="line in logLines">
       <div class="md-list-item-text" >
-        <h3 ng-class="{'log-error': line.type == 'error'}">{{ line.message }}</h3>
-        <p ng-class="{'log-error': line.type == 'error'}"><span><strong>Type:</strong> {{line.type}}</span> <span><strong>Date:</strong> {{ line.timestamp | date : 'medium' }}</span></p>
+        <h3 class="log-message" ng-class="{'log-error': line.type == 'error'}">{{ line.message }}</h3>
+        <p ng-class="{'log-error': line.type == 'error'}">
+          <span><strong>Type:</strong> {{line.type}}</span>
+          <span ng-if="line.state"><span><strong>State:</strong> {{line.state}}</span></span>
+          <span><strong>Date:</strong> {{ line.timestamp | date : 'medium' }}</span>
+        </p>
       </div>
       <md-divider inset></md-divider>
     </md-list-item>
