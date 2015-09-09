@@ -17,8 +17,6 @@ class MainController
     @mdDialog = dependencies.mdDialog
     @interval = dependencies.interval
 
-    @colors = ['#b9f6ca', '#ffff8d', '#84ffff', '#80d8ff', '#448aff', '#b388ff', '#8c9eff', '#ff8a80', '#ff80ab']
-
     @LogService.add 'Starting up!', 'info'
 
     @setupRootScope()
@@ -35,12 +33,11 @@ class MainController
   updateDevice: (device) =>
     filename = device.type?.replace ':', '/'
     device.icon_url = "https://ds78apnml6was.cloudfront.net/#{filename}.svg"
-    device.colorInt ?= parseInt(device.uuid[0..6], 16) % @colors.length
-    device.background = @colors[device.colorInt]
+    device.background = '#f5f5f5'
     device.col_span ?= 1
     device.row_span ?= 1
     if device.online == false
-      device.background = '#f5f5f5'
+      device.background = '#e5e5e5'
 
     return device
 

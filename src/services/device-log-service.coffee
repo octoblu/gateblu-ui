@@ -1,3 +1,5 @@
+_  = require 'lodash'
+
 class DeviceLogService
   constructor: ($rootScope) ->
     @logs = {}
@@ -37,6 +39,9 @@ class DeviceLogService
     @logs[entry.uuid] ?= []
     @logs[entry.uuid].unshift entry
     @rootScope.$broadcast 'log:device:add', entry
+
+  hasError: (uuid) =>
+    return _.any @logs[uuid], type: 'error'
 
   get: (uuid) => @logs[uuid]
   clear: (uuid) => @logs[uuid] = []

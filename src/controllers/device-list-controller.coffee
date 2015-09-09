@@ -3,6 +3,7 @@ class DeviceListController
     @rootScope = dependencies.rootScope
     @scope = dependencies.scope
     @GatebluServiceManager = dependencies.GatebluServiceManager
+    @DeviceLogService = dependencies.DeviceLogService
     @mdDialog = dependencies.mdDialog
 
     @scope.deleteDevice = (device) =>
@@ -32,10 +33,15 @@ class DeviceListController
     @scope.showDeviceLog = (device) =>
       @rootScope.$broadcast 'log:open:device', device
 
+    @rootScope.$on 'log:device:add', ($event, entry) =>
+      @scope.deviceHasNewError ?= {}
+      @scope.deviceHasNewError[entry.uuid] = @DeviceLogService.hasError entry.uuid
+
 angular.module 'gateblu-ui'
-  .controller 'DeviceListController', ($rootScope, $scope, GatebluServiceManager, $mdDialog) ->
+  .controller 'DeviceListController', ($rootScope, $scope, GatebluServiceManager, DeviceLogService, $mdDialog) ->
     new DeviceListController
       rootScope: $rootScope
       scope: $scope
       GatebluServiceManager: GatebluServiceManager
+      DeviceLogService: DeviceLogService
       mdDialog: $mdDialog

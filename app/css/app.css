@@ -157,7 +157,8 @@ footer .drawer-controls {
 
 .grid-device-container md-grid-tile-footer p {
   font-size: 0.9em;
-  padding: 3px 0 0 15px;
+  margin: 5px 0;
+  padding: 0 0 0 15px;
 }
 .grid-device-container md-icon svg {
   -webkit-border-radius: 50%;
@@ -179,8 +180,9 @@ footer .drawer-controls {
 .grid-device-container md-grid-tile md-icon {
   padding-bottom: 32px; }
 .grid-device-container md-grid-tile md-grid-tile-footer {
-  background: rgba(0, 0, 0, 0.68);
-  height: 36px; }
+  background: rgba(0, 0, 0, 0.5);
+  height: 50px;
+}
 .grid-device-container md-grid-tile-footer figcaption {
   width: 100%; }
 .grid-device-container md-grid-tile-footer figcaption h3 {
@@ -222,4 +224,22 @@ footer .drawer-controls {
 
 .icon-yellow {
   color: gold;
+}
+
+.device-icon-buttons {
+  height: 20px;
+  padding: 13px 0px;
+  background: rgba(0, 0, 0, 0.2)
+}
+
+.device-error-logs {
+  position: absolute;
+  right: 12px;
+  top: 12px;
+
+  width: 6px;
+  height: 6px;
+  border-radius: 3px;
+
+  background-color: #CC2200;
 }

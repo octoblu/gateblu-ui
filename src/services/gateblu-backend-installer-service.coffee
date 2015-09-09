@@ -4,7 +4,6 @@ class GatebluBackendInstallerService
   constructor : (@dependencies={})->
 
   install: (callback=->) =>
-    console.log "INSTALL!"
     callback()
 
 angular.module 'gateblu-ui'
