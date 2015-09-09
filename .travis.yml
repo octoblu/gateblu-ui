@@ -33,12 +33,3 @@ deploy:
   on:
     tags: true
     all_branches: true
-- provider: npm
-  skip_cleanup: true
-  clean_up: false
-  email: serveradmin@octoblu.com
-  api_key:
-    secure: BG9vlC2mjJkK9XJlL4/XE+pVvuZqDvadGA1YjUgmlv/slehYIx9ugpd0VFMJbObmr/+va24hHgJySkZtaJ1vGYAnbPbfWY+JMoNkHiXz7BFX4zYuMJtkzi3HIMexcZOj3oJwhSLGwrwEUHtLIATJeyX++H28mEjyW8VQgi3Eq6E=
-  on:
-    tags: true
-    all_branches: true

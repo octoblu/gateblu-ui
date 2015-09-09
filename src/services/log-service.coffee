@@ -12,4 +12,4 @@ angular.module 'gateblu-ui'
     all : =>
       logs
     clear : =>
-      logs.length = 0
+      logs = []

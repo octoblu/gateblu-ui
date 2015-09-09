@@ -139,6 +139,14 @@ class MainController
       @scope.showLog = false
       @scope.showingLogForDevice = null
 
+    @rootScope.$on 'log:clear:device', ($event, uuid) =>
+      @DeviceLogService.clear uuid
+      @scope.logLines = []
+
+    @rootScope.$on 'log:clear', ($event) =>
+      @LogService.clear()
+      @scope.logLines = []
+
     @rootScope.$on 'error', ($event, error) =>
       @scope.showError error
 

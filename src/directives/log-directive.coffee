@@ -5,4 +5,5 @@ angular.module 'gateblu-ui'
   scope:
     title: '='
     logLines: '='
+    deviceUuid: '='
   controller: 'LogController'
