@@ -132,6 +132,9 @@ class MainController
       @scope.showingLogForDevice = device.uuid
       @scope.logLines = @DeviceLogService.get device.uuid
 
+    @rootScope.$on 'log:add:device', ($event, entry) =>
+      @scope.logLines = @DeviceLogService.get entry.uuid if @scope.showingLogForDevice == entry.uuid
+
     @rootScope.$on 'log:close', ($event) =>
       @scope.showLog = false
       @scope.showingLogForDevice = null
@@ -156,9 +159,6 @@ class MainController
     @scope.showLog = false
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
     @scope.deviceLogs = {}
-
-    @DeviceLogService.listen (uuid, msg) =>
-      @scope.logLines = @DeviceLogService.get uuid if @scope.showingLogForDevice == uuid
 
     @scope.getInstallerLink = (version='latest') =>
       baseUrl = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/#{version}"
@@ -261,9 +261,9 @@ class MainController
     @scope.toggleInfo = =>
       @scope.showInfo = !@scope.showInfo
 
-    @scope.$watch 'deviceUuids', (deviceUuids) =>
-      _.each deviceUuids, (uuid) =>
-        @GatebluServiceManager.getLogForDevice uuid
+    # @scope.$watch 'deviceUuids', (deviceUuids) =>
+    #   _.each deviceUuids, (uuid) =>
+    #     @GatebluServiceManager.getLogForDevice uuid
 
 angular.module 'gateblu-ui'
   .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->

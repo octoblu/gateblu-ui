@@ -1,22 +1,27 @@
-angular.module 'gateblu-ui'
-  .service 'DeviceLogService', ($timeout)->
-    logs = {}
-    _callbacks = []
-    add: (uuid, type, log)=>
-      message = log
-      try
-        message = JSON.stringify(log).toString() unless _.isString log
-      catch
+class DeviceLogService
+  constructor: ($rootScope) ->
+    @logs = {}
+    @rootScope = $rootScope
 
-      logs[uuid] ?= []
-      entry = type: type, message: message, timestamp: new Date(), rawMessage: log
-      logs[uuid].unshift entry
-      $timeout =>
-        _.each _callbacks, (callback) => callback uuid, entry
-      , 0
-    get: (uuid) => logs[uuid]
-    all: => logs
-    clear: => logs[uuid] = []
-    clearAll: => logs = {}
-    listen: (callback=->)=>
-      _callbacks.push callback
+  add: (uuid, type, log) =>
+    message = log
+    try
+      message = JSON.stringify(log).toString() unless _.isString log
+
+    @logs[uuid] ?= []
+    entry =
+      type: type
+      message: message
+      timestamp: new Date()
+      uuid: uuid
+      rawMessage: log
+    @rootScope.$broadcast 'log:device:add', entry
+    @logs[uuid].unshift entry
+
+  get: (uuid) => @logs[uuid]
+  clear: (uuid) => @logs[uuid] = []
+  clearAll: => @logs = {}
+
+angular.module 'gateblu-ui'
+  .service 'DeviceLogService', ($rootScope)->
+    return new DeviceLogService $rootScope
