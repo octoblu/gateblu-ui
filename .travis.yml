@@ -24,7 +24,7 @@ deploy:
 - provider: s3
   access_key_id: AKIAJH2D5IPIRHYJT5IA
   secret_access_key:
-    secure: M0aUEjuuihPDcxZ9lyCo3HqGvOPmiDRnnq4UIwXrC9xTukBS2dfyDKC1sCcn1ijeGtwuw3HUGAVR/hglO13RCdKxTO1xnr4+iljxVOiVH0J3o8tqk3Is7TovmD7P8GpcI2KCgmMDf2ngq9jQWvs4tB6QGil0VcMvwe/6nTeQeMQ=
+    secure: A7BIpbw8inwuqTqyD+aVW9T/2uyQjjpdRhNhv0WBsL1jxJWSMwuwV1PaBka7SgrBvXRRvHjY626js0cIZYWpdz4+RwV8w1a9q9nXbmxtH3LSvIgLIfs4hrFrQvZvgZvFb0iZQnr6LNG1chuMJHyNOqwfqoEmynWZDDsN0wVxj4Q=
   bucket: gateblu
   upload-dir: gateblu-ui
   region: us-west-2
