@@ -124,8 +124,10 @@ class MainController
       @fullscreen = null
 
     @rootScope.$on 'log:open:device', ($event, device) =>
+      uuid = device.uuid[0..7]
       @scope.showLog = true
-      @scope.logTitle = "Device Log (~#{device.uuid})"
+      @scope.logTitle = "\"#{device.name}\" Log (~#{uuid}...)" if device.name?
+      @scope.logTitle = "Device Log (~#{uuid}...)" unless device.name?
       @scope.showingLogForDevice = device.uuid
       @scope.logLines = @DeviceLogService.get device.uuid
 
@@ -194,11 +196,13 @@ class MainController
       @mdDialog
         .show alert
         .then =>
-          @fullscreen =
-            message : 'Restarting Gateblu'
+          @scope.fullscreen =
+            message: 'Restarting Gateblu'
             spinner: true
           @GatebluServiceManager.hardRestartGateblu (error) =>
             @scope.showError error if error?
+            @scope.fullscreen = null
+            @rootScope.$apply()
 
     @scope.resetGateblu = =>
       alert = @mdDialog.confirm
@@ -211,7 +215,7 @@ class MainController
       @mdDialog
         .show alert
         .then =>
-          @fullscreen =
+          @scope.fullscreen =
             message : 'Resetting Gateblu'
             spinner: true
           @GatebluServiceManager.resetGateblu (error) =>
@@ -265,10 +269,6 @@ class MainController
 
     @scope.toggleInfo = =>
       @scope.showInfo = !@scope.showInfo
-
-    # @scope.$watch 'deviceUuids', (deviceUuids) =>
-    #   _.each deviceUuids, (uuid) =>
-    #     @GatebluServiceManager.getLogForDevice uuid
 
 angular.module 'gateblu-ui'
   .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->

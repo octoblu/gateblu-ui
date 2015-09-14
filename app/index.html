@@ -107,7 +107,7 @@
 
     <log ng-if="(showLog && !fullscreen) || (showLog && fullscreen.menu)" log-lines="logLines" device-uuid="showingLogForDevice" title="logTitle"></log>
     <full-screen-message ng-if="fullscreen" message="fullscreen.message" spinner="fullscreen.spinner" button-title="fullscreen.buttonTitle" event-name="fullscreen.eventName"></full-screen-message>
-    <device-list ng-if="!showLog && !fullscreen" devices="devices"></device-list>
+    <device-list ng-show="!showLog && !fullscreen" devices="devices"></device-list>
 
   </md-content>
 </body>

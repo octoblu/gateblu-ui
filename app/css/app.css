@@ -232,14 +232,19 @@ footer .drawer-controls {
   background: rgba(0, 0, 0, 0.2)
 }
 
-.device-error-logs {
+.device-logs-badge {
   position: absolute;
-  right: 12px;
-  top: 12px;
-
+  right: -10px;
+  top: -4px;
   width: 6px;
   height: 6px;
   border-radius: 3px;
+}
 
+.device-error-logs {
   background-color: #CC2200;
+}
+
+.device-logs {
+  background-color: rgb(76,175,80);
 }

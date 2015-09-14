@@ -31,11 +31,15 @@ class DeviceListController
         .show alert
 
     @scope.showDeviceLog = (device) =>
+      @scope.deviceHasNewError?[device.uuid] = false
+      @scope.deviceHasNewLog?[device.uuid] = false
       @rootScope.$broadcast 'log:open:device', device
 
     @rootScope.$on 'log:device:add', ($event, entry) =>
       @scope.deviceHasNewError ?= {}
       @scope.deviceHasNewError[entry.uuid] = @DeviceLogService.hasError entry.uuid
+      @scope.deviceHasNewLog ?= {}
+      @scope.deviceHasNewLog[entry.uuid] = !@scope.deviceHasNewError[entry.uuid]
 
 angular.module 'gateblu-ui'
   .controller 'DeviceListController', ($rootScope, $scope, GatebluServiceManager, DeviceLogService, $mdDialog) ->

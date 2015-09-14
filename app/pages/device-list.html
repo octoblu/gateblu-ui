@@ -23,7 +23,7 @@
           <md-button ng-click="showDeviceLog(device)"
             class="md-icon-button" aria-label="Show Logs" title="Show Logs">
             <i class="fa fa-file-text-o">
-              <span ng-class="{'device-error-logs': deviceHasNewError[device.uuid]}" />
+              <span class="device-logs-badge" ng-class="{'device-error-logs': deviceHasNewError[device.uuid], 'device-logs': deviceHasNewLog[device.uuid]}" />
             </i>
           </md-button>
           <md-button ng-click="deleteDevice(device)" class="md-icon-button" aria-label="Delete" title="Delete">
