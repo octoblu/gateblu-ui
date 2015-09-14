@@ -3,3 +3,6 @@ node_modules
 build
 .build
 .installer
+dpl_s3
+*.zip
+*.dmg

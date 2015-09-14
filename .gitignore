@@ -51,3 +51,6 @@ device.json
 .DS_Store
 build/
 app/package.json
+dpl_s3
+*.zip
+*.dmg
