@@ -8,6 +8,8 @@ env:
   global:
   - secure: cmK7r29eJ3JLWw6hwWmdkFASX40ciedftmamXzoOEtZMvEeAvdnjIIgcYQ/NO0+51WMlnnrEekB7h7khKvxgfCQ3S8H9Zi3vTNSKXONPcrNbLfze7FjY63yy5VsHK+PmD6Fmnj3Pl1HpQpzDaRWPrGq/uM2UYiDTpMw3K+OGPTI=
   - secure: aEroqDGI9P3ZxnsH7bLYoM1v8BWk4DyzqlO3yznSxiHbLnj2eHq8ehmjk2LaeuzsWTfxYXUfeg5WnxWP9OC3n+Yfsv7jUlhOwH2YbNssoe6dhYw3/8BPd8Iu4qUJB8rmRYx4h7PUViSO7zUe56sRdjoyZ28mm60j/BKKctdHB3M=
+before_install:
+- npm install npm -g
 before_script:
 - brew update
 - brew upgrade xctool || true
@@ -32,7 +34,7 @@ deploy:
   local-dir: dpl_s3
   on:
     tags: true
-    all_branches: true
+    all_branches: master
 - provider: npm
   skip_cleanup: true
   clean_up: false
@@ -41,4 +43,4 @@ deploy:
     secure: "ewo2E6Ugivr1xw7VbahYZPE3m4gZeidr89jxvCjhTjHKpVI6W9vX1li5Zz/SPnXTsWhT0CG4mw4m1BLmsVj35hiao59AAPSBlczpz9RuAp0wHSmlpMbpgGSBDZxvYUNX3FIhp4qcLyCI29Vtcjj6vEQQ9ZVSTG1L8CoqmbE9bWk="
   on:
     tags: true
-    all_branches: true
+    all_branches: master

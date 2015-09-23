@@ -7,8 +7,8 @@ class DeviceListController
     @DeviceService = dependencies.DeviceService
     @mdDialog = dependencies.mdDialog
 
-    @scope.DEBUG_SWITCHING_ACTIVE = false
-    
+    @scope.DEBUG_SWITCHING_ACTIVE = true
+
     @scope.getDeviceName = (device) =>
       return '[Initializing...]' if device.initializing
       return '[Missing Name]' unless device.name?
