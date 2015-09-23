@@ -81,7 +81,6 @@ class GatebluServiceManager
   removeDeviceAndTmp: (callback=->) =>
     directories = [
       @ConfigService.getSupportPath 'tmp'
-      @ConfigService.getSupportPath 'devices'
     ]
 
     async.each directories, fsExtra.emptyDir, callback
