@@ -4,7 +4,27 @@ class DeviceListController
     @scope = dependencies.scope
     @GatebluServiceManager = dependencies.GatebluServiceManager
     @DeviceLogService = dependencies.DeviceLogService
+    @DeviceService = dependencies.DeviceService
     @mdDialog = dependencies.mdDialog
+
+    @scope.DEBUG_SWITCHING_ACTIVE = false
+    
+    @scope.getDeviceName = (device) =>
+      return '[Initializing...]' if device.initializing
+      return '[Missing Name]' unless device.name?
+      return device.name
+
+    @scope.isInDebugMode = (device) =>
+      return device?.env?.DEBUG?
+
+    @scope.turnOnDebug = (device) =>
+      debugEnv = "#{device.connector}*"
+      query = $set: "env.DEBUG": debugEnv
+      @DeviceService.updateDangerously device.uuid, query, @onDebugChangeResponse
+
+    @scope.turnOffDebug = (device) =>
+      query = $unset: "env.DEBUG": ""
+      @DeviceService.updateDangerously device.uuid, query, @onDebugChangeResponse
 
     @scope.deleteDevice = (device) =>
       alert = @mdDialog.confirm
@@ -41,11 +61,22 @@ class DeviceListController
       @scope.deviceHasNewLog ?= {}
       @scope.deviceHasNewLog[entry.uuid] = !@scope.deviceHasNewError[entry.uuid]
 
+  onDebugChangeResponse: (error) =>
+    return console.error error if error?
+    alertObj =
+      title: 'Restart Service'
+      content: "Debug mode changed. Restart the gateblu service by pressing the power button."
+      ok: 'Okay'
+      theme: 'warning'
+    alert = @mdDialog.alert alertObj
+    @mdDialog.show alert
+
 angular.module 'gateblu-ui'
-  .controller 'DeviceListController', ($rootScope, $scope, GatebluServiceManager, DeviceLogService, $mdDialog) ->
+  .controller 'DeviceListController', ($rootScope, $scope, GatebluServiceManager, DeviceLogService, DeviceService, $mdDialog) ->
     new DeviceListController
       rootScope: $rootScope
       scope: $scope
       GatebluServiceManager: GatebluServiceManager
       DeviceLogService: DeviceLogService
+      DeviceService: DeviceService
       mdDialog: $mdDialog

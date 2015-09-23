@@ -13,7 +13,7 @@
 
       <md-grid-tile-footer layout="column">
         <p layout-align="center center" layout="row">
-          {{device.name || 'Initializing...'}}
+          {{getDeviceName(device)}}
           <span ng-show="!device.online"> &nbsp; (offline)</span>
         </p>
         <div class='device-icon-buttons' layout-align="center center" layout="row">
@@ -25,6 +25,12 @@
             <i class="fa fa-file-text-o">
               <span class="device-logs-badge" ng-class="{'device-error-logs': deviceHasNewError[device.uuid], 'device-logs': deviceHasNewLog[device.uuid]}" />
             </i>
+          </md-button>
+          <md-button ng-if="DEBUG_SWITCHING_ACTIVE && isInDebugMode(device)" ng-click="turnOffDebug(device)" class="md-icon-button" aria-label="Device Debug" title="Device Debug">
+            <i class="fa fa-bug icon-green"></i>
+          </md-button>
+          <md-button ng-if="DEBUG_SWITCHING_ACTIVE && !isInDebugMode(device)" ng-click="turnOnDebug(device)" class="md-icon-button" aria-label="Device Debug" title="Device Debug">
+            <i class="fa fa-bug muted"></i>
           </md-button>
           <md-button ng-click="deleteDevice(device)" class="md-icon-button" aria-label="Delete" title="Delete">
             <i class="fa fa-trash"></i>

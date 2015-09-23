@@ -72,7 +72,7 @@ class MainController
     @rootScope.$on 'gateblu:config', ($event, config) =>
       @LogService.add 'Gateblu Config Changed', 'info'
       @scope.gatebluConfig = config
-      @scope.fullscreen = null if @scope.fullscreen?.waitForConfig
+      @clearFullscreen() if @scope.fullscreen?.waitForConfig
       unless config.owner?
         @scope.fullscreen =
           buttonTitle: 'Claim Gateblu'
@@ -83,8 +83,7 @@ class MainController
     @rootScope.$on 'gateblu:device:config', ($event, config) =>
       device = _.findWhere @scope.devices, uuid: config.uuid
       return unless device?
-      device.online = config.online
-      device.name = config.name
+      _.extend device, config
 
     @rootScope.$on 'gateblu:notReady', ($event, config) =>
       @LogService.add "Meshblu Authentication Failed", 'error'
@@ -109,8 +108,7 @@ class MainController
       @LogService.add 'Received Device List', 'info'
       @scope.devices = _.map devices, @updateDevice
       uuids = _.pluck @scope.devices, 'uuid'
-      if _.isEqual uuids, @scope.deviceUuids
-        @scope.fullscreen = null
+      @clearFullscreen() if _.isEqual uuids, @scope.deviceUuids
 
     @rootScope.$on "device:unregistering", ($event, device) =>
       @fullscreen =
@@ -121,7 +119,7 @@ class MainController
       msg = "#{device.name} (~#{device.uuid}) has been deleted"
       @DeviceLogService.add device.uuid, 'warning', msg
       @LogService.add msg, 'warning'
-      @fullscreen = null
+      @clearFullscreen()
 
     @rootScope.$on 'log:open:device', ($event, device) =>
       uuid = device.uuid[0..7]
@@ -149,6 +147,9 @@ class MainController
     @rootScope.$on 'error', ($event, error) =>
       @scope.showError error
 
+    @rootScope.$on 'prompt-to-close', ($event) =>
+      @scope.promptToClose()
+
   showNoDevices: (uuids) =>
     showNoDevices = _.isEmpty(uuids) && !@scope.fullscreen?.claiming
     return true unless showNoDevices
@@ -156,6 +157,9 @@ class MainController
       message: 'No Devices'
       menu: true
       spinner: false
+
+  clearFullscreen: =>
+    @scope.fullscreen = null
 
   setupScope: =>
     @scope.fullscreen =
@@ -201,7 +205,7 @@ class MainController
             spinner: true
           @GatebluServiceManager.hardRestartGateblu (error) =>
             @scope.showError error if error?
-            @scope.fullscreen = null
+            @clearFullscreen()
             @rootScope.$apply()
 
     @scope.resetGateblu = =>
@@ -269,6 +273,10 @@ class MainController
 
     @scope.toggleInfo = =>
       @scope.showInfo = !@scope.showInfo
+
+    @scope.$watch 'fullscreen', =>
+      return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
+      @fullScreenTimeout = _.delay @clearFullscreen, 10000
 
 angular.module 'gateblu-ui'
   .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->
