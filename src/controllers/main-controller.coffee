@@ -274,6 +274,9 @@ class MainController
     @scope.toggleInfo = =>
       @scope.showInfo = !@scope.showInfo
 
+    @scope.hideChangeNoticeAction = =>
+      @scope.hideChangeNotice = true
+
     @scope.$watch 'fullscreen', =>
       return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
       @fullScreenTimeout = _.delay @clearFullscreen, 10000

@@ -4,6 +4,7 @@ class DeviceLogService
   constructor: ($rootScope) ->
     @logs = {}
     @rootScope = $rootScope
+    @MAX_LOG_LINES = 100
 
   add: (uuid, type, log) =>
     message = log
@@ -38,6 +39,7 @@ class DeviceLogService
   addRaw: (entry) =>
     @logs[entry.uuid] ?= []
     @logs[entry.uuid].unshift entry
+    @logs[entry.uuid] = _.take @logs[entry.uuid], @MAX_LOG_LINES
     @rootScope.$broadcast 'log:device:add', entry
 
   hasError: (uuid) =>

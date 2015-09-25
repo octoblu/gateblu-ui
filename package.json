@@ -4,7 +4,7 @@
   "homepage": "https://github.com/octoblu/gateblu-ui",
   "main": "main.js",
   "description": "Gateblu Cross Platform GUI",
-  "version": "3.2.2",
+  "version": "3.2.3",
   "repository": {
     "url": "https://github.com/octoblu/gateblu-ui.git",
     "type": "git"
