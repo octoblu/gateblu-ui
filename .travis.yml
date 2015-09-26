@@ -13,6 +13,8 @@ before_install:
 before_script:
 - brew update
 - brew upgrade xctool || true
+- brew install Caskroom/cask/xquartz
+- brew install wine
 - brew install curl
 - npm install
 script: cd $TRAVIS_BUILD_DIR && .build/build
