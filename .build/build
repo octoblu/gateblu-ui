@@ -50,6 +50,7 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
       --version=$ELECTRON_VERSION \
       --icon=$START_DIR/assets/icon.ico \
       --out=$CACHE_DIR \
+      --cache=$CACHE_DIR/electron \
       --overwrite \
       --asar=$APP_ARCHIVE \
       --version-string.CompanyName=Octoblu \

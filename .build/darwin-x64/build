@@ -13,12 +13,9 @@ if [ ! -f $PLATFORM_BUILD_DIR/GatebluService.pkg ]; then
   popd
 fi
 
-PLATFORM_APP_DIR=$PLATFORM_BUILD_DIR/GatebluApp
+echo '### create app folder'
+PLATFORM_APP_DIR=$PLATFORM_BUILD_DIR/Gateblu.app
 cp -rfp $APP_ARCHIVE $PLATFORM_APP_DIR/Contents/Resources
-
-mv $PLATFORM_BUILD_DIR/Gateblu.app $PLATFORM_APP_DIR
-
-chmod -R a+xr $PLATFORM_APP_DIR
 
 echo "### create keychain"
 security create-keychain -p travis mac-build.keychain
@@ -47,12 +44,12 @@ pushd $PLATFORM_BUILD_DIR
 pkgbuild --analyze --root ./GatebluApp \
   $PLATFORM_BUILD_DIR/GatebluAppComponents.plist
 
-pkgbuild --root ./GatebluApp \
+pkgbuild --root ./Gateblu.app \
   --identifier com.octoblu.GatebluApp \
   --version 1.0 \
   --ownership recommended \
   --component-plist $PLATFORM_BUILD_DIR/GatebluAppComponents.plist \
-  --install-location "/Applications" \
+  --install-location "/Applications/Gateblu.app" \
   ./GatebluApp.pkg
 
 codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/GatebluApp.pkg"
