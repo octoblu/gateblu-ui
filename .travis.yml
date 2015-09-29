@@ -4,6 +4,9 @@ cache:
   directories:
   - node_modules
   - build/cache
+  - /Library/Caches/Homebrew
+  - /opt/homebrew-cask/Caskroom/
+  - /usr/local/Cellar
 env:
   global:
   - secure: cmK7r29eJ3JLWw6hwWmdkFASX40ciedftmamXzoOEtZMvEeAvdnjIIgcYQ/NO0+51WMlnnrEekB7h7khKvxgfCQ3S8H9Zi3vTNSKXONPcrNbLfze7FjY63yy5VsHK+PmD6Fmnj3Pl1HpQpzDaRWPrGq/uM2UYiDTpMw3K+OGPTI=
@@ -13,9 +16,11 @@ before_install:
 before_script:
 - brew update
 - brew upgrade xctool || true
+- brew install Caskroom/cask/xquartz
+- brew install wine
 - brew install curl
 - npm install
-script: cd $TRAVIS_BUILD_DIR && .build/build-old
+script: cd $TRAVIS_BUILD_DIR && .build/build
 before_deploy:
 - mkdir -p dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
 - mkdir -p dpl_s3/latest

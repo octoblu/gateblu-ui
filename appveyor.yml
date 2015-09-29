@@ -24,17 +24,17 @@ after_build:
       } else {
         $env:TAG_NAME=$env:APPVEYOR_REPO_COMMIT
       }
-  - ps: mkdir output\$env:TAG_NAME | Out-Null
-  - ps: >-
-      if($env:APPVEYOR_REPO_TAG_NAME){
-        mkdir output\latest | Out-Null
-      }
-  - ps: cp '.\.installer\win32-*\output\*.msi' output\$env:TAG_NAME
-  - ps: cp '.\.installer\win32-*\output\*.exe' output\$env:TAG_NAME
-  - ps: >-
-      if($env:APPVEYOR_REPO_TAG_NAME){
-        cp "output\$env:TAG_NAME\*" output\latest
-      }
+  - ps: mkdir output\test-build | Out-Null
+  # - ps: >-
+  #     if($env:APPVEYOR_REPO_TAG_NAME){
+  #       mkdir output\latest | Out-Null
+  #     }
+  - ps: cp '.\.installer\win32-*\output\*.msi' output\test-build
+  - ps: cp '.\.installer\win32-*\output\*.exe' output\test-build
+  # - ps: >-
+  #     if($env:APPVEYOR_REPO_TAG_NAME){
+  #       cp "output\$env:TAG_NAME\*" output\latest
+  #     }
   - ps: $root = Resolve-Path output; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName S3.GatebluApp }
 
 deploy:

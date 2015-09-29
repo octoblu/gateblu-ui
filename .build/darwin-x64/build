@@ -13,6 +13,7 @@ if [ ! -f $PLATFORM_BUILD_DIR/GatebluService.pkg ]; then
   popd
 fi
 
+echo '### create app folder'
 PLATFORM_APP_DIR=$PLATFORM_BUILD_DIR/Gateblu.app
 cp -rfp $APP_ARCHIVE $PLATFORM_APP_DIR/Contents/Resources
 
@@ -40,18 +41,15 @@ codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.key
 echo "### building packages"
 pushd $PLATFORM_BUILD_DIR
 
-mkdir -p GatebluApp
-mv Gateblu.app GatebluApp
-
-pkgbuild --analyze --root ./GatebluApp \
+pkgbuild --analyze --root ./Gateblu.app \
   $PLATFORM_BUILD_DIR/GatebluAppComponents.plist
 
-pkgbuild --root ./GatebluApp \
+pkgbuild --root ./Gateblu.app \
   --identifier com.octoblu.GatebluApp \
   --version 1.0 \
   --ownership recommended \
   --component-plist $PLATFORM_BUILD_DIR/GatebluAppComponents.plist \
-  --install-location "/Applications" \
+  --install-location "/Applications/Gateblu.localized" \
   ./GatebluApp.pkg
 
 codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/GatebluApp.pkg"

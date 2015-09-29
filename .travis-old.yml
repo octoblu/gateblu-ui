@@ -4,9 +4,6 @@ cache:
   directories:
   - node_modules
   - build/cache
-  - /Library/Caches/Homebrew
-  - /opt/homebrew-cask/Caskroom/
-  - /usr/local/Cellar
 env:
   global:
   - secure: cmK7r29eJ3JLWw6hwWmdkFASX40ciedftmamXzoOEtZMvEeAvdnjIIgcYQ/NO0+51WMlnnrEekB7h7khKvxgfCQ3S8H9Zi3vTNSKXONPcrNbLfze7FjY63yy5VsHK+PmD6Fmnj3Pl1HpQpzDaRWPrGq/uM2UYiDTpMw3K+OGPTI=
@@ -16,17 +13,19 @@ before_install:
 before_script:
 - brew update
 - brew upgrade xctool || true
-- brew install Caskroom/cask/xquartz
-- brew install wine
 - brew install curl
 - npm install
-script: cd $TRAVIS_BUILD_DIR && .build/build
+script: cd $TRAVIS_BUILD_DIR && .build/build-old
 before_deploy:
-- mkdir -p dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
-- mkdir -p dpl_s3/latest
-- cp build/**/*.zip dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
-- cp build/darwin-x64/Gateblu.dmg dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
-- cp -rfp dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}/* dpl_s3/latest
+# Commented out for testing 
+# - mkdir -p dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+# - mkdir -p dpl_s3/latest
+# - cp build/**/*.zip dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+# - cp build/darwin-x64/Gateblu.dmg dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
+# - cp -rfp dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}/* dpl_s3/latest
+- mkdir -p dpl_s3/test-build
+- cp build/**/*.zip dpl_s3/test-build
+- cp build/darwin-x64/Gateblu.dmg dpl_s3/test-build
 deploy:
 - provider: s3
   access_key_id: AKIAJH2D5IPIRHYJT5IA
@@ -37,15 +36,16 @@ deploy:
   region: us-west-2
   skip_cleanup: true
   local-dir: dpl_s3
-  on:
-    tags: true
-    all_branches: master
-- provider: npm
-  skip_cleanup: true
-  clean_up: false
-  email: serveradmin@octoblu.com
-  api_key:
-    secure: "ewo2E6Ugivr1xw7VbahYZPE3m4gZeidr89jxvCjhTjHKpVI6W9vX1li5Zz/SPnXTsWhT0CG4mw4m1BLmsVj35hiao59AAPSBlczpz9RuAp0wHSmlpMbpgGSBDZxvYUNX3FIhp4qcLyCI29Vtcjj6vEQQ9ZVSTG1L8CoqmbE9bWk="
-  on:
-    tags: true
-    all_branches: master
+# Commented out for testing
+# on:
+#   tags: true
+#   all_branches: master
+# - provider: npm
+#   skip_cleanup: true
+#   clean_up: false
+#   email: serveradmin@octoblu.com
+#   api_key:
+#     secure: "ewo2E6Ugivr1xw7VbahYZPE3m4gZeidr89jxvCjhTjHKpVI6W9vX1li5Zz/SPnXTsWhT0CG4mw4m1BLmsVj35hiao59AAPSBlczpz9RuAp0wHSmlpMbpgGSBDZxvYUNX3FIhp4qcLyCI29Vtcjj6vEQQ9ZVSTG1L8CoqmbE9bWk="
+#   on:
+#     tags: true
+#     all_branches: master
