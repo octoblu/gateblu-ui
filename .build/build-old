@@ -1,0 +1,67 @@
+#!/bin/sh
+echo "Exciting Electrons..."
+
+PLATFORMS="darwin-x64 linux-x64 linux-ia32 win32-ia32 win32-x64"
+START_DIR=`pwd`
+SCRIPT_DIR=$START_DIR/.build
+BUILD_DIR=$START_DIR/build
+ELECTRON_VERSION=0.25.1
+ulimit -n 8192
+APP_DIR=$BUILD_DIR/app
+APP_ARCHIVE=$BUILD_DIR/app.asar
+CACHE_DIR=$BUILD_DIR/cache
+
+rm -rf $APP_DIR
+mkdir -p $BUILD_DIR $CACHE_DIR/electron
+
+echo "Installing node_modules..."
+npm install --silent
+node_modules/.bin/gulp
+
+echo "Copying app..."
+cp -rfp app $BUILD_DIR
+
+echo "Installing app node_modules..."
+cd $APP_DIR
+npm install --production --silent
+
+$START_DIR/node_modules/.bin/asar pack $APP_DIR $APP_ARCHIVE
+
+for ELECTRON_PLATFORM in $PLATFORMS; do
+  cd $CACHE_DIR/electron
+
+  echo "Downloading Electron ($ELECTRON_PLATFORM)..."
+
+  ELECTRON_PLATFORM_ZIP=gateblu-v$ELECTRON_VERSION-$ELECTRON_PLATFORM.zip
+  if [ ! -f $ELECTRON_PLATFORM_ZIP ]; then
+    echo "Downloading $ELECTRON_PLATFORM_ZIP"
+    curl -LsO https://s3-us-west-2.amazonaws.com/gateblu/electron-binaries/$ELECTRON_PLATFORM_ZIP
+    if [ $! ]; then
+      exit 1
+    fi
+  fi
+
+  echo "Building ($ELECTRON_PLATFORM)..."
+  PLATFORM_BUILD_DIR=$BUILD_DIR/$ELECTRON_PLATFORM
+  PLATFORM_SCRIPT_DIR=$SCRIPT_DIR/$ELECTRON_PLATFORM
+  platform_build_script=$PLATFORM_SCRIPT_DIR/build
+  sudo rm -rf $PLATFORM_BUILD_DIR
+  mkdir -p $PLATFORM_BUILD_DIR
+  cd $PLATFORM_BUILD_DIR
+
+  echo "Unzipping ($ELECTRON_PLATFORM_ZIP)..."
+  unzip -q $CACHE_DIR/electron/$ELECTRON_PLATFORM_ZIP
+
+  if [ ! -f $platform_build_script ]; then
+    echo "Could not find $platform_build_script"
+    exit 1
+  fi
+  export ELECTRON_PLATFORM SCRIPT_DIR PLATFORM_BUILD_DIR KEY_PASSWORD BUILD_DIR APP_DIR PLATFORM_SCRIPT_DIR APP_ARCHIVE
+  $platform_build_script
+  if [ $! ]; then
+    echo "$platform_build_script Failed!"
+    exit 1
+  fi
+done
+
+cd $START_DIR
