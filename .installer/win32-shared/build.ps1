@@ -69,10 +69,6 @@ If(!(Test-Path $destination)) {
 
 $destination = "$cache_dir\gateblu-$platform-$gateblu_version.zip"
 If(!(Test-Path $destination)) {
-  if($gateblu_version -eq "develop") {
-    echo "Sleeping for 45 minutes because this is the develop branch"
-    Start-Sleep -s 2700;
-  }
   $source = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/$gateblu_version/gateblu-$platform.zip"
   echo "Downloading $destination..."
   for($i=1; $i -le 100; $i++) {
