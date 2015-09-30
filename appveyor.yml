@@ -46,6 +46,9 @@ deploy:
     folder: gateblu-ui
     artifact: S3.GatebluApp
     set_public: true
-    # on:
-    #   branch: master
+    on:
+      branches:
+        only:
+          - /.*/
+    #  branch: master
     #   appveyor_repo_tag: true

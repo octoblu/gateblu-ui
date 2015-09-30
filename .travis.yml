@@ -35,6 +35,8 @@ deploy:
   region: us-west-2
   skip_cleanup: true
   local-dir: dpl_s3
+  on:
+    branches: true
 - provider: npm
   skip_cleanup: true
   clean_up: false
