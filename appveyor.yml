@@ -16,27 +16,27 @@ build_script:
       } else {
         . .\.installer\win32-x64\build.ps1
       }
-
 after_build:
   - ps: >-
-      if($env:APPVEYOR_REPO_TAG_NAME){
+      if ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
+        $env:TAG_NAME="test-build"
+      } elseif ($env:APPVEYOR_REPO_TAG_NAME){
         $env:TAG_NAME=$env:APPVEYOR_REPO_TAG_NAME
       } else {
         $env:TAG_NAME=$env:APPVEYOR_REPO_COMMIT
       }
   - ps: mkdir output\$env:TAG_NAME | Out-Null
   - ps: >-
-      if($env:APPVEYOR_REPO_TAG_NAME){
+      if($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_BRANCH -eq 'master'){
         mkdir output\latest | Out-Null
       }
   - ps: cp '.\.installer\win32-*\output\*.msi' output\$env:TAG_NAME
   - ps: cp '.\.installer\win32-*\output\*.exe' output\$env:TAG_NAME
   - ps: >-
-      if($env:APPVEYOR_REPO_TAG_NAME){
+      if ($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_BRANCH -eq 'master'){
         cp "output\$env:TAG_NAME\*" output\latest
       }
-  - ps: $root = Resolve-Path output; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName S3.GatebluApp }
-
+  - ps: $root = Resolve-Path output; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName S3.GatebluApp
 deploy:
   - provider: S3
     access_key_id: AKIAJH2D5IPIRHYJT5IA
@@ -46,6 +46,6 @@ deploy:
     folder: gateblu-ui
     artifact: S3.GatebluApp
     set_public: true
-    on:
-      branch: master
-      appveyor_repo_tag: true
+    # on:
+    #   branch: master
+    #   appveyor_repo_tag: true

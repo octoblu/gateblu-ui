@@ -27,7 +27,9 @@ $tmp_dir = [io.path]::GetTempFileName()
 $wix_template_dir = "$shared_dir\wix"
 $wix_dir = "C:\Program Files (x86)\WiX Toolset v3.9\bin"
 
-if($env:APPVEYOR_REPO_TAG_NAME){
+if ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
+  $gateblu_version="test-build"
+} elseif ($env:APPVEYOR_REPO_TAG_NAME){
   $gateblu_version=$env:APPVEYOR_REPO_TAG_NAME
 } else {
   $gateblu_version='latest'
