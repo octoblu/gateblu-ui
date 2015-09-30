@@ -1,7 +1,9 @@
 #!/bin/sh
 echo "Exciting Electrons..."
 
-PLATFORMS="darwin-x64 linux-x64 linux-ia32 win32-ia32 win32-x64"
+if [ -z "$PLATFORMS" ]; then
+  PLATFORMS="darwin-x64 linux-x64 linux-ia32 win32-ia32 win32-x64"
+fi
 START_DIR=`pwd`
 SCRIPT_DIR=$START_DIR/.build
 BUILD_DIR=$START_DIR/build
@@ -42,13 +44,19 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
   platform_build_script=$PLATFORM_SCRIPT_DIR/build
   sudo rm -rf $PLATFORM_BUILD_DIR
   mkdir -p $PLATFORM_BUILD_DIR
+  sudo rm -rf $CACHE_DIR/Gateblu-$ELECTRON_PLATFORM
   cd $PLATFORM_BUILD_DIR
+
+  APP_ICON=$START_DIR/assets/gateblu-icon.icns
+  if [ $JUST_ELECTRON_PLATFORM == "win32" ]; then
+    APP_ICON=$START_DIR/assets/gateblu-icon.ico
+  fi
 
   $START_DIR/node_modules/.bin/electron-packager $START_DIR/app Gateblu \
       --platform=$JUST_ELECTRON_PLATFORM \
       --arch=$JUST_ELECTRON_ARCH \
       --version=$ELECTRON_VERSION \
-      --icon=$START_DIR/assets/icon.ico \
+      --icon=$APP_ICON \
       --out=$CACHE_DIR \
       --cache=$CACHE_DIR/electron \
       --overwrite \
@@ -66,7 +74,7 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
     exit 1
   fi
 
-  export ELECTRON_PLATFORM SCRIPT_DIR PLATFORM_BUILD_DIR KEY_PASSWORD BUILD_DIR APP_DIR PLATFORM_SCRIPT_DIR APP_ARCHIVE
+  export ELECTRON_PLATFORM SCRIPT_DIR PLATFORM_BUILD_DIR KEY_PASSWORD BUILD_DIR APP_DIR PLATFORM_SCRIPT_DIR APP_ARCHIVE APP_ICON
 
   echo "Running platform script..."
   $platform_build_script

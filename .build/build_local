@@ -3,7 +3,11 @@ if [ "$KEY_PASSWORD" == "" ]; then
   echo "KEY_PASSWORD is blank"
   exit 1
 fi
+if [ "$1" == "darwin" ]; then
+  PLATFORMS="darwin-x64"
+  export PLATFORMS
+fi
 .build/build
 mkdir -p dpl_s3/latest
-cp build/**/*.zip dpl_s3/lastest
+cp build/**/*.zip dpl_s3/latest
 cp build/darwin-x64/Gateblu.dmg dpl_s3/latest
