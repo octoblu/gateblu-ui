@@ -49,6 +49,6 @@ deploy:
     on:
       branches:
         only:
-          - /.*/
-    #  branch: master
+          - master
+          - electron-builds
     #   appveyor_repo_tag: true
