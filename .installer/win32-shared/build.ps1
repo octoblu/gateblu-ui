@@ -29,13 +29,13 @@ $wix_dir = "C:\Program Files (x86)\WiX Toolset v3.9\bin"
 
 if ($env:APPVEYOR_REPO_BRANCH -eq 'develop') {
   $gateblu_version="develop"
-  $gateblu_legal_version="develop"
+  $gateblu_legal_version="0.0.0"
 } elseif ($env:APPVEYOR_REPO_TAG_NAME){
   $gateblu_version=$env:APPVEYOR_REPO_TAG_NAME
   $gateblu_legal_version = "$gateblu_version" -replace 'v', ''
 } else {
   $gateblu_version='latest'
-  $gateblu_legal_version="latest"
+  $gateblu_legal_version="0.0.0"
 }
 
 echo "Building Gateblu $gateblu_version"
@@ -69,6 +69,10 @@ If(!(Test-Path $destination)) {
 
 $destination = "$cache_dir\gateblu-$platform-$gateblu_version.zip"
 If(!(Test-Path $destination)) {
+  if($gateblu_version -eq "develop") {
+    echo "Sleeping for 45 minutes because this is the develop branch"
+    Start-Sleep -s 2700;
+  }
   $source = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/$gateblu_version/gateblu-$platform.zip"
   echo "Downloading $destination..."
   for($i=1; $i -le 100; $i++) {
