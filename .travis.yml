@@ -14,19 +14,17 @@ env:
 before_install:
 - npm install npm -g
 before_script:
+- BUILD_WINE=true
 - brew update
 - brew upgrade xctool || true
-- brew install Caskroom/cask/xquartz
-- brew install wine
+- if [ "$BUILD_WINE" == "true" ]; then brew install Caskroom/cask/xquartz; fi
+- if [ "$BUILD_WINE" == "true" ]; then brew install wine; fi
 - brew install curl
 - npm install
 script: cd $TRAVIS_BUILD_DIR && .build/build
 before_deploy:
-- mkdir -p dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
-- mkdir -p dpl_s3/latest
-- cp build/**/*.zip dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
-- cp build/darwin-x64/Gateblu.dmg dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
-- cp -rfp dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}/* dpl_s3/latest
+- if [ "$TRAVIS_BRANCH" == "master" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3; fi
+- if [ "$TRAVIS_BRANCH" != "master" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3_test; fi
 deploy:
 - provider: s3
   access_key_id: AKIAJH2D5IPIRHYJT5IA
@@ -37,9 +35,6 @@ deploy:
   region: us-west-2
   skip_cleanup: true
   local-dir: dpl_s3
-  on:
-    tags: true
-    all_branches: master
 - provider: npm
   skip_cleanup: true
   clean_up: false

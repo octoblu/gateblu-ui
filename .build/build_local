@@ -4,9 +4,6 @@ if [ "$KEY_PASSWORD" == "" ]; then
   exit 1
 fi
 .build/build
-mkdir -p build
-mkdir -p dpl_s3/commit
 mkdir -p dpl_s3/latest
-cp build/**/*.zip dpl_s3/commit
-cp build/darwin-x64/Gateblu.dmg dpl_s3/commit
-cp -rfp dpl_s3/commit/* dpl_s3/latest
+cp build/**/*.zip dpl_s3/lastest
+cp build/darwin-x64/Gateblu.dmg dpl_s3/latest

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+mkdir -p dpl_s3/test-build
+cp build/**/*.zip dpl_s3/test-build
+cp build/darwin-x64/Gateblu.dmg dpl_s3/test-build
