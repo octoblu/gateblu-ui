@@ -24,7 +24,7 @@ before_script:
 script: cd $TRAVIS_BUILD_DIR && .build/build
 before_deploy:
 - if [ "$TRAVIS_BRANCH" == "master" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3; fi
-- if [ "$TRAVIS_BRANCH" != "master" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3_test; fi
+- if [ "$TRAVIS_BRANCH" == "develop" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3_test; fi
 deploy:
 - provider: s3
   access_key_id: AKIAJH2D5IPIRHYJT5IA
@@ -36,7 +36,19 @@ deploy:
   skip_cleanup: true
   local-dir: dpl_s3
   on:
-    branches: true
+    tags: true
+    branch: master
+- provider: s3
+  access_key_id: AKIAJH2D5IPIRHYJT5IA
+  secret_access_key:
+    secure: A7BIpbw8inwuqTqyD+aVW9T/2uyQjjpdRhNhv0WBsL1jxJWSMwuwV1PaBka7SgrBvXRRvHjY626js0cIZYWpdz4+RwV8w1a9q9nXbmxtH3LSvIgLIfs4hrFrQvZvgZvFb0iZQnr6LNG1chuMJHyNOqwfqoEmynWZDDsN0wVxj4Q=
+  bucket: gateblu
+  upload-dir: gateblu-ui
+  region: us-west-2
+  skip_cleanup: true
+  local-dir: dpl_s3
+  on:
+    branch: develop
 - provider: npm
   skip_cleanup: true
   clean_up: false
@@ -45,4 +57,4 @@ deploy:
     secure: "ewo2E6Ugivr1xw7VbahYZPE3m4gZeidr89jxvCjhTjHKpVI6W9vX1li5Zz/SPnXTsWhT0CG4mw4m1BLmsVj35hiao59AAPSBlczpz9RuAp0wHSmlpMbpgGSBDZxvYUNX3FIhp4qcLyCI29Vtcjj6vEQQ9ZVSTG1L8CoqmbE9bWk="
   on:
     tags: true
-    all_branches: master
+    branch: master

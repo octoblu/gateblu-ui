@@ -18,8 +18,8 @@ build_script:
       }
 after_build:
   - ps: >-
-      if ($env:APPVEYOR_REPO_BRANCH -ne 'master') {
-        $env:TAG_NAME="test-build"
+      if ($env:APPVAPPVEYOR_REPO_BRANCH -eq "develop"){
+        $env:TAG_NAME="develop"
       } elseif ($env:APPVEYOR_REPO_TAG_NAME){
         $env:TAG_NAME=$env:APPVEYOR_REPO_TAG_NAME
       } else {
@@ -27,13 +27,13 @@ after_build:
       }
   - ps: mkdir output\$env:TAG_NAME | Out-Null
   - ps: >-
-      if($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_BRANCH -eq 'master'){
+      if($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVAPPVEYOR_REPO_BRANCH -ne "develop"){
         mkdir output\latest | Out-Null
       }
   - ps: cp '.\.installer\win32-*\output\*.msi' output\$env:TAG_NAME
   - ps: cp '.\.installer\win32-*\output\*.exe' output\$env:TAG_NAME
   - ps: >-
-      if ($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVEYOR_REPO_BRANCH -eq 'master'){
+      if ($env:APPVEYOR_REPO_TAG_NAME -and $env:APPVAPPVEYOR_REPO_BRANCH -ne "develop"){
         cp "output\$env:TAG_NAME\*" output\latest
       }
   - ps: $root = Resolve-Path output; [IO.Directory]::GetFiles($root.Path, '*.*', 'AllDirectories') | % { Push-AppveyorArtifact $_ -FileName $_.Substring($root.Path.Length + 1) -DeploymentName S3.GatebluApp
@@ -47,8 +47,15 @@ deploy:
     artifact: S3.GatebluApp
     set_public: true
     on:
-      branches:
-        only:
-          - master
-          - electron-builds
-    #   appveyor_repo_tag: true
+      branch: master
+      appveyor_repo_tag: true
+  - provider: S3
+    access_key_id: AKIAJH2D5IPIRHYJT5IA
+    secret_access_key:
+      secure: cFwATEkycF0yVPBsMBevUntX0ylOMsjvSbnaePjbONDOpxV/7QvU7aOt/zoPwHmI
+    bucket: gateblu
+    folder: gateblu-ui
+    artifact: S3.GatebluApp
+    set_public: true
+    on:
+      branch: develop
