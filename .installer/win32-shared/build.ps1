@@ -28,7 +28,7 @@ $wix_template_dir = "$shared_dir\wix"
 $wix_dir = "C:\Program Files (x86)\WiX Toolset v3.9\bin"
 
 if ($env:APPVEYOR_REPO_BRANCH -eq 'develop') {
-  $gateblu_version="develop"
+  $gateblu_version=$env:APPVEYOR_REPO_COMMIT
   $gateblu_legal_version="0.0.0"
 } elseif ($env:APPVEYOR_REPO_TAG_NAME){
   $gateblu_version=$env:APPVEYOR_REPO_TAG_NAME

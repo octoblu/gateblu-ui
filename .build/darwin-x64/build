@@ -44,12 +44,12 @@ pushd $PLATFORM_BUILD_DIR
 pkgbuild --analyze --root ./GatebluApp \
   $PLATFORM_BUILD_DIR/GatebluAppComponents.plist
 
-pkgbuild --root ./Gateblu.app \
+pkgbuild --root ./GatebluApp \
   --identifier com.octoblu.GatebluApp \
   --version 1.0 \
   --ownership recommended \
   --component-plist $PLATFORM_BUILD_DIR/GatebluAppComponents.plist \
-  --install-location "/Applications/Gateblu.app" \
+  --install-location "/Applications/Gateblu.localized" \
   ./GatebluApp.pkg
 
 codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/GatebluApp.pkg"

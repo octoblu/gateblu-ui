@@ -19,7 +19,7 @@ build_script:
 after_build:
   - ps: >-
       if ($env:APPVAPPVEYOR_REPO_BRANCH -eq "develop"){
-        $env:TAG_NAME="develop"
+        $env:TAG_NAME=$env:APPVEYOR_REPO_COMMIT
       } elseif ($env:APPVEYOR_REPO_TAG_NAME){
         $env:TAG_NAME=$env:APPVEYOR_REPO_TAG_NAME
       } else {
