@@ -1,4 +1,6 @@
 #!/bin/bash
+
+echo "### Preparing for S3 upload..."
 mkdir -p dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}
 mkdir -p dpl_s3/latest
 cp build/**/*.zip dpl_s3/${TRAVIS_TAG:-$TRAVIS_COMMIT}

@@ -1,5 +1,6 @@
 #!/bin/bash
 
+echo "### Preparing for test S3 upload..."
 mkdir -p dpl_s3/$TRAVIS_COMMIT
 cp build/**/*.zip dpl_s3/$TRAVIS_COMMIT
 cp build/darwin-x64/Gateblu.dmg dpl_s3/$TRAVIS_COMMIT
