@@ -49,7 +49,7 @@ pkgbuild --root ./Gateblu.app \
   --version 1.0 \
   --ownership recommended \
   --component-plist $PLATFORM_BUILD_DIR/GatebluAppComponents.plist \
-  --install-location "/Applications/Gateblu.localized" \
+  --install-location "/Applications/Gateblu.app" \
   ./GatebluApp.pkg
 
 codesign --force --verify --verbose --keychain ~/Library/Keychains/mac-build.keychain --sign "$identity" "$PLATFORM_BUILD_DIR/GatebluApp.pkg"
