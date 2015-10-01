@@ -1,5 +1,6 @@
 #!/bin/sh
 
+echo "### preparing linux-ia32 build"
 mkdir -p $PLATFORM_BUILD_DIR/resources
 cp -rfp $APP_ARCHIVE $PLATFORM_BUILD_DIR/resources
 cd $PLATFORM_BUILD_DIR && zip -9rq $PLATFORM_BUILD_DIR/gateblu-$ELECTRON_PLATFORM.zip *

@@ -1,11 +1,13 @@
 #!/bin/sh
-echo "Exciting Electrons..."
+echo "** Exciting Electrons..."
 
-PLATFORMS="darwin-x64 linux-x64 linux-ia32 win32-ia32 win32-x64"
+if [ -z "$PLATFORMS" ]; then
+  PLATFORMS="darwin-x64 linux-x64 linux-ia32 win32-ia32 win32-x64"
+fi
 START_DIR=`pwd`
 SCRIPT_DIR=$START_DIR/.build
 BUILD_DIR=$START_DIR/build
-ELECTRON_VERSION=0.33.2
+ELECTRON_VERSION=0.33.3
 ulimit -n 8192
 APP_DIR=$BUILD_DIR/app
 APP_ARCHIVE=$BUILD_DIR/app.asar
@@ -14,14 +16,14 @@ CACHE_DIR=$BUILD_DIR/cache
 rm -rf $APP_DIR
 mkdir -p $BUILD_DIR $CACHE_DIR/electron
 
-echo "Installing node_modules..."
+echo "** Installing node_modules..."
 npm install --silent
 node_modules/.bin/gulp
 
-echo "Copying app..."
+echo "** Copying app..."
 cp -rfp app $BUILD_DIR
 
-echo "Installing app node_modules..."
+echo "** Installing app node_modules..."
 cd $APP_DIR
 npm install --production --silent
 
@@ -32,7 +34,7 @@ $START_DIR/node_modules/.bin/asar pack $APP_DIR $APP_ARCHIVE
 for ELECTRON_PLATFORM in $PLATFORMS; do
   cd $CACHE_DIR/electron
 
-  echo "Building ($ELECTRON_PLATFORM)..."
+  echo "** Building [$ELECTRON_PLATFORM]..."
 
   JUST_ELECTRON_PLATFORM=`echo $ELECTRON_PLATFORM | sed "s/-x64//" | sed "s/-ia32//"`
   JUST_ELECTRON_ARCH=`echo $ELECTRON_PLATFORM | sed "s/darwin-//" | sed "s/linux-//" | sed "s/win32-//"`
@@ -42,37 +44,46 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
   platform_build_script=$PLATFORM_SCRIPT_DIR/build
   sudo rm -rf $PLATFORM_BUILD_DIR
   mkdir -p $PLATFORM_BUILD_DIR
+  sudo rm -rf $CACHE_DIR/Gateblu-$ELECTRON_PLATFORM
+
+  APP_ICON=$START_DIR/assets/gateblu-icon.icns
+  if [ $JUST_ELECTRON_PLATFORM == "win32" ]; then
+    APP_ICON=$START_DIR/assets/gateblu-icon.ico
+  fi
+
+  echo "** Checking for ElectronApp [$ELECTRON_PLATFORM]..."
+
+  OUTPUT_ELECTRON_NAME=gateblu-v$ELECTRON_VERSION-$ELECTRON_PLATFORM
+  ELECTRON_PLATFORM_ZIP=$OUTPUT_ELECTRON_NAME.zip
+  if [ ! -f $ELECTRON_PLATFORM_ZIP ]; then
+    echo "** Downloading ElectronApp ($ELECTRON_PLATFORM_ZIP) [$ELECTRON_PLATFORM]..."
+    curl -LsO https://s3-us-west-2.amazonaws.com/gateblu/electron-binaries/$ELECTRON_PLATFORM_ZIP
+    if [ $! ]; then
+      exit 1
+    fi
+  fi
+
+  echo "** Unzipping ElectronApp ($ELECTRON_PLATFORM_ZIP)[$ELECTRON_PLATFORM]..."
+  mkdir -p $CACHE_DIR/$OUTPUT_ELECTRON_NAME
+  unzip -q $CACHE_DIR/electron/$ELECTRON_PLATFORM_ZIP -d $CACHE_DIR/$OUTPUT_ELECTRON_NAME
+
+  echo "** Copying contents of ElectronApp [$ELECTRON_PLATFORM]..."
+  cp -rfp $CACHE_DIR/$OUTPUT_ELECTRON_NAME/* $PLATFORM_BUILD_DIR
+
   cd $PLATFORM_BUILD_DIR
 
-  $START_DIR/node_modules/.bin/electron-packager $START_DIR/app Gateblu \
-      --platform=$JUST_ELECTRON_PLATFORM \
-      --arch=$JUST_ELECTRON_ARCH \
-      --version=$ELECTRON_VERSION \
-      --icon=$START_DIR/assets/icon.ico \
-      --out=$CACHE_DIR \
-      --cache=$CACHE_DIR/electron \
-      --overwrite \
-      --asar=$APP_ARCHIVE \
-      --version-string.CompanyName=Octoblu \
-      --version-string.ProductName=Gateblu \
-      --version-string.ProductVersion=$APP_VERSION
-
-  echo "Copying Gateblu app..."
-
-  cp -rfp $CACHE_DIR/Gateblu-$ELECTRON_PLATFORM/Gateblu* $PLATFORM_BUILD_DIR
-
   if [ ! -f $platform_build_script ]; then
-    echo "Could not find $platform_build_script"
+    echo "** Could not find $platform_build_script"
     exit 1
   fi
 
-  export ELECTRON_PLATFORM SCRIPT_DIR PLATFORM_BUILD_DIR KEY_PASSWORD BUILD_DIR APP_DIR PLATFORM_SCRIPT_DIR APP_ARCHIVE
+  export ELECTRON_PLATFORM SCRIPT_DIR PLATFORM_BUILD_DIR KEY_PASSWORD BUILD_DIR APP_DIR PLATFORM_SCRIPT_DIR APP_ARCHIVE APP_ICON
 
-  echo "Running platform script..."
+  echo "** Running platform script [$ELECTRON_PLATFORM]..."
   $platform_build_script
 
   if [ $! ]; then
-    echo "$platform_build_script Failed!"
+    echo "** $platform_build_script Failed!"
     exit 1
   fi
 done

@@ -81,13 +81,13 @@ codesign -vvv -d "$PLATFORM_BUILD_DIR/dmg/Gateblu Installer.pkg"
 echo "### remove keychain"
 security delete-keychain mac-build.keychain
 
-umount /Volumes/Gateblu
+umount /Volumes/Gateblu > /dev/null 2>&1
 
 echo "### building dmg..."
 
 pushd $PLATFORM_BUILD_DIR
 $PLATFORM_SCRIPT_DIR/create-dmg --volname Gateblu \
-  --volicon $PLATFORM_SCRIPT_DIR/dmg/volume.icns \
+  --volicon $APP_ICON \
   --background $PLATFORM_SCRIPT_DIR/dmg/background.png \
   --window-size 512 320 \
   --icon-size 128 \
@@ -95,4 +95,5 @@ $PLATFORM_SCRIPT_DIR/create-dmg --volname Gateblu \
   --hide-extension Gateblu\ Installer.pkg \
   $PLATFORM_BUILD_DIR/Gateblu.dmg \
   $PLATFORM_BUILD_DIR/dmg
+
 exit $!
