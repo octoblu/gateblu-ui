@@ -87,7 +87,7 @@ echo "### building dmg..."
 
 pushd $PLATFORM_BUILD_DIR
 $PLATFORM_SCRIPT_DIR/create-dmg --volname Gateblu \
-  --volicon $APP_ICON \
+  --volicon $ASSETS_DIR/gateblu-disk-image.icns \
   --background $PLATFORM_SCRIPT_DIR/dmg/background.png \
   --window-size 512 320 \
   --icon-size 128 \

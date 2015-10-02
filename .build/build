@@ -7,6 +7,7 @@ fi
 START_DIR=`pwd`
 SCRIPT_DIR=$START_DIR/.build
 BUILD_DIR=$START_DIR/build
+ASSETS_DIR=$START_DIR/assets
 ELECTRON_VERSION=0.33.3
 ulimit -n 8192
 APP_DIR=$BUILD_DIR/app
@@ -36,20 +37,12 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
 
   echo "** Building [$ELECTRON_PLATFORM]..."
 
-  JUST_ELECTRON_PLATFORM=`echo $ELECTRON_PLATFORM | sed "s/-x64//" | sed "s/-ia32//"`
-  JUST_ELECTRON_ARCH=`echo $ELECTRON_PLATFORM | sed "s/darwin-//" | sed "s/linux-//" | sed "s/win32-//"`
-
   PLATFORM_BUILD_DIR=$BUILD_DIR/$ELECTRON_PLATFORM
   PLATFORM_SCRIPT_DIR=$SCRIPT_DIR/$ELECTRON_PLATFORM
   platform_build_script=$PLATFORM_SCRIPT_DIR/build
   sudo rm -rf $PLATFORM_BUILD_DIR
   mkdir -p $PLATFORM_BUILD_DIR
   sudo rm -rf $CACHE_DIR/Gateblu-$ELECTRON_PLATFORM
-
-  APP_ICON=$START_DIR/assets/gateblu-icon.icns
-  if [ $JUST_ELECTRON_PLATFORM == "win32" ]; then
-    APP_ICON=$START_DIR/assets/gateblu-icon.ico
-  fi
 
   echo "** Checking for ElectronApp [$ELECTRON_PLATFORM]..."
 
@@ -77,7 +70,7 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
     exit 1
   fi
 
-  export ELECTRON_PLATFORM SCRIPT_DIR PLATFORM_BUILD_DIR KEY_PASSWORD BUILD_DIR APP_DIR PLATFORM_SCRIPT_DIR APP_ARCHIVE APP_ICON
+  export ELECTRON_PLATFORM SCRIPT_DIR PLATFORM_BUILD_DIR ASSETS_DIR KEY_PASSWORD BUILD_DIR APP_DIR PLATFORM_SCRIPT_DIR APP_ARCHIVE
 
   echo "** Running platform script [$ELECTRON_PLATFORM]..."
   $platform_build_script
