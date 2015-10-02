@@ -14,6 +14,9 @@ APP_DIR=$BUILD_DIR/app
 APP_ARCHIVE=$BUILD_DIR/app.asar
 CACHE_DIR=$BUILD_DIR/cache
 
+# Initial Sudo so I don't forget
+sudo touch $CACHE_DIR/.touchme
+
 rm -rf $APP_DIR
 mkdir -p $BUILD_DIR $CACHE_DIR/electron
 
@@ -58,10 +61,12 @@ for ELECTRON_PLATFORM in $PLATFORMS; do
 
   echo "** Unzipping ElectronApp ($ELECTRON_PLATFORM_ZIP)[$ELECTRON_PLATFORM]..."
   mkdir -p $CACHE_DIR/$OUTPUT_ELECTRON_NAME
-  unzip -q $CACHE_DIR/electron/$ELECTRON_PLATFORM_ZIP -d $CACHE_DIR/$OUTPUT_ELECTRON_NAME
+  unzip -qo $CACHE_DIR/electron/$ELECTRON_PLATFORM_ZIP -d $CACHE_DIR/$OUTPUT_ELECTRON_NAME
 
-  echo "** Copying contents of ElectronApp [$ELECTRON_PLATFORM]..."
-  cp -rfp $CACHE_DIR/$OUTPUT_ELECTRON_NAME/* $PLATFORM_BUILD_DIR
+  echo "** Moving contents of ElectronApp [$ELECTRON_PLATFORM]..."
+  cd $CACHE_DIR
+  mkdir -p $PLATFORM_BUILD_DIR
+  mv $OUTPUT_ELECTRON_NAME/* ../$ELECTRON_PLATFORM
 
   cd $PLATFORM_BUILD_DIR
 
