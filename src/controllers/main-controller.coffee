@@ -279,7 +279,7 @@ class MainController
 
     @scope.$watch 'fullscreen', =>
       return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
-      @fullScreenTimeout = _.delay @clearFullscreen, 10000
+      @fullScreenTimeout = @timeout @clearFullscreen, 10000
 
 angular.module 'gateblu-ui'
   .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->

@@ -17,7 +17,7 @@ before_script:
 - npm install
 script: cd $TRAVIS_BUILD_DIR && .build/build
 before_deploy:
-- if [ "$TRAVIS_BRANCH" == "master" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3; fi
+- if [ "$TRAVIS_BRANCH" != "develop" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3; fi
 - if [ "$TRAVIS_BRANCH" == "develop" ]; then cd $TRAVIS_BUILD_DIR && .build/build_s3_test; fi
 deploy:
 - provider: s3

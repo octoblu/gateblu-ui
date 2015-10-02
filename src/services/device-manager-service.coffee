@@ -9,6 +9,7 @@ class DeviceManagerService
     callback()
 
   broadcast: =>
+    @devices = _.uniq @devices, 'uuid'
     @rootScope.$emit 'gateblu:devices', @devices
     @rootScope.$apply()
 
