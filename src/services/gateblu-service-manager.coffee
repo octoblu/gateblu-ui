@@ -72,7 +72,7 @@ class GatebluServiceManager
         callback()
 
     if process.platform == 'win32'
-      return exec 'taskkill /IM GatebluServiceTray.exe', (error, stdout, stdin) =>
+      return exec 'taskkill /f /im GatebluServiceTray.exe', (error, stdout, stdin) =>
         return callback error if error?
         callback()
 
