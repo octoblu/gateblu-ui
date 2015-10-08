@@ -96,24 +96,6 @@
       </div>
     </md-toolbar>
 
-    <md-toolbar md-theme="info" ng-if="!hideChangeNotice">
-      <div class="md-toolbar-tools">
-        <h2>
-          <i class="fa fa-info"></i>
-          <span>
-            Gateblu service and plugins changed.
-          </span>
-        </h2>
-        <span flex></span>
-        <md-button href="https://github.com/octoblu/issues/issues/220" class="external-link md-button md-raised" aria-label="Install">
-          See Notice
-        </md-button>
-        <md-button ng-click="hideChangeNoticeAction()" class="md-button md-raised" aria-label="Close">
-          Close
-        </md-button>
-      </div>
-    </md-toolbar>
-
     <div class="backend-install-container" ng-if="!isInstalled" flex layout-fill>
       <i class="fa fa-5x fa-exclamation-triangle big-icon"></i>
       <p>Gateblu Service is not installed!</p>

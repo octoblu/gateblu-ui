@@ -71,14 +71,15 @@ class MainController
 
     @rootScope.$on 'gateblu:config', ($event, config) =>
       @LogService.add 'Gateblu Config Changed', 'info'
+      @configChange?(config)
       @scope.gatebluConfig = config
-      @clearFullscreen() if @scope.fullscreen?.waitForConfig
-      unless config.owner?
-        @scope.fullscreen =
-          buttonTitle: 'Claim Gateblu'
-          eventName: 'gateblu:claim'
-          claiming: true
-          menu: true
+      @clearFullscreen() if config.owner?
+      return if config.owner?
+      @scope.fullscreen =
+        buttonTitle: 'Claim Gateblu'
+        eventName: 'gateblu:claim'
+        claiming: true
+        menu: true
 
     @rootScope.$on 'gateblu:device:config', ($event, config) =>
       device = _.findWhere @scope.devices, uuid: config.uuid
@@ -161,6 +162,10 @@ class MainController
   clearFullscreen: =>
     @scope.fullscreen = null
 
+  waitForConfig: (key, value, callback=->) =>
+    @configChange = (config) =>
+      return callback() if config[key] == value
+
   setupScope: =>
     @scope.fullscreen =
       message: 'Connecting to Octoblu...'
@@ -200,13 +205,18 @@ class MainController
       @mdDialog
         .show alert
         .then =>
+
           @scope.fullscreen =
             message: 'Restarting Gateblu'
             spinner: true
+
+          @waitForConfig 'online', true, =>
+            @clearFullscreen()
+
           @GatebluServiceManager.hardRestartGateblu (error) =>
             @scope.showError error if error?
-            @clearFullscreen()
             @rootScope.$apply()
+
 
     @scope.resetGateblu = =>
       alert = @mdDialog.confirm
@@ -222,9 +232,12 @@ class MainController
           @scope.fullscreen =
             message : 'Resetting Gateblu'
             spinner: true
+
+          @waitForConfig 'online', true, =>
+            @scope.promptToClose() unless error?
+
           @GatebluServiceManager.resetGateblu (error) =>
             @scope.showError error if error?
-            @scope.promptToClose() unless error?
             @rootScope.$apply()
 
     @scope.promptToClose = =>
@@ -260,6 +273,10 @@ class MainController
         message: "Starting Service..."
         spinner: true
         waitForConfig: true
+
+      @waitForConfig 'online', true, =>
+        @clearFullscreen()
+
       @GatebluServiceManager.stopAndStartService (error) =>
         @LogService.add error, 'error' if error?
 
@@ -268,6 +285,10 @@ class MainController
         message: "Stopping Service..."
         spinner: true
         waitForConfig: true
+
+      @waitForConfig 'online', false, =>
+        @clearFullscreen()
+
       @GatebluServiceManager.stopService (error) =>
         @LogService.add error, 'error' if error?
 
