@@ -32,7 +32,7 @@ class MainController
 
   updateDevice: (device) =>
     filename = device.type?.replace ':', '/'
-    device.icon_url = "https://ds78apnml6was.cloudfront.net/#{filename}.svg"
+    device.icon_url = "https://icons.octoblu.com/#{filename}.svg"
     device.background = '#f5f5f5'
     device.col_span ?= 1
     device.row_span ?= 1
