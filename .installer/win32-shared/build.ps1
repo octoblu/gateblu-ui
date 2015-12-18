@@ -25,7 +25,7 @@ $output_dir = "$script_dir\output"
 $cache_dir = "$script_dir\..\cache\$platform"
 $tmp_dir = [io.path]::GetTempFileName()
 $wix_template_dir = "$shared_dir\wix"
-$wix_dir = "C:\Program Files (x86)\WiX Toolset v3.9\bin"
+$wix_dir = "C:\Program Files (x86)\WiX Toolset v3.10\bin"
 
 if ($env:APPVEYOR_REPO_BRANCH -eq 'develop') {
   $gateblu_version=$env:APPVEYOR_REPO_COMMIT
