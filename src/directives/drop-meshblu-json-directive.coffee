@@ -12,7 +12,7 @@ class DropMeshbluJson
       item = event.dataTransfer.items[0]
 
       return @getFromFile file, @onData if file?
-      @getFromData item, @onData
+      return @getFromData item, @onData if item?
 
   validate: (data) =>
     return false unless data?
@@ -24,6 +24,7 @@ class DropMeshbluJson
     try return JSON.parse rawData
 
   onData: (error, data) =>
+    console.log 'data', data
     return @scope.$emit 'error', 'Invalid Meshblu Config' unless @validate data
     @scope.$emit 'gateblu:config:update', data
 
