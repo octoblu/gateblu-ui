@@ -86,8 +86,13 @@ class GatebluServiceManager
     async.each directories, fsExtra.emptyDir, callback
 
   removeGatebluConfig: (callback=->)=>
+    @LogService.add 'Removing Gateblu Config', 'info'
     fsExtra.unlink @ConfigService.meshbluConfigFile, (error) =>
       callback()
+
+  updateGatebluConfigFile: (config, callback=->)=>
+    @LogService.add 'Updating Gateblu Config', 'info'
+    fsExtra.writeJson @ConfigService.meshbluConfigFile, config, callback
 
   emit: (event, data) =>
     @rootScope.$broadcast event, data
@@ -100,6 +105,18 @@ class GatebluServiceManager
 
   unregisterGateblu: (callback=->) =>
     @meshbluHttp.unregister @ConfigService.meshbluConfig, callback
+
+  updateGatebluConfig: (config, callback=->) =>
+    @LogService.add 'Update Gateblu Config', 'info'
+    events = [
+      (callback) => @stopService => callback()
+      (callback) => @updateGatebluConfigFile config, callback
+      (callback) => @startService => callback()
+    ]
+    async.series events, (error) =>
+      @LogService.add 'Gateblu Config Updated', 'info'
+      return callback error if error?
+      callback()
 
   resetGateblu: (callback=->) =>
     @LogService.add 'Resetting Gateblu', 'warning'

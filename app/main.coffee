@@ -12,7 +12,7 @@ app.on 'window-all-closed', ->
     app.quit()
 
 app.on 'ready', ->
-  mainWindow = new BrowserWindow(width: 800, height: 600)
+  mainWindow = new BrowserWindow width: 800, height: 600
 
   ipc.on 'asynchronous-message', (event, message) ->
     debug 'event', event

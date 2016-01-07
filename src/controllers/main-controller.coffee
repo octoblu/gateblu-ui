@@ -81,6 +81,13 @@ class MainController
         claiming: true
         menu: true
 
+    @rootScope.$on 'gateblu:config:update', ($event, config) =>
+      console.log 'got update', config
+      @GatebluServiceManager.updateGatebluConfig config, (error) =>
+        return @rootScope.$broadcast 'error', error if error?
+        @waitForConfig 'online', true, =>
+          @scope.promptToClose()
+
     @rootScope.$on 'gateblu:device:config', ($event, config) =>
       device = _.findWhere @scope.devices, uuid: config.uuid
       return unless device?
@@ -300,6 +307,7 @@ class MainController
 
     @scope.$watch 'fullscreen', =>
       return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
+      return clearTimeout @fullScreenTimeout if @scope.fullscreen.claiming
       @fullScreenTimeout = @timeout @clearFullscreen, 30000
 
 angular.module 'gateblu-ui'

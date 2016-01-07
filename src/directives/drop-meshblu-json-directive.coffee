@@ -1,30 +1,43 @@
-angular.module 'gateblu-ui'
-.directive 'dropMeshbluJson', ->
-  restrict: 'A'
-  link: (scope, element) ->
+class DropMeshbluJson
+  link: (@scope, element) =>
     holder = element[0]
     holder.ondragover = -> false
     holder.ondragleave =  -> false
     holder.ondragend = -> false
-    holder.ondrop = (event) ->
+    holder.ondrop = (event) =>
       event.preventDefault()
       event.stopPropagation()
 
       file = event.dataTransfer.files[0]
       item = event.dataTransfer.items[0]
 
-      return getFromFile file, onData if file?
-      getFromData item, onData
+      return @getFromFile file, @onData if file?
+      @getFromData item, @onData
 
-    onData = (error, data) =>
-      console.log 'data', data
+  validate: (data) =>
+    return false unless data?
+    return false unless data.uuid?
+    return false unless data.token?
+    return true
 
-    getFromData = (item, callback) =>
-      item.getAsString (rawMeshbluJson) =>
-        callback null, JSON.parse rawMeshbluJson
+  parseData: (rawData) =>
+    try return JSON.parse rawData
 
-    getFromFile = (file, callback) =>
-      fileReader = new FileReader()
-      fileReader.addEventListener 'load', (event) ->
-        callback null, JSON.parse event.target.result
-      fileReader.readAsText file
+  onData: (error, data) =>
+    return @scope.$emit 'error', 'Invalid Meshblu Config' unless @validate data
+    @scope.$emit 'gateblu:config:update', data
+
+  getFromData: (item, callback) =>
+    item.getAsString (rawMeshbluJson) =>
+      callback null, @parseData rawMeshbluJson
+
+  getFromFile: (file, callback) =>
+    fileReader = new FileReader()
+    fileReader.addEventListener 'load', (event) =>
+      callback null, @parseData event.target.result
+    fileReader.readAsText file
+
+angular.module 'gateblu-ui'
+.directive 'dropMeshbluJson', ->
+  restrict: 'A'
+  link: -> new DropMeshbluJson().link arguments...
