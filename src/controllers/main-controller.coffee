@@ -13,22 +13,35 @@ class MainController
     @UpdateService = dependencies.UpdateService
     @GatebluBackendInstallerService = dependencies.GatebluBackendInstallerService
     @GatebluService = dependencies.GatebluService
+    @ConfigService = dependencies.ConfigService
     @DeviceManagerService = dependencies.DeviceManagerService
     @mdDialog = dependencies.mdDialog
     @interval = dependencies.interval
 
     @LogService.add 'Starting up!', 'info'
 
-    @setupRootScope()
     @setupScope()
-    @checkVersions()
 
-    @interval =>
+    missingCallback = =>
+      @scope.fullscreen =
+        message: 'Missing Configuration. Will retry in 10 seconds.'
+        spinner: false
+        noTimeout: true
+
+    foundCallback = =>
+      @ConfigService.reset()
+      @scope.fullscreen = null
+      @setupRootScope()
       @checkVersions()
-    , 1000 * 60 * 30
 
-    @GatebluServiceManager.whoami (error, data) =>
-      @scope.gateblu = data unless error?
+      @interval =>
+        @checkVersions()
+      , 1000 * 60 * 10
+
+      @GatebluServiceManager.whoami (error, data) =>
+        @scope.gateblu = data unless error?
+
+    @ConfigService.waitForMeshbluConfig {seconds: 30, missingCallback, foundCallback}
 
   updateDevice: (device) =>
     filename = device.type?.replace ':', '/'
@@ -79,6 +92,7 @@ class MainController
         buttonTitle: 'Claim Gateblu'
         eventName: 'gateblu:claim'
         claiming: true
+        noTimeout: true
         menu: true
 
     @rootScope.$on 'gateblu:config:update', ($event, config) =>
@@ -307,11 +321,11 @@ class MainController
 
     @scope.$watch 'fullscreen', =>
       return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
-      return clearTimeout @fullScreenTimeout if @scope.fullscreen.claiming
+      return clearTimeout @fullScreenTimeout if @scope.fullscreen.noTimeout
       @fullScreenTimeout = @timeout @clearFullscreen, 30000
 
 angular.module 'gateblu-ui'
-  .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->
+  .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, ConfigService, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->
     new MainController
       rootScope: $rootScope
       scope: $scope
@@ -325,3 +339,4 @@ angular.module 'gateblu-ui'
       GatebluBackendInstallerService: GatebluBackendInstallerService
       GatebluService: GatebluService
       DeviceManagerService: DeviceManagerService
+      ConfigService: ConfigService

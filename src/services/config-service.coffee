@@ -5,7 +5,7 @@ request = require 'request'
 PROGRAMFILES = process.env['PROGRAMFILES(X86)'] || process.env['PROGRAMFILES']
 
 class ConfigService
-  constructor: (dependencies={}) ->
+  constructor: ({@interval}) ->
     @meshbluConfigFile = @getSupportPath 'meshblu.json'
     @reset()
 
@@ -18,7 +18,7 @@ class ConfigService
     fs.existsSync @meshbluConfigFile
 
   loadMeshbluConfig: =>
-    jsonfile.readFileSync @meshbluConfigFile, throws: false if @meshbluConfigExists
+    jsonfile.readFileSync @meshbluConfigFile, throws: false if @meshbluConfigExists()
 
   loadServicePackageJson: =>
     jsonfile.readFileSync @getServicePackagePath(), throws: false
@@ -54,6 +54,14 @@ class ConfigService
 
     return '.'
 
+  waitForMeshbluConfig: ({seconds=10, missingCallback, foundCallback}) =>
+    return foundCallback() if @meshbluConfigExists()
+    missingCallback()
+    @interval =>
+      return foundCallback() if @meshbluConfigExists()
+      missingCallback()
+    , 1000 * seconds
+
 angular.module 'gateblu-ui'
-  .service 'ConfigService', ->
-    new ConfigService
+  .service 'ConfigService', ($interval)->
+    new ConfigService interval: $interval
