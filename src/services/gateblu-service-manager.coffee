@@ -10,6 +10,7 @@ class GatebluServiceManager
     @rootScope = dependencies.rootScope
     @http = dependencies.http
     @LogService = dependencies.LogService
+    @DeviceService = dependencies.DeviceService
     @DeviceLogService = dependencies.DeviceLogService
     @ConfigService = dependencies.ConfigService
     @meshbluHttp = new MeshbluHttp @ConfigService.meshbluConfig
@@ -77,6 +78,16 @@ class GatebluServiceManager
         callback()
 
     callback new Error "Unsupported Operating System"
+
+  deviceState : (device, state,  callback=->) =>
+    events = [
+      (callback) => @meshbluHttp.update device.uuid, {stop: !state}, callback
+      (callback) => @stopService => callback()
+      (callback) => @startService => callback()
+    ]
+    async.series events, (error) =>
+      return callback error if error?
+      callback()
 
   removeDeviceAndTmp: (callback=->) =>
     directories = [

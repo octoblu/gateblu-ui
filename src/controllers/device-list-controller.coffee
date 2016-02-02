@@ -40,6 +40,14 @@ class DeviceListController
           @rootScope.$broadcast 'device:unregistering', device
           @GatebluServiceManager.deleteDevice device
 
+    @scope.stopDevice = (device) =>
+      @rootScope.$broadcast 'device:stopping', device
+      @GatebluServiceManagerdeviceState device, false
+
+    @scope.startDevice = (device) =>
+      @rootScope.$broadcast 'device:starting', device
+      @GatebluServiceManager.deviceState device, true
+
     @scope.showDevice = (device) =>
       alert = @mdDialog.alert
         title: device.name
