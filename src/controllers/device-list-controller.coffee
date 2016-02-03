@@ -42,7 +42,7 @@ class DeviceListController
 
     @scope.stopDevice = (device) =>
       @rootScope.$broadcast 'device:stopping', device
-      @GatebluServiceManagerdevice.deviceState device, false
+      @GatebluServiceManager.deviceState device, false
 
     @scope.startDevice = (device) =>
       @rootScope.$broadcast 'device:starting', device
