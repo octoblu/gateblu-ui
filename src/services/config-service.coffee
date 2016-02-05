@@ -54,11 +54,16 @@ class ConfigService
 
     return '.'
 
-  waitForMeshbluConfig: ({seconds=10, missingCallback, foundCallback}) =>
-    return foundCallback() if @meshbluConfigExists()
+  waitForMeshbluConfig: ({seconds, missingCallback, foundCallback}) =>
+    seconds ?= 10
+    _foundCallback = =>
+      @interval.cancel intervalId
+      foundCallback()
+
+    return _foundCallback() if @meshbluConfigExists()
     missingCallback()
-    @interval =>
-      return foundCallback() if @meshbluConfigExists()
+    intervalId = @interval =>
+      return _foundCallback() if @meshbluConfigExists()
       missingCallback()
     , 1000 * seconds
 
