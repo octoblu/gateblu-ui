@@ -26,7 +26,7 @@ class GatebluServiceManager
   getInstallerLink: (version='latest') =>
     baseUrl = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-service/#{version}"
     if process.platform == 'darwin'
-      filename = 'GatebluService.pkg'
+      filename = 'GatebluService.dmg'
 
     if process.platform == 'win32'
       filename = "GatebluService-win32-#{process.arch}.msi"
