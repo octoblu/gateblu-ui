@@ -126,9 +126,10 @@ class MainController
         message: 'Loading Devices...'
         spinner: true
 
-    @rootScope.$on 'gateblu:devices', ($event, devices) =>
+    @rootScope.$on 'gateblu:devices', ($event, devices=[]) =>
       @LogService.add 'Received Device List', 'info'
-      @scope.devices = _.map devices, @updateDevice
+      updatedDevices = _.map devices, @updateDevice
+      @scope.devices = updatedDevices if _.isArray updatedDevices
       uuids = _.pluck @scope.devices, 'uuid'
       @clearFullscreen() if _.isEqual uuids, @scope.deviceUuids
 
@@ -196,6 +197,8 @@ class MainController
     @scope.showLog = false
     @scope.isInstalled = @GatebluServiceManager.isInstalled()
     @scope.deviceLogs = {}
+    @scope.devices = []
+    @scope.deviceUuids = []
 
     @scope.getInstallerLink = (version='latest') =>
       baseUrl = "https://s3-us-west-2.amazonaws.com/gateblu/gateblu-ui/#{version}"

@@ -10,6 +10,7 @@ class DeviceManagerService
 
   broadcast: =>
     @devices = _.uniq @devices, 'uuid'
+    @devices = [] unless _.isArray @devices
     @rootScope.$emit 'gateblu:devices', @devices
     @rootScope.$apply()
 
