@@ -30,7 +30,7 @@ class MainController
 
     foundCallback = =>
       @ConfigService.reset()
-      @scope.fullscreen = null
+      @clearFullscreen()
       @setupRootScope()
       @checkVersions()
 
@@ -73,9 +73,6 @@ class MainController
   setupRootScope: =>
     @rootScope.$on "gateblu:connected", ($event) =>
       @LogService.add "Gateblu Connected", 'info'
-      @scope.fullscreen =
-        message: 'Loading Devices...'
-        spinner: true
 
     @rootScope.$on 'gateblu:claim', ($event) =>
       @GatebluServiceManager.generateSessionToken (error, result) =>
@@ -86,17 +83,9 @@ class MainController
       @LogService.add 'Gateblu Config Changed', 'info'
       @configChange?(config)
       @scope.gatebluConfig = config
-      @clearFullscreen() if config.owner?
-      return if config.owner?
-      @scope.fullscreen =
-        buttonTitle: 'Claim Gateblu'
-        eventName: 'gateblu:claim'
-        claiming: true
-        noTimeout: true
-        menu: true
+      @showScreens()
 
     @rootScope.$on 'gateblu:config:update', ($event, config) =>
-      console.log 'got update', config
       @GatebluServiceManager.updateGatebluConfig config, (error) =>
         return @rootScope.$broadcast 'error', error if error?
         @waitForConfig 'online', true, =>
@@ -120,18 +109,16 @@ class MainController
 
     @rootScope.$on 'gateblu:refreshDevices', ($event, data={}) =>
       @LogService.add 'Refreshing Devices', 'info'
-      @scope.deviceUuids = data.deviceUuids
-      return if @showNoDevices data.deviceUuids
-      @scope.fullscreen =
-        message: 'Loading Devices...'
-        spinner: true
+      newDevicesUuids = data.deviceUuids
+      oldDevicesUuids = _.pluck @scope.devices, 'uuid'
+      differenceUuids = _.difference newDevicesUuids, oldDevicesUuids
+      @notLoadingDevices = _.isEmpty(newDevicesUuids) || !_.isEmpty(differenceUuids)
+      @showScreens()
 
     @rootScope.$on 'gateblu:devices', ($event, devices=[]) =>
       @LogService.add 'Received Device List', 'info'
-      updatedDevices = _.map devices, @updateDevice
-      @scope.devices = updatedDevices if _.isArray updatedDevices
-      uuids = _.pluck @scope.devices, 'uuid'
-      @clearFullscreen() if _.isEqual uuids, @scope.deviceUuids
+      @scope.devices = _.map devices, @updateDevice
+      @clearFullscreen()
 
     @rootScope.$on "device:unregistering", ($event, device) =>
       @fullscreen =
@@ -173,13 +160,38 @@ class MainController
     @rootScope.$on 'prompt-to-close', ($event) =>
       @scope.promptToClose()
 
-  showNoDevices: (uuids) =>
-    showNoDevices = _.isEmpty(uuids) && !@scope.fullscreen?.claiming
-    return true unless showNoDevices
-    @scope.fullscreen =
-      message: 'No Devices'
-      menu: true
-      spinner: false
+  showScreens: =>
+    uuids = _.pluck @scope.devices, 'uuid'
+    unless @scope.gatebluConfig?.uuid?
+      @scope.fullscreen =
+        message: 'Initializing...'
+        spinner: true
+      return
+
+    unless @scope.gatebluConfig?.owner?
+      @scope.fullscreen =
+        buttonTitle: 'Claim Gateblu'
+        eventName: 'gateblu:claim'
+        claiming: true
+        noTimeout: true
+        menu: true
+      return
+
+    unless @notLoadingDevices
+      @scope.fullscreen =
+        message: 'Loading Devices...'
+        spinner: true
+      return
+
+    if _.isEmpty @scope.devices
+      @scope.fullscreen =
+        message: 'No Devices'
+        menu: true
+        spinner: false
+        noTimeout: true
+      return
+
+    @clearFullscreen()
 
   clearFullscreen: =>
     @scope.fullscreen = null
@@ -192,6 +204,7 @@ class MainController
     @scope.fullscreen =
       message: 'Connecting to Octoblu...'
       spinner: true
+      noTimeout: true
 
     @scope.showingLogForDevice = null
     @scope.showLog = false
@@ -240,7 +253,6 @@ class MainController
           @GatebluServiceManager.hardRestartGateblu (error) =>
             @scope.showError error if error?
             @rootScope.$apply()
-
 
     @scope.resetGateblu = =>
       alert = @mdDialog.confirm
@@ -323,9 +335,12 @@ class MainController
       @scope.hideChangeNotice = true
 
     @scope.$watch 'fullscreen', =>
-      return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
+      return clearTimeout @fullScreenTimeout unless @scope.fullscreen
       return clearTimeout @fullScreenTimeout if @scope.fullscreen.noTimeout
       @fullScreenTimeout = @timeout @clearFullscreen, 30000
+
+    @scope.$watch 'devices', =>
+      @showScreens()
 
 angular.module 'gateblu-ui'
   .controller 'MainController', ($rootScope, $scope, $timeout, $interval, GatebluServiceManager, ConfigService, LogService, DeviceLogService, UpdateService, GatebluBackendInstallerService, GatebluService, DeviceManagerService, $mdDialog) ->

@@ -3,7 +3,7 @@
         md-cols-sm="1" md-cols-md="3" md-cols-gt-md="4"
         md-row-height-gt-md="1:1" md-row-height="4:3"
         md-gutter="8px" md-gutter-gt-sm="4px" >
-    <md-grid-tile ng-repeat="device in devices track by $index | orderBy: 'name'"
+    <md-grid-tile ng-repeat="device in devices track by $index | orderBy: 'uuid'"
                   md-rowspan="{{device.row_span}}"
                   md-colspan="{{device.col_span}}"
                   md-colspan-sm="1"
