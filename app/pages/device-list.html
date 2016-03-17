@@ -14,7 +14,7 @@
       <md-grid-tile-footer layout="column">
         <p layout-align="center center" layout="row">
           {{getDeviceName(device)}}
-          <span ng-show="!device.online"> &nbsp; (offline)</span>
+          <span ng-show="!device.online"> &nbsp; (disconnected)</span>
         </p>
         <div class='device-icon-buttons' layout-align="center center" layout="row">
           <md-button ng-click="stopDevice(device)" ng-if="device.online" class="md-icon-button" aria-label="Stop" title="Stop">
