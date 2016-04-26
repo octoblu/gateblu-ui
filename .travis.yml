@@ -4,6 +4,9 @@ cache:
   directories:
   - node_modules
   - build/cache
+branches:
+  only:
+  - /^v[0-9]/
 env:
   global:
   - secure: cmK7r29eJ3JLWw6hwWmdkFASX40ciedftmamXzoOEtZMvEeAvdnjIIgcYQ/NO0+51WMlnnrEekB7h7khKvxgfCQ3S8H9Zi3vTNSKXONPcrNbLfze7FjY63yy5VsHK+PmD6Fmnj3Pl1HpQpzDaRWPrGq/uM2UYiDTpMw3K+OGPTI=
