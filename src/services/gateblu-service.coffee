@@ -27,6 +27,7 @@ class GatebluService
 
     @gateblu.on 'config', (config) =>
       @broadcast 'gateblu:config', config
+      @broadcast 'gateblu:refreshDevices', deviceUuids: _.pluck config.devices, 'uuid'
 
     @gateblu.on 'refreshDevices', (data) =>
       @broadcast 'gateblu:refreshDevices', data

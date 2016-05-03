@@ -110,9 +110,13 @@ class GatebluServiceManager
     @rootScope.$apply()
 
   deleteDevice: (device) =>
-    @meshbluHttp.unregister device, (error) =>
+    { uuid } = @ConfigService.meshbluConfig
+    pullQuery = { $pull: { 'devices': { uuid: device.uuid } } }
+    @meshbluHttp.updateDangerously uuid, pullQuery, (error) =>
       return @emit 'error', error if error?
-      @emit 'device:unregistered', device
+      @meshbluHttp.unregister device, (error) =>
+        return @emit 'error', error if error?
+        @emit 'device:unregistered', device
 
   unregisterGateblu: (callback=->) =>
     @meshbluHttp.unregister @ConfigService.meshbluConfig, callback

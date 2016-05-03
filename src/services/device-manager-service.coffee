@@ -15,7 +15,7 @@ class DeviceManagerService
     @rootScope.$apply()
 
   removeDevice: (device, callback=->) =>
-    _.pull @devices, device
+    @devices = _.reject @devices, { uuid: device.uuid }
     @broadcast()
     callback()
 

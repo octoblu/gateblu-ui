@@ -24,7 +24,6 @@ class DropMeshbluJson
     try return JSON.parse rawData
 
   onData: (error, data) =>
-    console.log 'data', data
     return @scope.$emit 'error', 'Invalid Meshblu Config' unless @validate data
     @scope.$emit 'gateblu:config:update', data
 

@@ -335,9 +335,9 @@ class MainController
       @scope.hideChangeNotice = true
 
     @scope.$watch 'fullscreen', =>
-      return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
-      return clearTimeout @fullScreenTimeout if @scope.fullscreen.noTimeout
-      @fullScreenTimeout = @timeout @clearFullscreen, 30000
+      # return clearTimeout @fullScreenTimeout unless @scope.fullscreen?
+      # return clearTimeout @fullScreenTimeout if @scope.fullscreen.noTimeout
+      # @fullScreenTimeout = @timeout @clearFullscreen, 30000
 
     @scope.$watch 'devices', =>
       @showScreens()

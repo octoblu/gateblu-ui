@@ -8,7 +8,7 @@ class DeviceService
     @devices = []
 
   updateDangerously: (uuid, query, callback=->) =>
-    return console.log 'invalid query' unless query
+    return console.error 'invalid query' unless query
     @meshbluHttp.updateDangerously uuid, query, callback
 
 angular.module 'gateblu-ui'
