@@ -107,14 +107,6 @@ class MainController
         message: 'Reconnecting to Octoblu...'
         spinner: true
 
-    @rootScope.$on 'gateblu:refreshDevices', ($event, data={}) =>
-      @LogService.add 'Refreshing Devices', 'info'
-      newDevicesUuids = data.deviceUuids
-      oldDevicesUuids = _.pluck @scope.devices, 'uuid'
-      differenceUuids = _.difference newDevicesUuids, oldDevicesUuids
-      @notLoadingDevices = _.isEmpty(newDevicesUuids) || !_.isEmpty(differenceUuids)
-      @showScreens()
-
     @rootScope.$on 'gateblu:devices', ($event, devices=[]) =>
       @LogService.add 'Received Device List', 'info'
       @scope.devices = _.map devices, @updateDevice
@@ -177,15 +169,12 @@ class MainController
         menu: true
       return
 
-    unless @notLoadingDevices
-      @scope.fullscreen =
-        message: 'Loading Devices...'
-        spinner: true
-      return
-
     if _.isEmpty @scope.devices
+      message = 'No Devices'
+      if !_.isEmpty @scope.gatebluConfig.devices
+        message = 'No Devices (May be Loading...)'
       @scope.fullscreen =
-        message: 'No Devices'
+        message: message
         menu: true
         spinner: false
         noTimeout: true
